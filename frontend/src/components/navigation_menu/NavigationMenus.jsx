@@ -1,12 +1,13 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { ReactComponent as Logo } from "../../logo.svg";
-
+import MenuBar from "./MenuBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function NavigationMenu(){
     return (
         <Navbar expand="lg" bg="light" variant="light">
+          <MenuBar/>
           <Navbar.Brand href="#home">
             <Logo
               alt=""

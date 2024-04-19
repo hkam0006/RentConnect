@@ -2,7 +2,7 @@ import logo from './logo.svg';
 import React, { Component } from 'react'
 import './App.css';
 import NavigationMenu from './components/navigation_menu/NavigationMenus';
-
+import MenuBar from './components/navigation_menu/MenuBar';
 function App() {
   return (
     <div className="App">
