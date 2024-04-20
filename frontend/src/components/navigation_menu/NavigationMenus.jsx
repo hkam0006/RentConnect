@@ -2,12 +2,14 @@ import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { ReactComponent as Logo } from "../../logo.svg";
 import MenuBar from "./MenuBar";
+import '../../App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function NavigationMenu(){
     return (
-        <Navbar expand="lg" bg="light" variant="light">
-          <MenuBar/>
+      <div className="navbar-container">
+        <MenuBar/>
+        <Navbar bg="light" variant="light">
           <Navbar.Brand href="#home">
             <Logo
               alt=""
@@ -22,6 +24,7 @@ export default function NavigationMenu(){
               <Nav.Link href="#properties">Properties</Nav.Link>
             </Nav>
         </Navbar>
+        </div>
       );
     
 }
