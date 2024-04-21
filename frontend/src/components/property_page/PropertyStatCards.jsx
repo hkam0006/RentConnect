@@ -29,6 +29,7 @@ export function PropertyStatCards() {
                   id="demo-simple-select"
                   value={leasedTimeframe}
                   onChange={handleLeaseChange}
+                  variant='standard'
                 >
                   <MenuItem value={"Weekly"}>Weekly</MenuItem>
                   <MenuItem value={"Monthly"}>Monthly</MenuItem>
@@ -58,6 +59,7 @@ export function PropertyStatCards() {
                   sx={{
                     height: "100%"
                   }}
+                  variant='standard'
                 >
                   <MenuItem value={"Weekly"}>Weekly</MenuItem>
                   <MenuItem value={"Monthly"}>Monthly</MenuItem>
