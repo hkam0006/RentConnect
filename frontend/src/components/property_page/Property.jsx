@@ -6,7 +6,7 @@ import { PropertySearch } from './PropertySearch';
 
 export default function Property() {
   return (
-    <Container sx={{ mt: 10 }} >
+    <Container sx={{ mt: 10, height: "80vh" }} >
       <PropertyStatCards />
       <PropertySearch />
       <PropertiesTable />

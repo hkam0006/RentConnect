@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Typography, Container, Grid, Stack, Card, CardContent, MenuItem, Select, FormControl, InputLabel } from "@mui/material"
+import { Typography, Container, Grid, Stack, Card, CardContent, MenuItem, Select, FormControl } from "@mui/material"
 
 
 export function PropertyStatCards() {
@@ -22,7 +22,7 @@ export function PropertyStatCards() {
         <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} >
           <CardContent>
             <Stack direction="row" justifyContent="space-between">
-              <Typography variant='subtitle' fontWeight={700} color="text.secondary">Total Properties Leased</Typography>
+              <Typography variant='caption' fontWeight={700} color="text.secondary">Total Properties Leased</Typography>
               <FormControl size="small">
                 <Select
                   labelId="demo-simple-select-label"
@@ -48,7 +48,7 @@ export function PropertyStatCards() {
         <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} >
           <CardContent>
             <Stack direction="row" justifyContent="space-between">
-              <Typography variant='subtitle' fontWeight={700} color="text.secondary">Total Applications Received</Typography>
+              <Typography variant='caption' fontWeight={700} color="text.secondary">Total Applications Received</Typography>
               <FormControl size="small">
                 <Select
                   labelId="total-appliication-received"
@@ -77,7 +77,7 @@ export function PropertyStatCards() {
         <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} >
           <CardContent>
             <Stack direction="row" justifyContent="space-between">
-              <Typography variant='subtitle' fontWeight={700} color="text.secondary">Average DoM</Typography>
+              <Typography variant='caption' fontWeight={700} color="text.secondary">Average DoM</Typography>
               <FormControl size="small">
 
               </FormControl>

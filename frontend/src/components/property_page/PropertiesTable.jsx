@@ -1,30 +1,47 @@
 import React from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from "@mui/material"
+import ImgElement from './ImgElement';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses } from "@mui/material"
+import { styled } from '@mui/material/styles';
+import { FaBath, FaCar, FaBed } from "react-icons/fa6";
+
+// Demo Images
+import ListingImage from './listing.jpg'
+import ListingImageApt from './listing2.jpg'
 
 
 export function PropertiesTable() {
 
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
+  function createData(name, vacancy, attendees, applications, listingImage, type, price, available) {
+    return { name, vacancy, attendees, applications, listingImage, type, price, available };
   }
 
   const rows = [
-    createData('Property 1', 159, 6.0, 24, 4.0),
-    createData('Property 2', 237, 9.0, 37, 4.3),
-    createData('Property 3', 262, 16.0, 24, 6.0),
-    createData('Property 4', 305, 3.7, 67, 4.3),
-    createData('Property 5', 356, 16.0, 49, 3.9),
+    createData('1702/655 Chapel Street, South Yarra 3141', 25, 31, 15, ListingImageApt, "Apartment", "$750 per week", "31st March 2024"),
+    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "$800 per week", "31st Feb 2024"),
+    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "$800 per week", "31st Feb 2024"),
+    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "$800 per week", "31st Feb 2024"),
   ];
+
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: "#5c4db1",
+      color: "white"
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 12,
+    },
+  }));
+
   return (
-    <TableContainer component={Paper} sx={{ mt: 2 }}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3, height: "550px" }}>
+      <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell><Typography fontSize={"12px"} fontWeight={700}>Property</Typography></TableCell>
-            <TableCell align="right"><Typography fontWeight={700} fontSize={"12px"} >Vacancy (DoM)</Typography></TableCell>
-            <TableCell align="right"><Typography fontWeight={700} fontSize={"12px"} >Attendees</Typography></TableCell>
-            <TableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Applications</Typography></TableCell>
-            <TableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Something</Typography></TableCell>
+            <StyledTableCell><Typography fontSize={"12px"} fontWeight={700}>Property</Typography></StyledTableCell>
+            <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"} >Vacancy (DoM)</Typography></StyledTableCell>
+            <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"} >Attendees</Typography></StyledTableCell>
+            <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Applications</Typography></StyledTableCell>
+            <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}></Typography></StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -34,12 +51,33 @@ export function PropertiesTable() {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                <Card sx={{ padding: 2, }} >
+                  <Typography variant='body' fontWeight={700}>{row.name}</Typography>
+                  <Stack direction='row' spacing={2} justifyContent="start" sx={{ width: "fit-content" }} >
+                    <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.listingImage} alt='Stock Listing Image' />
+                    <Stack>
+                      <Stack direction='row' spacing={2}>
+                        <Typography variant='h6'><FaBed /> 2</Typography>
+                        <Typography variant='h6'><FaBath /> 2</Typography>
+                        <Typography variant='h6'><FaCar /> 2</Typography>
+                      </Stack>
+                      <Typography>{row.price}</Typography>
+                      <Typography>Apartment Type: {row.type}</Typography>
+                      <Typography>Available: {row.available}</Typography>
+                      <Typography>Apply Link</Typography>
+                    </Stack>
+                  </Stack>
+                </Card>
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+              <TableCell align="right">{row.vacancy}</TableCell>
+              <TableCell align="right">{row.attendees}</TableCell>
+              <TableCell align="right">{row.applications}</TableCell>
+              <TableCell align="right">
+                <Stack spacing={1}>
+                  <Button variant='contained'>View</Button>
+                  <Button variant='outlined'>More</Button>
+                </Stack>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
