@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ImgElement from './ImgElement';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses } from "@mui/material"
 import { styled } from '@mui/material/styles';
@@ -11,9 +11,15 @@ import AddIcon from '@mui/icons-material/Add';
 // Demo Images
 import ListingImage from './listing.jpg'
 import ListingImageApt from './listing2.jpg'
+import AddPropertyModal from './AddPropertyModal';
 
 
 export function PropertiesTable() {
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   function createData(name, vacancy, attendees, applications, listingImage, type, price, available) {
     return { name, vacancy, attendees, applications, listingImage, type, price, available };
   }
@@ -27,8 +33,8 @@ export function PropertiesTable() {
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#5c4db1",
-      color: "white"
+      backgroundColor: "white",
+      // color: "white"
     },
     [`&.${tableCellClasses.body}`]: {
       fontSize: 12,
@@ -36,6 +42,7 @@ export function PropertiesTable() {
   }));
 
   return <>
+    {open && <AddPropertyModal handleClose={handleClose} />}
     <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3, height: "550px" }}>
       <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -94,7 +101,7 @@ export function PropertiesTable() {
           ))}
         </TableBody>
       </Table>
-      <Fab color="primary" sx={{ position: "sticky", bottom: "10px", left: "10px" }} aria-label="add">
+      <Fab color="primary" sx={{ position: "sticky", bottom: "10px", left: "10px" }} aria-label="add" onClick={() => handleOpen()}>
         <AddIcon />
       </Fab>
     </TableContainer>
