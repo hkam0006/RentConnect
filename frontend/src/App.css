@@ -50,4 +50,5 @@
 .show_end {
   position: relative;
   justify-content: flex-end;
+  padding: 50;
 }
