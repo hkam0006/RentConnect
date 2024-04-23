@@ -6,14 +6,21 @@ export default function MenuBar() {
     return(
         <>
         <Hamburger toggled={isOpen} toggle={setOpen}/>
-        {isOpen && (
-            <div className="menu-items">
-                    <li>Dashboard</li>
-                    <li>Inbox</li>
-                    <li>Inspection</li>
-                    <li>Inspection Runs</li>
-            </div>
-        )}
+            {isOpen && (
+                <div className="menu-items">
+                    <li><a href="">Dashboard</a></li>
+                    <li><a href="">Inbox</a></li>
+                    <li><a href="">Inspection</a></li>
+                    <li><a href="">Inspection Runs</a></li>
+                    <li><a href="">Properties</a></li>
+                    <li><a href="">References</a></li>
+                    <li><a href="">Contacts</a></li>
+                    <li><a href="">Keys</a></li>
+                    <li><a href="">Add Property</a></li>
+                    <li><a href="">Help | Contact Us | Legal Knowledge base</a></li>
+
+                </div>
+            )}
         </>
     );
 
