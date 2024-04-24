@@ -20,16 +20,17 @@ export function PropertiesTable() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  function createData(name, vacancy, attendees, applications, listingImage, type, price, available) {
-    return { name, vacancy, attendees, applications, listingImage, type, price, available };
+  function createData(address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces) {
+    return { address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces };
   }
 
-  const rows = [
-    createData('1702/655 Chapel Street, South Yarra 3141', 25, 31, 15, ListingImageApt, "Apartment", "$750 per week", "31st March 2024"),
-    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "$800 per week", "31st Feb 2024"),
-    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "$800 per week", "31st Feb 2024"),
-    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "$800 per week", "31st Feb 2024"),
+  const defaultRows = [
+    createData('1702/655 Chapel Street, South Yarra 3141', 25, 31, 15, ListingImageApt, "Apartment", "750 per week", "31st March 2024", 3, 3, 2),
+    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 3, 2, 1),
+    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 1, 1, 0),
   ];
+
+  const [rows, setRows] = useState(defaultRows)
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -42,8 +43,8 @@ export function PropertiesTable() {
   }));
 
   return <>
-    {open && <AddPropertyModal handleClose={handleClose} />}
-    <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3, height: "550px" }}>
+    {open && <AddPropertyModal handleClose={handleClose} handleAdd={setRows} rows={rows} />}
+    {rows.length > 0 ? <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3, height: "700px" }}>
       <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -62,25 +63,25 @@ export function PropertiesTable() {
             >
               <TableCell component="th" scope="row">
                 <Card sx={{ padding: 2, }} >
-                  <Typography variant='body' fontWeight={700}>{row.name}</Typography>
+                  <Typography variant='body' fontWeight={700}>{row.address}</Typography>
                   <Stack direction='row' spacing={2} justifyContent="start" sx={{ width: "fit-content" }} >
                     <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.listingImage} alt='Stock Listing Image' />
                     <Stack>
                       <Stack direction='row' spacing={2}>
                         <Stack direction='row' spacing={0.5} alignItems={"center"}>
                           <BedIcon />
-                          <Typography alignContent="center" variant='h6'>2</Typography>
+                          <Typography alignContent="center" variant='h6'>{row.bedrooms}</Typography>
                         </Stack>
                         <Stack direction='row' spacing={0.5} alignItems={"center"}>
                           <BathtubIcon />
-                          <Typography alignContent="center" variant='h6'>2</Typography>
+                          <Typography alignContent="center" variant='h6'>{row.bathrooms}</Typography>
                         </Stack>
                         <Stack direction='row' spacing={0.5} alignItems={"center"}>
                           <DirectionsCarIcon />
-                          <Typography alignContent="center" variant='h6'>2</Typography>
+                          <Typography alignContent="center" variant='h6'>{row.car_spaces}</Typography>
                         </Stack>
                       </Stack>
-                      <Typography>{row.price}</Typography>
+                      <Typography>${row.price} {row.payFreq}</Typography>
                       <Typography>Apartment Type: {row.type}</Typography>
                       <Typography>Available: {row.available}</Typography>
                       <Typography>Apply Link</Typography>
@@ -101,9 +102,24 @@ export function PropertiesTable() {
           ))}
         </TableBody>
       </Table>
-      <Fab color="primary" sx={{ position: "sticky", bottom: "10px", left: "10px" }} aria-label="add" onClick={() => handleOpen()}>
-        <AddIcon />
-      </Fab>
-    </TableContainer>
+      <Stack sx={{ position: "sticky", bottom: "10px" }} alignItems="center">
+        <Fab color="primary" aria-label="add" onClick={() => handleOpen()}>
+          <AddIcon />
+        </Fab>
+      </Stack>
+    </TableContainer> : <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+      <Stack textAlign='center'>
+        <Typography variant='h6'>Looks like you don't have any properties yet.</Typography>
+        <Typography variant='subtitle'>Add your first property now!</Typography>
+        <Button
+          sx={{ margin: "auto", mt: 2 }}
+          variant='contained'
+          onClick={() => handleOpen()}
+          startIcon={<AddIcon />}
+        >
+          Add Property
+        </Button>
+      </Stack>
+    </Paper>}
   </>
 }
