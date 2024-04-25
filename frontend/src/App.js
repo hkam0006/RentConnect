@@ -16,8 +16,8 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/ApplicationDetails/:applicationId' element={<ApplicationDetails />} />
-            {/* Route for the button */}
             <Route path='/Properties' element={<Properties />} />
+            <Route path='/PropertyDetails' element={<PropertyDetails />} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -32,6 +32,9 @@ function Home() {
       </Link>
       <Link to="/Properties">
         <button>Go to Properties</button>
+      </Link>
+      <Link to="/PropertyDetails">
+        <button>Go to Property Details</button>
       </Link>
     </div>
     
