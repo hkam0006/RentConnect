@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import ImgElement from './ImgElement';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Box } from "@mui/material"
 import { styled } from '@mui/material/styles';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import { Fab } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 // Demo Images
 import ListingImage from './listing.jpg'
@@ -25,9 +26,9 @@ export function PropertiesTable() {
   }
 
   const defaultRows = [
-    createData('1702/655 Chapel Street, South Yarra 3141', 25, 31, 15, ListingImageApt, "Apartment", "750 per week", "31st March 2024", 3, 3, 2),
-    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 3, 2, 1),
-    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 1, 1, 0),
+    // createData('1702/655 Chapel Street, South Yarra 3141', 25, 31, 15, ListingImageApt, "Apartment", "750 per week", "31st March 2024", 3, 3, 2),
+    // createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 3, 2, 1),
+    // createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 1, 1, 0),
   ];
 
   const [rows, setRows] = useState(defaultRows)
@@ -61,33 +62,33 @@ export function PropertiesTable() {
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
-                <Card sx={{ padding: 2, }} >
-                  <Typography variant='body' fontWeight={700}>{row.address}</Typography>
-                  <Stack direction='row' spacing={2} justifyContent="start" sx={{ width: "fit-content" }} >
-                    <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.listingImage} alt='Stock Listing Image' />
-                    <Stack>
-                      <Stack direction='row' spacing={2}>
-                        <Stack direction='row' spacing={0.5} alignItems={"center"}>
-                          <BedIcon />
-                          <Typography alignContent="center" variant='h6'>{row.bedrooms}</Typography>
-                        </Stack>
-                        <Stack direction='row' spacing={0.5} alignItems={"center"}>
-                          <BathtubIcon />
-                          <Typography alignContent="center" variant='h6'>{row.bathrooms}</Typography>
-                        </Stack>
-                        <Stack direction='row' spacing={0.5} alignItems={"center"}>
-                          <DirectionsCarIcon />
-                          <Typography alignContent="center" variant='h6'>{row.car_spaces}</Typography>
-                        </Stack>
+              <TableCell width={{ width: "fit-content" }}>
+                {/* <Card sx={{ padding: 2, }} > */}
+                <Typography variant='body' fontWeight={700}>{row.address}</Typography>
+                <Stack direction='row' spacing={2} justifyContent="start" sx={{ width: "fit-content" }} >
+                  <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.listingImage} alt='Stock Listing Image' />
+                  <Stack>
+                    <Stack direction='row' spacing={2}>
+                      <Stack direction='row' spacing={0.5} alignItems={"center"}>
+                        <BedIcon />
+                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.bedrooms}</Typography>
                       </Stack>
-                      <Typography>${row.price} {row.payFreq}</Typography>
-                      <Typography>Apartment Type: {row.type}</Typography>
-                      <Typography>Available: {row.available}</Typography>
-                      <Typography>Apply Link</Typography>
+                      <Stack direction='row' spacing={0.5} alignItems={"center"}>
+                        <BathtubIcon />
+                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.bathrooms}</Typography>
+                      </Stack>
+                      <Stack direction='row' spacing={0.5} alignItems={"center"}>
+                        <DirectionsCarIcon />
+                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.car_spaces}</Typography>
+                      </Stack>
                     </Stack>
+                    <Typography>${row.price} {row.payFreq}</Typography>
+                    <Typography>Apartment Type: {row.type}</Typography>
+                    <Typography>Available: {row.available}</Typography>
+                    <Button variant='outlined' size='small' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                   </Stack>
-                </Card>
+                </Stack>
+                {/* </Card> */}
               </TableCell>
               <TableCell align="right"><Typography variant='h6'>{row.vacancy}</Typography></TableCell>
               <TableCell align="right"><Typography variant='h6'> {row.attendees}</Typography></TableCell>

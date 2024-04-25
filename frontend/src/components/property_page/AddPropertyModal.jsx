@@ -54,7 +54,7 @@ export default function AddPropertyModal({ handleClose, handleAdd, rows }) {
     handleClose(event)
   }
 
-  const buttonDisabled = !newRow.address || newRow.price == 0 || !newRow.propManager || !newRow.payFreq || !newRow.type || !newRow.available
+  const buttonDisabled = !newRow.address || newRow.price <= 0 || !newRow.propManager || !newRow.payFreq || !newRow.type || !newRow.available
 
   return (
     <Modal
