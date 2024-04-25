@@ -8,30 +8,14 @@ import BedIcon from '@mui/icons-material/Bed';
 import { Fab } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-
-// Demo Images
-import ListingImage from './listing.jpg'
-import ListingImageApt from './listing2.jpg'
 import AddPropertyModal from './AddPropertyModal';
 
 
-export function PropertiesTable() {
+export function PropertiesTable({ properties, handleAddProperties, propManagers }) {
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  function createData(address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces) {
-    return { address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces };
-  }
-
-  const defaultRows = [
-    createData('1702/655 Chapel Street, South Yarra 3141', 25, 31, 15, ListingImageApt, "Apartment", "750 per week", "31st March 2024", 3, 3, 2),
-    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 3, 2, 1),
-    createData('123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 1, 1, 0),
-  ];
-
-  const [rows, setRows] = useState(defaultRows)
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -44,8 +28,8 @@ export function PropertiesTable() {
   }));
 
   return <>
-    {open && <AddPropertyModal handleClose={handleClose} handleAdd={setRows} rows={rows} />}
-    {rows.length > 0 ? <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3, height: "700px" }}>
+    {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
+    {properties.length > 0 ? <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3, height: "700px" }}>
       <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -57,7 +41,7 @@ export function PropertiesTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {properties.map((row, index) => (
             <TableRow
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

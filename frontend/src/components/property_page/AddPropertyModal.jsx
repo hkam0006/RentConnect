@@ -3,7 +3,7 @@ import { Typography, Stack, Button, Modal, Box, TextField, Select, MenuItem, For
 import ListingImage from './listing.jpg'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-export default function AddPropertyModal({ handleClose, handleAdd, rows }) {
+export default function AddPropertyModal({ handleClose, handleAdd, rows, propManagers }) {
   const [newRow, setNewRow] = useState({
     address: "",
     vacancy: 0,
@@ -78,13 +78,12 @@ export default function AddPropertyModal({ handleClose, handleAdd, rows }) {
               onChange={handleChange}
               name='propManager'
             >
-              <MenuItem value={null}>Not Selected</MenuItem>
-              <MenuItem value="Jensen Huang">Jensen Huang</MenuItem>
-              <MenuItem value="Mark Zuckerberg">Mark Zuckerberg</MenuItem>
-              <MenuItem value="Elon Musk">Elon Musk</MenuItem>
+              {propManagers.map((manager, index) => (
+                <MenuItem key={index} value={manager}>{manager}</MenuItem>
+              ))}
             </Select>
           </FormControl>
-          <TextField label="Address" required onChange={handleChange} name='address' />
+          <TextField label="Address" required onChange={handleChange} name='address' value={newRow.address} />
           <FormControl>
             <InputLabel id="property-type-select-label">Property Type</InputLabel>
             <Select
