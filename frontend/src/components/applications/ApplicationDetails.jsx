@@ -140,7 +140,7 @@ function ApplicationDetails() {
 
         const result = (
             <Box className='outline' >
-                <Paper sx={{ padding: 2, position: 'fixed', width: '17%', height: '87%', margin: '30px' }}>
+                <Paper sx={{ padding: 2, position: 'fixed', width: '20%', height: '87%', margin: '30px' }}>
                     {applicantData && (
                         <Box>
                             <Typography variant='h6'>{applicantData.details.FirstName} {applicantData.details.LastName}</Typography>
@@ -186,7 +186,7 @@ function ApplicationDetails() {
             return <CircularProgress />
         } else {
             return (
-                <Box className='content' sx={{ width: '95%'}}>
+                <Box className='content' sx={{ width: '100%'}}>
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px' }} elevation={10}>
                         <Grid container alignItems="center">
                             <Grid item xs={8}>
@@ -384,7 +384,7 @@ function ApplicationDetails() {
             <Grid item xs={3}>
                 <Box>
                     {showComment && (
-                        <Box style={{ padding: 2, width: '18%', position: 'absolute', top: commentPosition + 'px' }}>
+                        <Box style={{ padding: 2, width: '22%', position: 'absolute', top: commentPosition + 'px' }}>
                             {showComment && (
                                 applicationData[commentType].map((comment, index) => (
                                     <Paper sx={{ padding: 2, width: '100%', marginLeft: '30px', marginBottom: '30px' }}>
