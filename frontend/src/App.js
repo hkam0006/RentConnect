@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import './App.css';
-import Contacts from './components/contacts/Contacts';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-=======
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import ApplicationDetails from './components/applications/ApplicationDetails';
@@ -12,7 +7,6 @@ import Properties from './components/property_page/Properties';
 import PropertyDetails  from './components/property_page/PropertyDetails';
 
 import {CssBaseline, ThemeProvider} from "@mui/material"
->>>>>>> b3363acd25fd2726de06c199cce6094ed4bcdcaa
 
 function App() {
     return (
@@ -32,15 +26,6 @@ function App() {
 
 function Home() {
   return (
-<<<<<<< HEAD
-    <Router>
-      <main>
-        <Routes>
-          <Route path="/contacts" element={<Contacts />} />
-        </Routes>
-      </main>
-    </Router>
-=======
     <div>
       <Link to="/ApplicationDetails/testID">
         <button>Go to ApplicationDetails with ID "testID"</button>
@@ -53,7 +38,6 @@ function Home() {
       </Link>
     </div>
     
->>>>>>> b3363acd25fd2726de06c199cce6094ed4bcdcaa
   );
 }
 
