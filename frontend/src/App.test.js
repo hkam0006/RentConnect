@@ -1,9 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-beforeAll(async () => {
-  global.TextEncoder = require('util').TextEncoder;
-  global.TextDecoder = require('util').TextDecoder;
+test('TextEncoder is globally defined in Jest', () => {
+  expect(global.TextEncoder).toBeDefined();
 });
 
 test('renders app without crashing', () => {
