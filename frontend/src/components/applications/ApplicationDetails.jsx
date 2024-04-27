@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { app } from '../../firebaseConfig'
-import { getFirestore, collection, doc, getDoc, getDocs } from 'firebase/firestore/lite'
-import { List, ListItem, Typography, CircularProgress, Grid, Paper, Button, TextField, Box } from '@mui/material'
-import ChatIcon from '@mui/icons-material/Chat'
+import { getFirestore, collection, doc, getDoc, getDocs, arrayUnion, updateDoc } from 'firebase/firestore/lite'
+import { List, ListItem, Typography, CircularProgress, Grid, Paper, Button, TextField, Box, Divider } from '@mui/material'
+import { Chat, Check, Close, Star, StarBorder } from '@mui/icons-material'
 
 function ApplicationDetails() {
     const [applicationData, setApplicationData] = useState(null)
@@ -21,6 +21,8 @@ function ApplicationDetails() {
     const [commentType, setCommentType] = useState('')
     const [comment, setComment] = useState('') 
 
+    const [applicationDocRefConst, setApplicationDocRef] = useState(null)
+
     useEffect(() => {
         const fetchApplicationData = async () => {
             try {
@@ -28,6 +30,7 @@ function ApplicationDetails() {
                 const db = getFirestore(app)
                 const applicationsRef = collection(db, 'Applications')
                 const applicationDocRef = doc(applicationsRef, applicationId)
+                setApplicationDocRef(applicationDocRef)
                 const applicationDoc = await getDoc(applicationDocRef)
                 if (applicationDoc.exists) {
                     setApplicationData(applicationDoc.data())
@@ -98,6 +101,7 @@ function ApplicationDetails() {
                         })
                     })
 
+                    // Create applicant
                     const applicant = {
                         details: applicantDetails.data(),
                         addressHistory: applicantAddressHistory.data(),
@@ -118,7 +122,6 @@ function ApplicationDetails() {
                             petDetails: applicantPetDetails
                         }
                     }
-                    console.log(applicant)
                     setApplicantData(applicant)
                 } else {
                     console.log('Unable to find application')
@@ -139,8 +142,8 @@ function ApplicationDetails() {
         }
 
         const result = (
-            <Box className='outline' >
-                <Paper sx={{ padding: 2, position: 'fixed', width: '20%', height: '87%', margin: '30px' }}>
+            <Box className='outline'>
+                <Paper sx={{ padding: 2, position: 'fixed', width: '20%', height: '92%', margin: '30px' }}>
                     {applicantData && (
                         <Box>
                             <Typography variant='h6'>{applicantData.details.FirstName} {applicantData.details.LastName}</Typography>
@@ -172,7 +175,6 @@ function ApplicationDetails() {
     const Content = () => {
         const handleCommentsClick = (event, type) => {
             const position = event.currentTarget.closest('.paper').getBoundingClientRect().top + window.scrollY
-            console.log(position)
             setCommentPosition(position)
             if (commentType === type) {
                 setShowComment(!showComment)
@@ -182,148 +184,550 @@ function ApplicationDetails() {
             }
         }
 
+        const handleVerification = async (verificationType, verificationStatus) => {
+            try {
+                setApplicationData({
+                    ...applicationData,
+                    [verificationType]: verificationStatus
+                })
+                await updateDoc(applicationDocRefConst, {
+                    [verificationType]: verificationStatus
+                })
+            } catch (error) {
+                console.error('Error updating verification:', error)
+            }
+        }
+
         if (!applicantData || !applicationData) {
             return <CircularProgress />
         } else {
             return (
                 <Box className='content' sx={{ width: '100%'}}>
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px' }} elevation={10}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={8}>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={6}>
                                 <Typography variant='h4' id='preferences'>Preferences</Typography>
                             </Grid>
-                            <Grid item xs={4} container justifyContent="flex-end">
-                                <Button variant="contained" color="primary" onClick={(event) => handleCommentsClick(event, 'PreferencesComments')}>
-                                    <ChatIcon />
-                                </Button>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {applicationData.PreferencesVerified ? (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'green', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PreferencesVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PreferencesVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'PreferencesComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PreferencesVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'red', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PreferencesVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'PreferencesComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                )}
                             </Grid>
                         </Grid>
-                        <Typography variant='body1'>Applicant ID: {applicantData.TenantID}</Typography>
-                        <Typography variant='body1'>Adults: {applicationData.Adults}</Typography>
-                        <Typography variant='body1'>Children: {applicationData.Children}</Typography>
-                        <Typography variant='body1'>Pets: {applicationData.Pets}</Typography>
-                        <Typography variant='body1'>Rent: {applicationData.Rent}</Typography>
-                        <Typography variant='body1'>Term: {applicationData.Term}</Typography>
-                        <Typography variant='body1'>Lease Start: {applicationData.LeaseStart.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
-                        <Typography variant='body1'>Details: {applicationData.Details}</Typography>
+                        <br></br>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={4}>
+                                <Typography variant='body1' color='text.secondary'>Rent</Typography>
+                                <Typography variant='body1'>{applicationData.Rent}/w</Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography variant='body1' color='text.secondary'>Term</Typography>
+                                <Typography variant='body1'>{applicationData.Term} months</Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography variant='body1' color='text.secondary'>Lease Start</Typography>
+                                <Typography variant='body1'>{applicationData.LeaseStart.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
+                            </Grid>
+                        </Grid>
+                        <br></br>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={4}>
+                                <Typography variant='body1' color='text.secondary'>Adults</Typography>
+                                <Typography variant='body1'>{applicationData.Adults}</Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography variant='body1' color='text.secondary'>Children</Typography>
+                                <Typography variant='body1'>{applicationData.Children}</Typography>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Typography variant='body1' color='text.secondary'>Pets</Typography>
+                                <Typography variant='body1'>{applicationData.Pets}</Typography>
+                            </Grid>
+                        </Grid>
+                        <br></br>
+                        <Typography variant='body1' color='text.secondary'>Details & Requests:</Typography>
+                        <Typography variant='body1'>{applicationData.Details}</Typography>
                     </Paper>
 
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px' }} elevation={10}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={8}>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={6}>
                                 <Typography variant='h4' id='addressHistory'>Address History</Typography>
                             </Grid>
-                            <Grid item xs={4} container justifyContent="flex-end">
-                                <Button variant="contained" color="primary" onClick={(event) => handleCommentsClick(event, 'AddressHistoryComments')}>
-                                    <ChatIcon />
-                                </Button>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {applicationData.AddressHistoryVerified ? (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'green', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('AddressHistoryVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('AddressHistoryVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'AddressHistoryComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('AddressHistoryVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'red', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('AddressHistoryVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'AddressHistoryComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                )}
                             </Grid>
                         </Grid>
-                        <Typography variant='body1'>Verified: {applicationData.AddressHistoryVerified ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Address: {applicantData.addressHistory.Address}</Typography>
-                        <Typography variant='body1'>Reviewer ID: {applicantData.addressHistory.ReviewerID}</Typography>
-                        <Typography variant='body1'>Comments: {applicantData.addressHistory.Comments}</Typography>
-                        <Typography variant='body1'>Feedback: {applicantData.addressHistory.Feedback}</Typography>
-                        <Typography variant='body1'>Pleasantness: {applicantData.addressHistory.PleasantnessRating}/5</Typography>
-                        <Typography variant='body1'>Cares about the property: {applicantData.addressHistory.PropertyCareRating}/5</Typography>
-                        <Typography variant='body1'>Would you rent the tenant again? {applicantData.addressHistory.Recommended ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Were there deductions to the bond? {applicantData.addressHistory.BondDeductions ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Did the tenant pay rent on time? {applicantData.addressHistory.OnTimePayments ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Were repair and maintenance requests reasonable? {applicantData.addressHistory.ReasonableRequests ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Were pets kept on the property without permission? {applicantData.addressHistory.UnpermittedPets ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Did you receive any complaints during the tenancy? {applicantData.addressHistory.ComplaintsReceived ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Did the tenant leave the property in a reasonable condition? {applicantData.addressHistory.ReasonablePropertyCondition ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Did you expect the tenant to terminate the tenancy? {applicantData.addressHistory.ExpectedTermination ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Did you expect the bond claim to be fully claimed? {applicantData.addressHistory.FullBondClaim ? 'Yes' : 'No'}</Typography>
+                        <br></br>
+                        <Typography variant='h6'>{applicantData.addressHistory.Address}</Typography>
+                        <Box paddingTop={1} paddingBottom={1}>
+                            <Divider />
+                        </Box>
+                        
+                        <Typography variant='body1' color='text.secondary'>Contact</Typography>
+                        <Typography variant='body1' paddingBottom={1}>{applicantData.addressHistory.ReviewerID}</Typography>
+                        <Typography variant='body1' color='text.secondary'>Comments</Typography>
+                        <Typography variant='body1' paddingBottom={1}>{applicantData.addressHistory.Comments}</Typography>
+                        <Typography variant='body1' color='text.secondary'>Feedback</Typography>
+                        <Typography variant='body1'>{applicantData.addressHistory.Feedback}</Typography>
+                        
+                        <Box paddingTop={1} paddingBottom={1}>
+                            <Divider />
+                        </Box>
+
+                        <Typography variant='body1' color='text.secondary'>Questions</Typography>
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={6}>
+                                <Typography variant='body1'>Pleasantness:</Typography>
+                            </Grid>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {[...Array(5)].map((_, index) => (
+                                    <React.Fragment>
+                                        {index < applicantData.addressHistory.PleasantnessRating ? <Star color='primary' style={{ width: '32px', height: '32px' }}/> : <StarBorder color='primary' style={{ width: '32px', height: '32px' }}/>}
+                                    </React.Fragment>
+                                ))}
+                            </Grid>
+                        </Grid>
+                        
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={6}>
+                                <Typography variant='body1'><Typography variant='body1'>Cares about the property:</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {[...Array(5)].map((_, index) => (
+                                    <React.Fragment>
+                                        {index < applicantData.addressHistory.PropertyCareRating ? <Star color='primary' style={{ width: '32px', height: '32px' }}/> : <StarBorder color='primary' style={{ width: '32px', height: '32px' }}/>}
+                                    </React.Fragment>
+                                ))}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Would you rent the tenant again?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.Recommended ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Were there deductions to the bond?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.BondDeductions ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Did the tenant pay rent on time?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.OnTimePayments ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Were repair and maintenance requests reasonable?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.ReasonableRequests ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Were pets kept on the property without permission?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.UnpermittedPets ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Were pets kept on the property without permission?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.UnpermittedPets ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Did you receive any complaints during the tenancy?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.ComplaintsReceived ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Did the tenant leave the property in a reasonable condition?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.ReasonablePropertyCondition ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Did you expect the tenant to terminate the tenancy?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.ExpectedTermination ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
+
+                        <Grid container alignItems='center' paddingBottom={2}>
+                            <Grid xs={8}>
+                                <Typography variant='body1'><Typography variant='body1'>Did you expect the bond claim to be fully claimed?</Typography></Typography>
+                            </Grid>
+                            <Grid item xs={4} container justifyContent='flex-end'>
+                                {applicantData.addressHistory.FullBondClaim ? (
+                                    <Typography variant='body1' style={{ backgroundColor: 'green', color: 'white', padding: '2px 10px', borderRadius: '5px'}}>Yes</Typography>
+                                ) : (
+                                    <Typography variant='body1' style={{ backgroundColor: 'red', color: 'white', padding: '2px 13px', borderRadius: '5px'}}>No</Typography>
+                                )}
+                            </Grid>
+                        </Grid>
                     </Paper>
 
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px' }} elevation={10}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={8}>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={6}>
                                 <Typography variant='h4' id='employmentHistory'>Employment History</Typography>
                             </Grid>
-                            <Grid item xs={4} container justifyContent="flex-end">
-                                <Button variant="contained" color="primary" onClick={(event) => handleCommentsClick(event, 'EmploymentHistoryComments')}>
-                                    <ChatIcon />
-                                </Button>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {applicationData.EmploymentHistoryVerified ? (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'green', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('EmploymentHistoryVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('EmploymentHistoryVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'EmploymentHistoryComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('EmploymentHistoryVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'red', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('EmploymentHistoryVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'EmploymentHistoryComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                )}
                             </Grid>
                         </Grid>
-                        <Typography variant='body1'>Verified: {applicationData.EmploymentHistoryVerified ? 'Yes' : 'No'}</Typography>
                         {applicantData.employmentHistory.employmentHistory && applicantData.employmentHistory.employmentHistory.map((employment, index) => (
-                            <Box>
-                                <Typography variant='body1'>Title: {employment.EmploymentTitle}</Typography>
-                                <Typography variant='body1'>Location: {employment.EmploymentLocation}</Typography>
-                                <Typography variant='body1'>Employment Type: {employment.EmploymentType}</Typography>
-                                <Typography variant='body1'>Gross Income: {employment.GrossIncome}</Typography>
-                                <Typography variant='body1'>Net Income: {employment.NetIncome}</Typography>
-                                <Typography variant='body1'>Location: {employment.EmploymentLocation}</Typography>
+                            <Paper sx={{ padding: 2, marginTop: '20px', backgroundColor: '#DBCCE5' }}>
+                                <Typography variant='h6'>{employment.EmploymentTitle} at {employment.EmploymentLocation}</Typography>
+                                <Box paddingTop={1} paddingBottom={1}>
+                                    <Divider />
+                                </Box>
+                                <Grid container alignItems='center'>
+                                    <Grid item xs={4}>
+                                        <Typography variant='body1' color='text.secondary'>Type</Typography>
+                                        <Typography variant='body1'>{employment.EmploymentType.replace(/([A-Z])/g, ' $1').trim()}</Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography variant='body1' color='text.secondary'>Gross Income</Typography>
+                                        <Typography variant='body1'>${employment.GrossIncome} p/a</Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography variant='body1' color='text.secondary'>Net Income</Typography>
+                                        <Typography variant='body1'>${Math.round(employment.NetIncome/12)} p/w</Typography>
+                                    </Grid>
+                                </Grid>
+                                <br></br>
+                                <Grid container alignItems='center'>
+                                    <Grid item xs={4}>
+                                        <Typography variant='body1' color='text.secondary'>Tenure</Typography>
+                                        <Typography variant='body1'>
+                                            {employment.CurrentlyPresent ? (
+                                                (() => {
+                                                const currentDate = new Date();
+                                                const startYear = employment.StartDate.toDate().getFullYear();
+                                                const startMonth = employment.StartDate.toDate().getMonth();
+                                                const currentYear = currentDate.getFullYear();
+                                                const currentMonth = currentDate.getMonth();
+                                                let yearsDifference = currentYear - startYear;
+                                                let monthsDifference = currentMonth - startMonth;
+
+                                                if (monthsDifference < 0) {
+                                                    yearsDifference -= 1;
+                                                    monthsDifference += 12;
+                                                }
+
+                                                return `${yearsDifference} years, ${monthsDifference} months`;
+                                                })()
+                                            ) : (
+                                                (() => {
+                                                const startYear = employment.StartDate.toDate().getFullYear();
+                                                const startMonth = employment.StartDate.toDate().getMonth();
+                                                const endYear = employment.EndDate.toDate().getFullYear();
+                                                const endMonth = employment.EndDate.toDate().getMonth();
+                                                let yearsDifference = endYear - startYear;
+                                                let monthsDifference = endMonth - startMonth;
+
+                                                if (monthsDifference < 0) {
+                                                    yearsDifference -= 1;
+                                                    monthsDifference += 12;
+                                                }
+
+                                                return `${yearsDifference} years, ${monthsDifference} months`;
+                                                })()
+                                            )}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography variant='body1' color='text.secondary'>Start Date</Typography>
+                                        <Typography variant='body1'>{employment.StartDate.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <Typography variant='body1' color='text.secondary'>End Date</Typography>
+                                        <Typography variant='body1'>{employment.CurrentlyPresent ? (employment.EndDate.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) : ('Currently Present')}</Typography>
+                                    </Grid>
+                                </Grid>
+                                <br></br>
+                                <Typography variant='body1' color='text.secondary'>Contact</Typography>
                                 <Typography variant='body1'>Employer Name: {employment.ContactFirstName} {employment.ContactLastName}</Typography>
                                 <Typography variant='body1'>Employer Phone: {employment.ContactPhone}</Typography>
                                 <Typography variant='body1'>Employer Email: {employment.ContactEmail}</Typography>
-                                <Typography variant='body1'>Start Date: {employment.StartDate.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
-                                {(employment.CurrentlyPresent ? <Typography variant='body1'>End Date: {employment.EndDate.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</Typography> : <Typography variant='body1'>End Date: Currently Present</Typography>)}
-                            </Box>
+                            </Paper>
                         ))}
                     </Paper>
                     
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px' }} elevation={10}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={8}>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={6}>
                                 <Typography variant='h4' id='income'>Income</Typography>
                             </Grid>
-                            <Grid item xs={4} container justifyContent="flex-end">
-                                <Button variant="contained" color="primary" onClick={(event) => handleCommentsClick(event, 'IncomeComments')}>
-                                    <ChatIcon />
-                                </Button>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {applicationData.IncomeVerified ? (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'green', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IncomeVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IncomeVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'IncomeComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IncomeVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'red', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IncomeVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'IncomeComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                )}
                             </Grid>
                         </Grid>
-                        <Typography variant='body1'>Verified: {applicationData.IncomeVerified ? 'Yes' : 'No'}</Typography>
-                        <Typography variant='body1'>Bank Statements</Typography>
-                        {applicantData.income.BankStatements && applicantData.income.BankStatements.map((document, index) => (
-                            <Typography variant='body1'>{document}</Typography>
+                        <br></br>
+                        <Grid container>
+                            <Grid item xs={6}>
+                                <Typography variant='h6'>Bank Statements</Typography>
+                                {applicantData.income.BankStatements && applicantData.income.BankStatements.map((document, index) => (
+                                    <Typography variant='body1'>{document}</Typography>
+                                ))}
+                                <Typography variant='body1'>I don't know what goes here. PDF I guess?</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography variant='h6'>Payslips</Typography>
+                                    {applicantData.income.Payslips && applicantData.income.Payslips.map((document, index) => (
+                                <Typography variant='body1'>{document}</Typography>
                         ))}
-                        <Typography variant='body1'>Payslips</Typography>
-                        {applicantData.income.Payslips && applicantData.income.Payslips.map((document, index) => (
-                            <Typography variant='body1'>{document}</Typography>
-                        ))}
-                        <Typography variant='body1'>Government Benefit Documents</Typography>
-                        {applicantData.income.GovernmentBenefitDocuments && applicantData.income.GovernmentBenefitDocuments.map((document, index) => (
-                            <Typography variant='body1'>{document}</Typography>
-                        ))}
-                        <Typography variant='body1'>Other Income Documents</Typography>
-                        {applicantData.income.OtherIncomeDocuments && applicantData.income.OtherIncomeDocuments.map((document, index) => (
-                            <Typography variant='body1'>{document}</Typography>
-                        ))}
+                            </Grid>
+                        </Grid>
+                        <br></br>
+                        <Grid container>
+                            <Grid item xs={6}>
+                                <Typography variant='h6'>Government Benefit Documents</Typography>
+                                {applicantData.income.GovernmentBenefitDocuments && applicantData.income.GovernmentBenefitDocuments.map((document, index) => (
+                                    <Typography variant='body1'>{document}</Typography>
+                                ))}
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Typography variant='h6'>Other Income Documents</Typography>
+                                {applicantData.income.OtherIncomeDocuments && applicantData.income.OtherIncomeDocuments.map((document, index) => (
+                                    <Typography variant='body1'>{document}</Typography>
+                                ))}
+                            </Grid>
+                        </Grid>
                     </Paper>
 
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px' }} elevation={10}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={8}>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={6}>
                                 <Typography variant='h4' id='identity'>Identity</Typography>
                             </Grid>
-                            <Grid item xs={4} container justifyContent="flex-end">
-                                <Button variant="contained" color="primary" onClick={(event) => handleCommentsClick(event, 'IdentityComments')}>
-                                    <ChatIcon />
-                                </Button>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {applicationData.IdentityVerified ? (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'green', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IdentityVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IdentityVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'IdentityComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IdentityVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'red', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('IdentityVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'IdentityComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                )}
                             </Grid>
                         </Grid>
-                        <Typography variant='body1'>Verified: {applicantData.IdentityVerified ? 'Yes' : 'No'}</Typography>
                         {applicantData.identity.identity && Object.keys(applicantData.identity.identity).map((key, index) => {
                             switch (key) {
                                 case 'DriverLicence':
                                     return (
                                         <Box>
-                                            <Typography variant='body1'>Drivers Licence</Typography>
-                                            <Typography variant='body1'>Number: {applicantData.identity.identity.DriverLicence.Number}</Typography>
-                                            <Typography variant='body1'>Expiry: {applicantData.identity.identity.DriverLicence.Expiry}</Typography>
-                                            <Typography variant='body1'>Date of Birth: {applicantData.identity.identity.DriverLicence.DoB}</Typography>
-                                            <Typography variant='body1'>State: {applicantData.identity.identity.DriverLicence.State}</Typography>
+                                            <Box paddingTop={1} paddingBottom={1}>
+                                                <Divider />
+                                            </Box>
+                                            <Typography variant='h6' paddingBottom={1}>Drivers Licence</Typography>
+                                            <Grid container>
+                                                <Grid item xs={3}>
+                                                    <Typography variant='body1' color='text.secondary'>Number</Typography>
+                                                    <Typography variant='body1'>{applicantData.identity.identity.DriverLicence.documents.Number}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography variant='body1' color='text.secondary'>Expiry Date</Typography>
+                                                    <Typography variant='body1'>{applicantData.identity.identity.DriverLicence.documents.Expiry.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography variant='body1' color='text.secondary'>Date of Birth</Typography>
+                                                    <Typography variant='body1'>{applicantData.identity.identity.DriverLicence.documents.DoB.toDate().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</Typography>
+
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography variant='body1' color='text.secondary'>State</Typography>
+                                                    <Typography variant='body1'>{applicantData.identity.identity.DriverLicence.documents.State}</Typography>
+
+                                                </Grid>
+                                            </Grid>                                            
                                         </Box>
                                     )
                                 case 'Passport':
                                     return (
                                         <Box>
-                                            <Typography variant='body1'>Passport</Typography>
+                                            <Box paddingTop={1} paddingBottom={1}>
+                                                <Divider />
+                                            </Box>
+                                            <Typography variant='h6' paddingBottom={1}>Passport</Typography>
                                         </Box>
                                     )
                                 default:
@@ -335,28 +739,46 @@ function ApplicationDetails() {
                     </Paper>
 
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px', marginBottom: '30px' }} elevation={10}>
-                        <Grid container alignItems="center">
-                            <Grid item xs={8}>
+                        <Grid container alignItems='center'>
+                            <Grid item xs={6}>
                                 <Typography variant='h4' id='petDetails'>Pet Details</Typography>
                             </Grid>
-                            <Grid item xs={4} container justifyContent="flex-end">
-                                <Button variant="contained" color="primary" onClick={(event) => handleCommentsClick(event, 'PetDetailsComments')}>
-                                    <ChatIcon />
-                                </Button>
+                            <Grid item xs={6} container justifyContent='flex-end'>
+                                {applicationData.PetDetailsVerified ? (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'green', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PetDetailsVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PetDetailsVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'PetDetailsComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                ) : (
+                                    <Box>
+                                        <Button className='verifiedCheckButton' variant='contained' color='primary' disabled={false} style={{ backgroundColor: 'grey', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PetDetailsVerified', true)}>
+                                            <Check />
+                                        </Button>
+                                        <Button className='verifiedCrossButton' variant='contained' color='primary' disabled={true} style={{ backgroundColor: 'red', color: 'white', marginRight: '4px' }} onClick={() => handleVerification('PetDetailsVerified', false)}>
+                                            <Close />
+                                        </Button>
+                                        <Button variant='contained' color='primary' onClick={(event) => handleCommentsClick(event, 'PetDetailsComments')}>
+                                            <Chat />
+                                        </Button>
+                                    </Box>
+                                )}
                             </Grid>
                         </Grid>
-                        <Typography variant='body1'>Verified: {applicantData.PetDetailsVerified ? 'Yes' : 'No'}</Typography>
                         {applicantData.petDetails.petDetails && applicantData.petDetails.petDetails.map((pet, index) => (
-                            <Box>
-                                <Typography variant='body1'>Name: {pet.Name}</Typography>
-                                <Typography variant='body1'>Species: {pet.Species}</Typography>
-                                <Typography variant='body1'>Age: {pet.Age}</Typography>
-                                <Typography variant='body1'>Name: {pet.Name}</Typography>
-                                <Typography variant='body1'>Indoors Staus: {pet.Name}</Typography>
+                            <Paper sx={{ padding: 2, marginTop: '20px', backgroundColor: '#DBCCE5' }}>
+                                <Typography variant='h6'>{pet.Name} ({pet.Species})</Typography>
+                                <Typography variant='body1'>{pet.Age} y/o, {pet.IndoorsStatus}</Typography>
                                 <Typography variant='body1'>Desexed: {pet.Desexed ? 'Yes' : 'No'}</Typography>
-                                <Typography variant='body1'>Microchip Number: {pet.MicrochipNumber}</Typography>
-                                <Typography variant='body1'>Registration Number: {pet.RegistrationNumber}</Typography>
-                            </Box>
+                                <Typography variant='body1'>Microchip Number: {pet.MicrochipNumber ? pet.MicrochipNumber : 'Not Microchipped'}</Typography>
+                                <Typography variant='body1'>Registration Number: {pet.RegistrationNumber ? pet.RegistrationNumber : 'Not Registered'}</Typography>
+                            </Paper>
                         ))}
                     </Paper>
                 </Box>
@@ -364,10 +786,22 @@ function ApplicationDetails() {
         }
     }
 
-    const handleAddComment = () => {
+    const handleAddComment = async () => {
         if (comment.trim() !== '') {
-            console.log(comment)
-            setComment('')
+            if (applicationData[commentType].includes(comment)) {
+                console.log('Comment already exists')
+                setComment('')             
+            } else {
+                try {
+                    await updateDoc(applicationDocRefConst, {
+                        [commentType]: arrayUnion(comment)
+                    })
+                } catch (error) {
+                    console.error('Error adding comment:', error)
+                }
+                applicationData[commentType].push(comment)
+                setComment('')
+            }
         }
     }
 
@@ -402,11 +836,11 @@ function ApplicationDetails() {
                                     fullWidth
                                     multiline
                                     rows={4}
-                                    variant="outlined"
-                                    margin="dense"
+                                    variant='outlined'
+                                    margin='dense'
                                 />
 
-                                <Button className="textField" variant="contained" color="primary" onClick={handleAddComment}>
+                                <Button className='textField' variant='contained' color='primary' onClick={handleAddComment}>
                                     Add Comment
                                 </Button>
                             </Paper>
