@@ -9,9 +9,13 @@ import {
     MenuItem,
     Select,
     FormControl,
-    CardMedia, createTheme, ThemeProvider
+    CardMedia,
+    createTheme, ThemeProvider, IconButton, Avatar
 } from "@mui/material"
+import CardHeader from '@mui/material/CardHeader';
 import { BarChart } from '@mui/x-charts/BarChart';
+import defaultImageUrl from './house_default.jpg'
+
 
 export default function ChartsOverviewDemo() {
     return (
@@ -35,7 +39,7 @@ export function DashboardCards() {
                 <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#feede2"}}>
                     <CardContent>
                         <Stack direction="row" justifyContent="space-between">
-                            <Typography variant='h6' fontWeight={700} color="text.secondary">Income Statistic</Typography>
+                            <Typography variant='h6' fontWeight={700} color="text.primary">Income Statistic</Typography>
                         </Stack>
                         <Stack textAlign={"center"}>
                             <ChartsOverviewDemo />
@@ -45,57 +49,70 @@ export function DashboardCards() {
             </Grid>
 
             {/* Annual Income Card */}
-            <Grid xs={12} sm={1.25} item>
+            <Grid xs={12} sm={1.5} item>
                 <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#89caff"}}>
                     <CardContent>
-                        <Stack direction="row" justifyContent="space-between">
-                            <Typography variant='body1' fontWeight={700} color="text.secondary">Annual Income</Typography>
-                        </Stack>
-                        <Stack textAlign={"center"}>
-                            <Typography variant='h3' fontWeight={700} color={"primary"}>{42}</Typography>
+                        <Stack direction="column" alignItems="center" justifyContent="space-between" spacing={17}>
+                            <Typography variant='body1' fontWeight={700} color="text.primary">Annual Income</Typography>
+                            <Stack direction="column" alignItems="center" justifyContent="space-between" spacing={0}>
+                                <Typography variant='h5' fontWeight={700} color={"text.primary"}>{"$3.5K"}</Typography>
+                                <Typography variant='caption' fontWeight={700} color={"text.secondary"}>{"↑19.5%"}</Typography>
+                            </Stack>
                         </Stack>
                     </CardContent>
                 </Card>
             </Grid>
 
             {/* Total Properties Card */}
-            <Grid xs={12} sm={1.25} item>
+            <Grid xs={12} sm={1.5} item>
                 <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#96f2d3"}}>
                     <CardContent>
-                        <Stack direction="row" justifyContent="space-between">
-                            <Typography variant='body1' fontWeight={700} color="text.secondary">Total Properties</Typography>
-                        </Stack>
-                        <Stack textAlign={"center"}>
-                            <Typography variant='h3' fontWeight={700} color={"primary"}>{42}</Typography>
+                        <Stack direction="column" alignItems="center" justifyContent="space-between" spacing={18}>
+                            <Typography variant='body1' fontWeight={700} color="text.primary">Total Properties</Typography>
+                            <Stack direction="column" alignItems="center" justifyContent="space-between" spacing={0}>
+                                <Typography variant='caption' fontWeight={900} color={"text.primary"}>{"3 Apartments"}</Typography>
+                                <Typography variant='caption' fontWeight={1000} color={"text.primary"}>{"2 Houses"}</Typography>
+                            </Stack>
                         </Stack>
                     </CardContent>
                 </Card>
             </Grid>
 
             {/* Overall Rating Card */}
-            <Grid xs={12} sm={1.25} item>
+            <Grid xs={12} sm={1.5} item>
                 <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#ef99ba"}}>
                     <CardContent>
-                        <Stack direction="row" justifyContent="space-between">
-                            <Typography variant='body1' fontWeight={700} color="text.secondary">Overall Rating</Typography>
-                        </Stack>
-                        <Stack textAlign={"center"}>
-                            <Typography variant='h3' fontWeight={700} color={"primary"}>{42}</Typography>
+                        <Stack direction="column" alignItems="center" justifyContent="space-between" spacing={18}>
+                            <Typography variant='body1' fontWeight={700} color="text.primary">Overall Rating</Typography>
+                            <Stack direction="column" alignItems="flex-start" justifyContent="space-between" spacing={0}>
+                                <Typography variant='h6' fontWeight={900} color={"text.primary"}>{"4.5 Stars"}</Typography>
+                                <Typography variant='caption' fontWeight={1000} color={"text.secondary"}>{"Great job!"}</Typography>
+                            </Stack>
                         </Stack>
                     </CardContent>
                 </Card>
             </Grid>
 
             {/* Appointment Card */}
-            <Grid xs={12} sm={3} item>
-                <Card sx={{ width: "125%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#f9fbfd"}}>
+            <Grid xs={12} sm={2.5} item>
+                <Card sx={{ width: "120%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
+                    <CardHeader
+                        action={
+                            <IconButton aria-label="settings">
+                            </IconButton>
+                        }
+                        title="Appointment"
+                        subheader="September 14, 2016"
+                    />
+                    <CardMedia
+                        component="img"
+                        height="100"
+                        image={defaultImageUrl}
+                        alt="House Appointment"
+                    />
                     <CardContent>
-                        <Stack direction="row" justifyContent="space-between">
-                            <Typography variant='subtitle1' fontWeight={700} color="text.secondary">Appointment</Typography>
-                        </Stack>
-                        <Stack textAlign={"center"}>
-                            <Typography variant='h3' fontWeight={700} color={"primary"}>{42}</Typography>
-                        </Stack>
+                        <Typography variant="h6" color="text.secondary">Event: Inspection</Typography>
+                        <Typography variant="body1" color="text.secondary">Time: 8:00pm</Typography>
                     </CardContent>
                 </Card>
             </Grid>
