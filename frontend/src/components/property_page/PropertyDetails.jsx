@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
-import { Container, Typography, Box, Paper, Grid, Divider, Card, CardContent, CardMedia } from '@mui/material';
+import { Container, Stack,  Typography, Box, Paper, Grid, Divider, Card, CardContent, CardMedia, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import EditIcon from '@mui/icons-material/Edit';
 import ImgElement from './ImgElement'
+import { PropertyApplicationsTable } from './PropertyApplicationsTable';
 
 // Demo Images
 import ListingImage from './listing.jpg'
@@ -29,10 +32,37 @@ export default function PropertyDetails() {
         amenities: "List of amenities here"
     }
 
+    const app1 = {
+        matchScore: '55',
+        name: "John Doe",
+        rentToIncomeRatio: '25%',
+        inspectedDate: '25 April 2024',
+        status: 'Shortlisted'
+    }
+    const app2 = {
+        matchScore: '70',
+        name: "Jane Tenant",
+        rentToIncomeRatio: '43%',
+        inspectedDate: '25 April 2024',
+        status: 'Pending'
+    }
+
+    const applications = [
+        app1,
+        app2
+    ]
+
     return <>
         <Container>
             <Card>
                 <CardContent>
+                    <Grid container justifyContent='flex-end'>
+                        <Stack direction='row' spacing={1}>
+                            <Button xs={{ mt: 5, mr: 2 }} variant='outlined' size='medium' endIcon={<OpenInNewIcon />}>Apply Link</Button>
+                            <Button xs={{ mt: 5 }} variant='outlined' size='medium' endIcon={<EditIcon />}>Edit</Button>
+                        </Stack>
+                    </Grid>
+                    <Divider sx={{ mt: 2, mb: 2 }}/>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <Typography variant="h4" gutterBottom>
@@ -75,14 +105,14 @@ export default function PropertyDetails() {
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
                     <Grid container spacing={2}>
-                        <Grid item sx={12}>
+                        <Grid item xs={12}>
                             <Box>
-                            <Typography variant="h4">
+                                <Typography variant="h4">
                                     Applications
                                 </Typography>
-                                <Typography sx={{ mt: 1 }}>
-                                    List of applications
-                                </Typography>
+                                <PropertyApplicationsTable
+                                    applications={applications}
+                                />
                             </Box>
                         </Grid>
                     </Grid>
