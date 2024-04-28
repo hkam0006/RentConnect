@@ -81,7 +81,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
               <TableCell align="right"><Typography variant='h6'>{row.applications}</Typography></TableCell>
               <TableCell align="right">
                 <Stack spacing={1}>
-                  <Button variant='contained' onClick={() => navigate(`/PropertyDetails/${row.id}`)}>View</Button>
+                  <Button variant='contained' onClick={() => navigate(`/property/${row.id}`)}>View</Button>
                   <Button variant='outlined'>More</Button>
                 </Stack>
               </TableCell>

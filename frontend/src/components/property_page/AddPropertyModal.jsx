@@ -13,7 +13,7 @@ export default function AddPropertyModal({ handleClose, propManagers }) {
     attendees: 0,
     applications: 0,
     listingImage: ListingImage,
-    type: null,
+    type: "",
     price: 0,
     payFreq: "",
     available: "",
@@ -89,7 +89,6 @@ export default function AddPropertyModal({ handleClose, propManagers }) {
               onChange={handleChange}
               name='type'
             >
-              <MenuItem value={null}>Not Selected</MenuItem>
               <MenuItem value="Apartment">Apartment</MenuItem>
               <MenuItem value="House">House</MenuItem>
               <MenuItem value="Studio">Studio</MenuItem>

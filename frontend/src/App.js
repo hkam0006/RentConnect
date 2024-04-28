@@ -16,8 +16,8 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/ApplicationDetails/:applicationId' element={<ApplicationDetails />} />
-            <Route path='/Properties' element={<Properties />} />
-            <Route path='/PropertyDetails/:propertyId' element={<PropertyDetails />} />
+            <Route path='/property' element={<Properties />} />
+            <Route path='/property/:propertyId' element={<PropertyDetails />} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -30,7 +30,7 @@ function Home() {
       <Link to="/ApplicationDetails/testID">
         <button>Go to ApplicationDetails with ID "testID"</button>
       </Link>
-      <Link to="/Properties">
+      <Link to="/property">
         <button>Go to Properties</button>
       </Link>
       <Link to="/PropertyDetails">
