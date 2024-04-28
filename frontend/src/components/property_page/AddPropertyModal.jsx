@@ -4,7 +4,7 @@ import ListingImage from './listing.jpg'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import useApp from '../../hooks/useApp'
 
-export default function AddPropertyModal({ handleClose, handleAdd, rows, propManagers }) {
+export default function AddPropertyModal({ handleClose, propManagers }) {
   const { createProperty } = useApp();
 
   const [newRow, setNewRow] = useState({
@@ -21,7 +21,8 @@ export default function AddPropertyModal({ handleClose, handleAdd, rows, propMan
     bedrooms: "0",
     bathrooms: "0",
     car_spaces: "0",
-    vacancy: 0
+    vacancy: 0,
+    status: "Active"
   })
 
   const handleChange = e => {
@@ -44,15 +45,6 @@ export default function AddPropertyModal({ handleClose, handleAdd, rows, propMan
   };
 
   async function confirmPressed(event) {
-    handleAdd(prevState => {
-      if (prevState.length > 0) {
-        return [
-          newRow,
-          ...prevState
-        ]
-      }
-      return [newRow]
-    })
     await createProperty("testID", newRow)
     handleClose(event)
   }

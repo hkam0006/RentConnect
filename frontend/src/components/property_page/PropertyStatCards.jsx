@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { Typography, Container, Grid, Stack, Card, CardContent, MenuItem, Select, FormControl } from "@mui/material"
 
 
-export function PropertyStatCards() {
-  const [leasedTimeframe, setLeasedTimeframe] = useState("Weekly");
-  const [totalApplicationsTimeFrame, setTotalApplicationsTimeFrame] = useState("Weekly");
+export function PropertyStatCards({ totalApplications, avgDOM, totalLeased }) {
+  const [leasedTimeframe, setLeasedTimeframe] = useState("All Time");
+  const [totalApplicationsTimeFrame, setTotalApplicationsTimeFrame] = useState("All Time");
 
   const handleLeaseChange = (event) => {
     setLeasedTimeframe(event.target.value);
@@ -31,6 +31,7 @@ export function PropertyStatCards() {
                   onChange={handleLeaseChange}
                   variant='standard'
                 >
+                  <MenuItem value={"All Time"}>All Time</MenuItem>
                   <MenuItem value={"Weekly"}>Weekly</MenuItem>
                   <MenuItem value={"Monthly"}>Monthly</MenuItem>
                   <MenuItem value={"Yearly"}>Yearly</MenuItem>
@@ -38,7 +39,7 @@ export function PropertyStatCards() {
               </FormControl>
             </Stack>
             <Stack textAlign={"center"}>
-              <Typography variant='h3' fontWeight={700} color={"primary"}>{42}</Typography>
+              <Typography variant='h3' fontWeight={700} color={"primary"}>{totalLeased}</Typography>
             </Stack>
           </CardContent>
         </Card>
@@ -61,6 +62,7 @@ export function PropertyStatCards() {
                   }}
                   variant='standard'
                 >
+                  <MenuItem value={"All Time"}>All Time</MenuItem>
                   <MenuItem value={"Weekly"}>Weekly</MenuItem>
                   <MenuItem value={"Monthly"}>Monthly</MenuItem>
                   <MenuItem value={"Yearly"}>Yearly</MenuItem>
@@ -68,7 +70,7 @@ export function PropertyStatCards() {
               </FormControl>
             </Stack>
             <Stack textAlign={"center"}>
-              <Typography variant='h3' fontWeight={700} color={"primary"}>{102}</Typography>
+              <Typography variant='h3' fontWeight={700} color={"primary"}>{totalApplications}</Typography>
             </Stack>
           </CardContent>
         </Card>
@@ -85,7 +87,7 @@ export function PropertyStatCards() {
               </FormControl>
             </Stack>
             <Stack textAlign={"center"}>
-              <Typography variant='h3' fontWeight={700} color={"primary"}>{14}</Typography>
+              <Typography variant='h3' fontWeight={700} color={"primary"}>{avgDOM}</Typography>
             </Stack>
           </CardContent>
         </Card>

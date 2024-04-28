@@ -26,6 +26,13 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
     setStatus(
       typeof value === 'string' ? value.split(",") : value
     );
+    if (value.length === 0) {
+      filterProperties(unfilteredProperties);
+      return
+    }
+
+    const arrCopy = unfilteredProperties.filter((property) => value.includes(property.status));
+    filterProperties(arrCopy)
   }
 
   function handleSearchChange(event) {
@@ -99,10 +106,8 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
             }}
           >
             <MenuItem disabled value=""><Typography color='gray'><em>Filter Application Status</em></Typography></MenuItem>
-            <MenuItem value="Active with Contract">Active with Contract</MenuItem>
-            <MenuItem value="Back on Market">Back on Market</MenuItem>
-            <MenuItem value="Temporarily off Market">Temporarily off Market</MenuItem>
-            <MenuItem value="Deal Pending">Deal Pending</MenuItem>
+            <MenuItem value="Leased">Leased</MenuItem>
+            <MenuItem value="Active">Active</MenuItem>
           </Select>
         </FormControl>
       </Grid>

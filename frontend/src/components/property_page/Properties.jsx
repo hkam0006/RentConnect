@@ -29,11 +29,24 @@ const propManagers = [
 export default function Properties() {
   const { fetchProperties } = useApp();
   const [properties, setProperties] = useState([]);
+  const [unfiltered, setUnfiltered] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [totalApplications, setTotalApplications] = useState(0);
+  const [dom, setDOM] = useState(0);
+  const [leased, setLeased] = useState(0);
 
   useEffect(() => {
     let unsub = null;
-    fetchProperties("testID", setLoading, setProperties).then((res) => {
+    fetchProperties(
+      "testID",
+      setLoading,
+      setProperties,
+      setUnfiltered,
+      setDOM,
+      setLeased,
+      setTotalApplications
+    ).then((res) => {
       unsub = res;
     })
 
@@ -44,12 +57,18 @@ export default function Properties() {
     }
   }, [])
 
+
+
   return (
     <Container sx={{ mt: 5, height: "80vh" }} >
-      <PropertyStatCards />
+      <PropertyStatCards
+        totalApplications={totalApplications}
+        avgDOM={dom}
+        totalLeased={leased}
+      />
       <PropertySearch
         filterProperties={setProperties}
-        unfilteredProperties={defaultRows}
+        unfilteredProperties={unfiltered}
         propManagers={propManagers}
         properties={properties}
       />

@@ -18,20 +18,39 @@ const useApp = () => {
     }
   }
   
-  async function fetchProperties(orgId, setLoading, setProperties){
+  async function fetchProperties(
+    orgId, 
+    setLoading, 
+    setProperties, 
+    setUnfiltered,
+    setDOM, 
+    setLeased,
+    setTotalApplications
+  ){
     const propertiesCollectionRef = collection(db, '/Properties/');
     try {
       const q = query(propertiesCollectionRef, where("orgId", "==", orgId));
       const unsub = onSnapshot(q, (querySnapshot) => {
+        let applicationSum = 0;
+        let vacancySum = 0;
+        let totalLeased = 0;
         const properties = []
         querySnapshot.forEach((doc) => {
           properties.push({
             ...doc.data(),
             id: doc.id
           });
+          applicationSum += doc.data().applications
+          vacancySum += doc.data().vacancy
+          if (doc.data().status === "Leased") {
+            totalLeased += 1;
+          }
         })
-        console.log(properties)
+        setUnfiltered(properties);
         setProperties(properties);
+        setTotalApplications(applicationSum);
+        setDOM(Number((vacancySum / properties.length).toFixed(1)));
+        setLeased(totalLeased);
       })
       setLoading(false);
       return unsub;
