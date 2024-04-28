@@ -9,6 +9,7 @@ import { Fab } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AddPropertyModal from './AddPropertyModal';
+import { useNavigate } from "react-router-dom"
 
 
 export function PropertiesTable({ properties, handleAddProperties, propManagers }) {
@@ -20,12 +21,13 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "white",
-      // color: "white"
     },
     [`&.${tableCellClasses.body}`]: {
       fontSize: 12,
     },
   }));
+
+  const navigate = useNavigate();
 
   return <>
     {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
@@ -79,7 +81,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
               <TableCell align="right"><Typography variant='h6'>{row.applications}</Typography></TableCell>
               <TableCell align="right">
                 <Stack spacing={1}>
-                  <Button variant='contained'>View</Button>
+                  <Button variant='contained' onClick={() => navigate(`/PropertyDetails/${row.id}`)}>View</Button>
                   <Button variant='outlined'>More</Button>
                 </Stack>
               </TableCell>

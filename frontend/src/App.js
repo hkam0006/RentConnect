@@ -17,7 +17,7 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/ApplicationDetails/:applicationId' element={<ApplicationDetails />} />
             <Route path='/Properties' element={<Properties />} />
-            <Route path='/PropertyDetails' element={<PropertyDetails />} />
+            <Route path='/PropertyDetails/:propertyId' element={<PropertyDetails />} />
           </Routes>
         </Router>
     </ThemeProvider>

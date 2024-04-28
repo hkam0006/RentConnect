@@ -2,8 +2,11 @@ import React, { useState } from 'react'
 import { Typography, Stack, Button, Modal, Box, TextField, Select, MenuItem, FormControl, InputLabel, OutlinedInput, InputAdornment } from "@mui/material"
 import ListingImage from './listing.jpg'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import useApp from '../../hooks/useApp'
 
 export default function AddPropertyModal({ handleClose, handleAdd, rows, propManagers }) {
+  const { createProperty } = useApp();
+
   const [newRow, setNewRow] = useState({
     address: "",
     vacancy: 0,
@@ -40,7 +43,7 @@ export default function AddPropertyModal({ handleClose, handleAdd, rows, propMan
     p: 4,
   };
 
-  function confirmPressed(event) {
+  async function confirmPressed(event) {
     handleAdd(prevState => {
       if (prevState.length > 0) {
         return [
@@ -50,7 +53,7 @@ export default function AddPropertyModal({ handleClose, handleAdd, rows, propMan
       }
       return [newRow]
     })
-    console.log(rows)
+    await createProperty("testID", newRow)
     handleClose(event)
   }
 
