@@ -5,6 +5,7 @@ import './App.css';
 import theme from './theme';
 import Properties from './components/property_page/Properties';
 import PropertyDetails  from './components/property_page/PropertyDetails';
+import Contacts from './components/contacts/Contacts';
 
 import {CssBaseline, ThemeProvider} from "@mui/material"
 
@@ -18,6 +19,7 @@ function App() {
             <Route path='/ApplicationDetails/:applicationId' element={<ApplicationDetails />} />
             <Route path='/property' element={<Properties />} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
+            <Route path='/contacts' element={<Contacts />} />
           </Routes>
         </Router>
     </ThemeProvider>
