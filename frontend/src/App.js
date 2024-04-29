@@ -19,7 +19,6 @@ function App() {
             <Route path='/ApplicationDetails/:applicationId' element={<ApplicationDetails />} />
             <Route path='/property' element={<Properties />} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
-            <Route path='/contacts' element={<Contacts />} />
           </Routes>
         </Router>
     </ThemeProvider>
