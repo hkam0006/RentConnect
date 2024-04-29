@@ -19,6 +19,7 @@ function App() {
             <Route path='/ApplicationDetails/:applicationId' element={<ApplicationDetails />} />
             <Route path='/property' element={<Properties />} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
+            <Route path='/contacts' element={<Contacts />}/>
           </Routes>
         </Router>
     </ThemeProvider>
@@ -36,6 +37,9 @@ function Home() {
       </Link>
       <Link to="/PropertyDetails">
         <button>Go to Property Details</button>
+      </Link>
+      <Link to="/contacts">
+        <button>Go to Contacts</button>
       </Link>
     </div>
     
