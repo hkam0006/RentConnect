@@ -32,12 +32,12 @@ export function PropertyApplicationsTable({ applications }) {
       <Table stickyHeader sx={{ minWidth: 1000 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <StyledTableCell></StyledTableCell>
-            <StyledTableCell align="right"><Typography variant='h6'>Match Score</Typography></StyledTableCell>
-            <StyledTableCell align="right"><Typography variant='h6' >Name</Typography></StyledTableCell>
-            <StyledTableCell align="right"><Typography variant='h6' >Ratio</Typography></StyledTableCell>
-            <StyledTableCell align="right"><Typography variant='h6'>Inspected Date</Typography></StyledTableCell>
-            <StyledTableCell align="right"><Typography variant='h6'>Status</Typography></StyledTableCell>
+            {/* <StyledTableCell></StyledTableCell> */}
+            <StyledTableCell align="center"><Typography variant='h6'>Match Score</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='h6' >Name</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='h6' >Ratio</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='h6'>Inspected Date</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='h6'>Status</Typography></StyledTableCell>
             <StyledTableCell></StyledTableCell>
           </TableRow>
         </TableHead>
@@ -47,13 +47,13 @@ export function PropertyApplicationsTable({ applications }) {
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell><Checkbox /></TableCell>
-              <TableCell align="right"><Typography>{row.matchScore}</Typography></TableCell>
-              <TableCell align="right"><Typography>{row.name}</Typography></TableCell>
-              <TableCell align="right"><Typography> {row.rentToIncomeRatio}</Typography></TableCell>
-              <TableCell align="right"><Typography>{row.inspectedDate}</Typography></TableCell>
-              <TableCell align="right"><Typography>{row.status}</Typography></TableCell>
-              <TableCell align="right"><Button variant='outlined' size='medium'>View</Button></TableCell>
+              {/* <TableCell><Checkbox /></TableCell> */}
+              <TableCell align="center"><Typography>{row.matchScore}</Typography></TableCell>
+              <TableCell align="left"><Typography>{row.name}</Typography></TableCell>
+              <TableCell align="left"><Typography> {row.rentToIncomeRatio}</Typography></TableCell>
+              <TableCell align="left"><Typography>{row.inspectedDate}</Typography></TableCell>
+              <TableCell align="left"><Typography>{row.status}</Typography></TableCell>
+              <TableCell align="center"><Button variant='outlined' size='medium'>View</Button></TableCell>
             </TableRow>
           ))}
         </TableBody>
