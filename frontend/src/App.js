@@ -33,7 +33,7 @@ function Home() {
       <Link to="/property">
         <button>Go to Properties</button>
       </Link>
-      <Link to="/PropertyDetails">
+      <Link to="/property/testID">
         <button>Go to Property Details</button>
       </Link>
     </div>
