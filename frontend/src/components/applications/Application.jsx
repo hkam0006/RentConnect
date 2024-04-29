@@ -11,20 +11,20 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { app } from "../../firebaseConfig";
 
 const Application = () => {
-  const [propertiesData, setPropertiesData] = useState([]);
+  const [applicationsData, setAppliactionsData] = useState([]);
 
   useEffect(() => {
     const fetchPropertiesData = async () => {
       try {
         // Get properties data
         const db = getFirestore(app);
-        const propertiesRef = collection(db, "Properties");
+        const propertiesRef = collection(db, "Applications");
         const propertiesSnapshot = await getDocs(propertiesRef);
         const propertiesList = propertiesSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setPropertiesData(propertiesList);
+        setAppliactionsData(propertiesList);
       } catch (error) {
         console.error("Error fetching properties data:", error);
       }
@@ -34,12 +34,15 @@ const Application = () => {
   }, []);
 
   return (
-    <Grid container spacing={2} justifyContent="leading">
-      {" "}
-      {propertiesData.map((property) => (
+    <Grid
+      container
+      spacing={2}
+      style={{ padding: "20px" }}
+      justifyContent="flex-start"
+    >
+      {applicationsData.map((property) => (
         <Grid item key={property.id} xs={12} sm={6} md={4}>
-          {" "}
-          <Card style={{ maxWidth: 500 }}>
+          <Card style={{ maxWidth: 450 }}>
             <CardMedia
               component="img"
               height="300"
@@ -47,7 +50,15 @@ const Application = () => {
               alt="Property"
             />
             <CardContent>
-              <Typography variant="h5" component="h2">
+              <Typography
+                variant="h5"
+                component="h2"
+                style={{
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
                 {property.address}
               </Typography>
               <Grid
