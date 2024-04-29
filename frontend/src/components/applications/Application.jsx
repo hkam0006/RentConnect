@@ -7,94 +7,137 @@ import {
   Button,
   Grid,
 } from "@mui/material";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 import { app } from "../../firebaseConfig";
+import { Link } from "react-router-dom";
+import BathtubIcon from "@mui/icons-material/Bathtub";
+import BedIcon from "@mui/icons-material/Bed";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 
 const Application = () => {
-  const [applicationsData, setAppliactionsData] = useState([]);
+  const [applicationsData, setApplicationsData] = useState([]);
 
   useEffect(() => {
-    const fetchPropertiesData = async () => {
+    const fetchApplicationsData = async () => {
       try {
-        // Get properties data
         const db = getFirestore(app);
-        const propertiesRef = collection(db, "Applications");
-        const propertiesSnapshot = await getDocs(propertiesRef);
-        const propertiesList = propertiesSnapshot.docs.map((doc) => ({
+        const applicationsRef = collection(db, "Applications");
+        const applicationsSnapshot = await getDocs(applicationsRef);
+        let applicationsList = applicationsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setAppliactionsData(propertiesList);
+
+        const propertiesRef = collection(db, "Properties");
+        const applicationsListWithProperties = await Promise.all(
+          applicationsList.map(async (app) => {
+            try {
+              const propertyDoc = doc(propertiesRef, app.propertyId);
+              const propertySnapshot = await getDoc(propertyDoc);
+              if (propertySnapshot.exists()) {
+                const propertyData = propertySnapshot.data();
+
+                return { ...app, propertyData };
+              } else {
+                console.warn(
+                  `Property with ID ${app.propertyId} does not exist. Application skipped.`
+                );
+                return null;
+              }
+            } catch (error) {
+              console.error("Error fetching property data:", error);
+              return { ...app, propertyData: {} };
+            }
+          })
+        );
+
+        setApplicationsData(
+          applicationsListWithProperties.filter((app) => app !== null)
+        );
       } catch (error) {
-        console.error("Error fetching properties data:", error);
+        console.error("Error fetching applications data:", error);
       }
     };
 
-    fetchPropertiesData();
+    fetchApplicationsData();
   }, []);
 
   return (
-    <Grid
-      container
-      spacing={2}
-      style={{ padding: "20px" }}
-      justifyContent="flex-start"
-    >
-      {applicationsData.map((property) => (
-        <Grid item key={property.id} xs={12} sm={6} md={4}>
-          <Card style={{ maxWidth: 450 }}>
-            <CardMedia
-              component="img"
-              height="300"
-              image={property.listingImage}
-              alt="Property"
-            />
-            <CardContent>
-              <Typography
-                variant="h5"
-                component="h2"
-                style={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {property.address}
-              </Typography>
-              <Grid
-                container
-                justifyContent="space-between"
-                style={{ marginTop: 16 }}
-              >
-                <Typography variant="body1">
-                  Bedrooms: {property.bedrooms}
+    <div>
+      <Grid
+        container
+        spacing={2}
+        style={{ padding: "20px" }}
+        justifyContent="flex-start"
+      >
+        {applicationsData.map((application) => (
+          <Grid item key={application.id} xs={12} sm={6} md={4}>
+            <Card style={{ maxWidth: 450 }}>
+              <CardMedia
+                component="img"
+                height="300"
+                image={application.propertyData.listingImage}
+                alt="Property"
+              />
+              <CardContent>
+                <Typography
+                  variant="h5"
+                  component="h2"
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {application.propertyData.address}
                 </Typography>
-                <Typography variant="body1">
-                  Bathrooms: {property.bathrooms}
-                </Typography>
-                <Typography variant="body1">
-                  Car Spaces: {property.car_spaces}
-                </Typography>
-                <Typography variant="body1">
-                  Rent: {property.price}/wk
-                </Typography>
-                <Typography variant="body1">
-                  Status: {property.status}
-                </Typography>
-              </Grid>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                style={{ marginTop: 16 }}
-              >
-                View Application
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  style={{ marginTop: 16 }}
+                >
+                  <Typography variant="body1">
+                    <BedIcon />: {application.propertyData.bedrooms}
+                  </Typography>
+                  <Typography variant="body1">
+                    <BathtubIcon />: {application.propertyData.bathrooms}
+                  </Typography>
+                  <Typography variant="body1">
+                    <DirectionsCarIcon />: {application.propertyData.car_spaces}
+                  </Typography>
+
+                  <Grid justifyContent="flex-end">
+                    <Typography variant="body1">
+                      Rent: {application.propertyData.price}/wk
+                    </Typography>
+                    <Typography variant="body1">
+                      Lease Start:{" "}
+                      {application.LeaseStart?.toDate().toLocaleDateString()}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Link to={`/ApplicationDetails/${application.id}`}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    style={{ marginTop: 16 }}
+                  >
+                    View Application
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </div>
   );
 };
 
