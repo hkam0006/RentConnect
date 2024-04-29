@@ -19,28 +19,6 @@ import ListingImage from './listing.jpg'
 
 export default function PropertyDetails() {
 
-    // Dummy property
-    const property = {
-        name: '1702/655 Chapel Street, South Yarra 3141',
-        bedrooms: 2,
-        bathrooms: 2,
-        carSpots: 1,
-        squareMetres: 285,
-        vacancy: 25,
-        attendees: 31,
-        applications: 15,
-        listingImage: ListingImage,
-        type: "Townhouse",
-        price: "750",
-        available: "31st March 2024",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        amenities: {
-            airConditioning: ['Air conditioning', AcUnitIcon],
-            wardrobes: ['Built-in wardrobes', CheckroomIcon],
-            deck: ['Deck', DeckIcon]
-        }
-    }
-
     // Dummy application
     const app1 = {
         matchScore: '55',
@@ -62,22 +40,42 @@ export default function PropertyDetails() {
         app1,
         app2
     ]
-    
 
-    const [open, setOpen] = useState(false);
-    const [data, setData] = useState({
-        name: 'Test',
-        email: 'test@email.com',
-        // Add additional fields if necessary
+    // Dummy property
+    const [property, setProperty] = useState({
+        name: '1702/655 Chapel Street, South Yarra 3141',
+        bedrooms: 2,
+        bathrooms: 2,
+        carSpots: 1,
+        squareMetres: 285,
+        vacancy: 25,
+        attendees: 31,
+        applications: 15,
+        listingImage: ListingImage,
+        type: "Townhouse",
+        price: "750",
+        available: "31st March 2024",
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        amenities: {
+            airConditioning: ['Air conditioning', AcUnitIcon],
+            wardrobes: ['Built-in wardrobes', CheckroomIcon],
+            deck: ['Deck', DeckIcon]
+        }
     });
+
+    // For editting modal
+    const [open, setOpen] = useState(false);
+    const [data, setData] = useState(property);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    // Edit modal submit functionality
     const handleSubmit = () => {
         console.log("Form data submitted: ", data);
+        // Foer editting, handle database changes here
+        setProperty({...property, ...data});
         handleClose();
-        // Further logic for submission handling
-    }
+    };
 
 
     return <>

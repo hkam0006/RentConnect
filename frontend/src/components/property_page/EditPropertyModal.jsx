@@ -28,12 +28,32 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
           />
           <TextField
             margin="dense"
-            name="email"
-            label="Email"
-            type="email"
+            name="type"
+            label="Type"
+            type="text"
             fullWidth
             variant="standard"
-            value={data.email}
+            value={data.type}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="price"
+            label="Price"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={data.price}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="description"
+            label="Description"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={data.description}
             onChange={handleInputChange}
           />
           {/* Add more fields as needed */}
