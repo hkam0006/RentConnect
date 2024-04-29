@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import "./ApplicationForm.css";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Button,
+  Grid,
+} from "@mui/material";
+
 const ApplicationForm = () => {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
 
@@ -12,61 +20,44 @@ const ApplicationForm = () => {
   };
 
   return (
-    <div className="popup">
-      <div className="popup-content">
-        <h2>Application Details</h2>
-        <form className="application-form">
-          {/* Personal Information Section */}
-          <div className="form-section">
-            <h3>Personal Information</h3>
-            <label htmlFor="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" />
-
-            <label htmlFor="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" />
-
-            <label htmlFor="mobileNumber">Mobile Number</label>
-            <input type="tel" id="mobileNumber" name="mobileNumber" />
-
-            <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" />
-
-            <label htmlFor="dob">Date of Birth</label>
-            <input type="date" id="dob" name="dob" />
-          </div>
-
-          {/* Identity Documents Section */}
-          <div className="form-section">
-            <h3>Identity Documents</h3>
-            {/* Passport */}
-            <label htmlFor="passport">Passport</label>
-            <input type="text" id="passport" name="passport" />
-
-            {/* Birth Certificate */}
-            <label htmlFor="birthCertificate">Birth Certificate</label>
-            <input type="text" id="birthCertificate" name="birthCertificate" />
-          </div>
-
-          {/* Income Section */}
-          <div className="form-section">
-            <h3>Income</h3>
-            <label htmlFor="salary">Salary</label>
-            <input type="number" id="salary" name="salary" />
-
-            <label htmlFor="rentalIncome">Rental Income</label>
-            <input type="number" id="rentalIncome" name="rentalIncome" />
-          </div>
-
-          {/* Buttons */}
-          <div className="form-actions">
-            <button type="submit">Submit</button>
-            <button type="button" onClick={handleCloseClick}>
-              Close
-            </button>
-          </div>
+    <Dialog
+      open={isPopupVisible}
+      onClose={handleCloseClick}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Application Details</DialogTitle>
+      <DialogContent>
+        <form>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField label="Name" fullWidth />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField label="Phone" fullWidth />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField label="Email" fullWidth />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                type="date"
+                label="Date of Birth"
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+          </Grid>
+          <Grid container justifyContent="flex-end" style={{ marginTop: 16 }}>
+            <Button onClick={handleCloseClick} color="secondary">
+              Cancel
+            </Button>
+            <Button type="submit" color="primary" style={{ marginLeft: 8 }}>
+              Submit
+            </Button>
+          </Grid>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
