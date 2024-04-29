@@ -21,7 +21,6 @@ export default function AddPropertyModal({ handleClose, propManagers }) {
     bedrooms: "0",
     bathrooms: "0",
     car_spaces: "0",
-    vacancy: 0,
     status: "Active"
   })
 
