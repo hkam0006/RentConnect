@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container } from "@mui/material"
+import { Container, Paper } from "@mui/material"
 import { PropertyStatCards } from './PropertyStatCards';
 import { PropertiesTable } from './PropertiesTable';
 import { PropertySearch } from './PropertySearch';
@@ -8,6 +8,7 @@ import { PropertySearch } from './PropertySearch';
 import ListingImage from './listing.jpg'
 import ListingImageApt from './listing2.jpg'
 import useApp from '../../hooks/useApp';
+import AppLoader from './AppLoader';
 
 function createData(id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager) {
   return { id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager };
@@ -57,7 +58,7 @@ export default function Properties() {
     }
   }, [])
 
-
+  if (loading) return <AppLoader />
 
   return (
     <Container sx={{ mt: 5, height: "80vh" }} >
@@ -66,17 +67,19 @@ export default function Properties() {
         avgDOM={dom}
         totalLeased={leased}
       />
-      <PropertySearch
-        filterProperties={setProperties}
-        unfilteredProperties={unfiltered}
-        propManagers={propManagers}
-        properties={properties}
-      />
-      <PropertiesTable
-        properties={properties}
-        handleAddProperties={setProperties}
-        propManagers={propManagers}
-      />
+      <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
+        <PropertySearch
+          filterProperties={setProperties}
+          unfilteredProperties={unfiltered}
+          propManagers={propManagers}
+          properties={properties}
+        />
+        <PropertiesTable
+          properties={properties}
+          handleAddProperties={setProperties}
+          propManagers={propManagers}
+        />
+      </Paper>
     </Container >
   )
 }
