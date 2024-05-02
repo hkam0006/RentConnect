@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import BedIcon from "@mui/icons-material/Bed";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import NavigationMenu from '../navigation_menu/NavigationMenus';
 
 const Application = () => {
   const [applicationsData, setApplicationsData] = useState([]);
@@ -70,10 +71,11 @@ const Application = () => {
 
   return (
     <div>
+      <NavigationMenu/>
       <Grid
         container
         spacing={2}
-        style={{ padding: "20px" }}
+        style={{ padding: "20px", paddingTop: '80px' }}
         justifyContent="flex-start"
       >
         {applicationsData.map((application) => (

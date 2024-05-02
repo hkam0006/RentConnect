@@ -3,6 +3,7 @@ import { Container } from "@mui/material"
 import { PropertyStatCards } from './PropertyStatCards';
 import { PropertiesTable } from './PropertiesTable';
 import { PropertySearch } from './PropertySearch';
+import NavigationMenu from '../navigation_menu/NavigationMenus';
 
 // Demo Images
 import ListingImage from './listing.jpg'
@@ -60,7 +61,9 @@ export default function Properties() {
 
 
   return (
-    <Container sx={{ mt: 5, height: "80vh" }} >
+    <div>
+    <NavigationMenu/>
+    <Container sx={{ mt: 5, height: "80vh", paddingTop: '64px' }} >
       <PropertyStatCards
         totalApplications={totalApplications}
         avgDOM={dom}
@@ -78,5 +81,6 @@ export default function Properties() {
         propManagers={propManagers}
       />
     </Container >
+  </div>
   )
 }
