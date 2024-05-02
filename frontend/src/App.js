@@ -7,6 +7,8 @@ import Properties from './components/property_page/Properties';
 import PropertyDetails  from './components/property_page/PropertyDetails';
 import Contacts from './components/contacts/Contacts';
 import Application from './components/applications/Application';
+import Dashboard from './components/dashboard_page/Dashboard';
+
 import {CssBaseline, ThemeProvider} from "@mui/material"
 
 
@@ -47,7 +49,7 @@ function Home() {
         <button>Go to Contacts</button>
       </Link>
     </div>
-    
+
   );
 }
 
