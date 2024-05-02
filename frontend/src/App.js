@@ -24,6 +24,7 @@ function App() {
             <Route path='/property' element={<Properties />} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
             <Route path='/contacts' element={<Contacts />}/>
+            <Route path='/dashboard' element={<Dashboard />}/>
           </Routes>
         </Router>
     </ThemeProvider>
@@ -48,6 +49,9 @@ function Home() {
       <Link to="/contacts">
         <button>Go to Contacts</button>
       </Link>
+        <Link to="/dashboard">
+            <button>Go to Dashboard</button>
+        </Link>
     </div>
 
   );
