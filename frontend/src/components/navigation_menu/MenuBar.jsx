@@ -7,7 +7,7 @@
 //         <>
 //         <Hamburger toggled={isOpen} toggle={setOpen}/>
 //             {isOpen && (
-//                 <div className="menu-items">
+//                 <div className="menu-iteIms">
 //                     <li><a href="">Dashboard</a></li>
 //                     <li><a href="">Inbox</a></li>
 //                     <li><a href="">Inspection</a></li>
