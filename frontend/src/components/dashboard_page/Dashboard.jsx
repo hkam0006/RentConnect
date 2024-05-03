@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Container } from "@mui/material"
-import {DashboardCards} from "./DashboardCards";
-import {PropertiesTable} from "./PropertiesTable";
+import { DashboardCards } from "./DashboardCards";
+import { PropertiesTable } from "./DashboardPropertiesTable";
 
 export default function Dashboard() {
     return (

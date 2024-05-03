@@ -69,7 +69,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
                       </Stack>
                     </Stack>
                     <Typography>${row.price} {row.payFreq}</Typography>
-                    <Typography>Apartment Type: {row.type}</Typography>
+                    <Typography>Type: {row.type}</Typography>
                     <Typography>Available: {row.available}</Typography>
                     <Button variant='outlined' size='small' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                   </Stack>
