@@ -8,7 +8,7 @@ import PropertyDetails  from './components/property_page/PropertyDetails';
 import Contacts from './components/contacts/Contacts';
 import Application from './components/applications/Application';
 import Dashboard from './components/dashboard_page/Dashboard';
-
+import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant'
 import {CssBaseline, ThemeProvider} from "@mui/material"
 
 
@@ -25,6 +25,7 @@ function App() {
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
             <Route path='/contacts' element={<Contacts />}/>
             <Route path='/dashboard' element={<Dashboard />}/>
+            <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -52,6 +53,9 @@ function Home() {
         <Link to="/dashboard">
             <button>Go to Dashboard</button>
         </Link>
+        <Link to="/tenant/property/testID">
+          <button>Go to Tenant Property Details</button>
+      </Link>
     </div>
 
   );
