@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Container, Stack, IconButton, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
+import { Container, Stack, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
@@ -10,8 +10,7 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 import DeckIcon from '@mui/icons-material/Deck';
 import { UpcomingViewingsTable } from './UpcomingViewingsTable';
 import InspectionRequestModal from './InspectionRequestModal';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ImageCarousel from '../ImageCarousel';
 
 // Demo Images
 import ListingImage from '../listing.jpg'
@@ -111,7 +110,7 @@ export default function PropertyDetailsTenant() {
                         </Stack>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} sx={{height: '400px'}}>
                         <Grid item xs={6}>
                             <Typography variant="h4" gutterBottom>
                                 {property.name}
@@ -214,34 +213,4 @@ function AmenitiesList({ amenities }) {
             </Grid>
         </Grid>
     );
-}
-
-function ImageCarousel({ images }) {
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    const handleNext = () => {
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }
-
-    const handleBack = () => {
-        setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-    }
-
-    return <>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-            <IconButton onClick={handleBack} disabled={images.length <= 1}>
-                <ArrowBackIosIcon />
-            </IconButton>
-            <Box sx={{ height: '300px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img
-                    src={images[currentImageIndex]}
-                    alt={`Slide ${currentImageIndex}`}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                />
-            </Box>
-            <IconButton onClick={handleNext} disabled={images.length <= 1}>
-                <ArrowForwardIosIcon />
-            </IconButton>
-        </Box>
-    </>
 }

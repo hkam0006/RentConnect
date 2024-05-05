@@ -13,9 +13,11 @@ import AcUnitIcon from '@mui/icons-material/AcUnit';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import DeckIcon from '@mui/icons-material/Deck';
 import EditPropertyModal from './EditPropertyModal';
+import ImageCarousel from './ImageCarousel';
 
 // Demo Images
 import ListingImage from './listing.jpg'
+import ListingImageAppt from './listing2.jpg'
 
 export default function PropertyDetails() {
 
@@ -51,7 +53,12 @@ export default function PropertyDetails() {
         vacancy: 25,
         attendees: 31,
         applications: 15,
-        listingImage: ListingImage,
+        listingImages: [
+            ListingImage,
+            ListingImageAppt,
+            ListingImage,
+            ListingImageAppt
+        ],
         type: "Townhouse",
         price: "750",
         available: "31st March 2024",
@@ -98,7 +105,7 @@ export default function PropertyDetails() {
                         </Stack>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} sx={{height: '400px'}}>
                         <Grid item xs={6}>
                             <Typography variant="h4" gutterBottom>
                                 {property.name}
@@ -116,7 +123,7 @@ export default function PropertyDetails() {
                             </Box>
                         </Grid>
                         <Grid item xs={6} id="photos">
-                            <ImgElement sx={{ width: '100%', borderRadius: 3}} src={property.listingImage} alt='Stock Listing Image'/>
+                            <ImageCarousel images={property.listingImages}/>
                         </Grid>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
