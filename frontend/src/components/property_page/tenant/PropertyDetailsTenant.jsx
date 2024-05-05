@@ -1,48 +1,23 @@
 import React, {useState} from 'react';
-import { Container, Stack,  Typography, Box, Paper, Grid, Divider, Card, CardContent, CardMedia, Button } from '@mui/material';
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Container, Stack, IconButton, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-import EditIcon from '@mui/icons-material/Edit';
-import ImgElement from '../ImgElement'
-import { PropertyApplicationsTable } from '../PropertyApplicationsTable';
-import Icon from '@mui/material/Icon'
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import DeckIcon from '@mui/icons-material/Deck';
-import EditPropertyModal from '../EditPropertyModal';
 import { UpcomingViewingsTable } from './UpcomingViewingsTable';
 import InspectionRequestModal from './InspectionRequestModal';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 // Demo Images
 import ListingImage from '../listing.jpg'
+import ListingImageAppt from '../listing2.jpg'
 
 export default function PropertyDetailsTenant() {
-
-    // Dummy application
-    const app1 = {
-        matchScore: '55',
-        name: "John Doe",
-        rentToIncomeRatio: '25%',
-        inspectedDate: '25 April 2024',
-        status: 'Shortlisted'
-    }
-    // Dummy application
-    const app2 = {
-        matchScore: '70',
-        name: "Jane Tenant",
-        rentToIncomeRatio: '43%',
-        inspectedDate: '25 April 2024',
-        status: 'Pending'
-    }
-    // Dummy array of applications
-    const applications = [
-        app1,
-        app2
-    ]
 
     // Dummy viewings
     const viewing1 = {
@@ -70,7 +45,12 @@ export default function PropertyDetailsTenant() {
         vacancy: 25,
         attendees: 31,
         applications: 15,
-        listingImage: ListingImage,
+        listingImages: [
+            ListingImage,
+            ListingImageAppt,
+            ListingImage,
+            ListingImageAppt
+        ],
         type: "Townhouse",
         price: "750",
         available: "31st March 2024",
@@ -152,7 +132,7 @@ export default function PropertyDetailsTenant() {
                             </Box>
                         </Grid>
                         <Grid item xs={6} id="photos">
-                            <ImgElement sx={{ width: '100%', borderRadius: 3}} src={property.listingImage} alt='Stock Listing Image'/>
+                            <ImageCarousel images={property.listingImages} />
                         </Grid>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
@@ -197,13 +177,6 @@ export default function PropertyDetailsTenant() {
     </>
 }
 
-// Example list of ementites for a property
-const amenities = {
-    airConditioning: ['Air conditioning', AcUnitIcon],
-    wardrobes: ['Built-in wardrobes', CheckroomIcon],
-    deck: ['Deck', DeckIcon]
-};
-
 // Function to display amenities of a property
 function AmenitiesList({ amenities }) {
     const amenitiesArray = Object.values(amenities);
@@ -241,4 +214,34 @@ function AmenitiesList({ amenities }) {
             </Grid>
         </Grid>
     );
+}
+
+function ImageCarousel({ images }) {
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    const handleNext = () => {
+        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }
+
+    const handleBack = () => {
+        setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+    }
+
+    return <>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
+            <IconButton onClick={handleBack} disabled={images.length <= 1}>
+                <ArrowBackIosIcon />
+            </IconButton>
+            <Box sx={{ height: '300px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img
+                    src={images[currentImageIndex]}
+                    alt={`Slide ${currentImageIndex}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                />
+            </Box>
+            <IconButton onClick={handleNext} disabled={images.length <= 1}>
+                <ArrowForwardIosIcon />
+            </IconButton>
+        </Box>
+    </>
 }
