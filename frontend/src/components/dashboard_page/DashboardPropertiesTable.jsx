@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
-import ImgElement from './ImgElement';
+import ImgElement from '../property_page/ImgElement';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses } from "@mui/material"
 import { styled } from '@mui/material/styles';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
-import { Fab } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add';
 
 // Demo Images
-import ListingImage from './listing.jpg'
-import ListingImageApt from './listing2.jpg'
+import ListingImage from '../property_page/listing.jpg'
+import ListingImageApt from '../property_page/listing2.jpg'
 
 
 export function PropertiesTable() {
