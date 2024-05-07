@@ -9,7 +9,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 export default function NavigationMenu() {
@@ -38,7 +38,7 @@ export default function NavigationMenu() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar sx={{ backgroundColor: 'white', color: 'black' }}> 
+            <AppBar sx={{ backgroundColor: 'white', color: 'black' }}>
                 <Toolbar>
                     <IconButton
                         size="large"
@@ -47,16 +47,20 @@ export default function NavigationMenu() {
                         aria-label="menu"
                         onClick={handleMenu}
                     >
-                        <MenuIcon /> 
+                        <MenuIcon />
                     </IconButton>
-                    <Logo
-                        alt=""
-                        width="50"
-                        height="50"
-                        className="d-inline-block align-top"
-                    />
+                    <a href='/'>
+                        <Logo
+                            alt=""
+                            width="50"
+                            height="50"
+                            className="d-inline-block align-top"
+                        />
+                    </a>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left', paddingRight: '10px' }}>
-                        RentConnect
+                        <a href='/' style={{ textDecoration: "none", color: "inherit" }} >
+                            RentConnect
+                        </a>
                         <span style={{ fontSize: "90%" }}>
                             <a href="/property" style={{ textDecoration: 'none', color: 'inherit', padding: '20px' }}>
                                 Property
@@ -74,7 +78,7 @@ export default function NavigationMenu() {
                                 onClick={handleIcon}
                                 color="inherit"
                             >
-                                <AccountCircle /> 
+                                <AccountCircle />
                             </IconButton>
                             <Menu
                                 id="menu-appbar"
