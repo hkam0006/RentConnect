@@ -10,6 +10,7 @@ import Application from './components/applications/Application';
 import Dashboard from './components/dashboard_page/Dashboard';
 import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant'
 import {CssBaseline, ThemeProvider} from "@mui/material"
+import PropertySearch from './components/property_search/PropertySearch';
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path='/contacts' element={<Contacts />}/>
             <Route path='/dashboard' element={<Dashboard />}/>
             <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
+            <Route path='/search' element={<PropertySearch />} />
           </Routes>
         </Router>
     </ThemeProvider>
