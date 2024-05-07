@@ -10,7 +10,7 @@ import Application from './components/applications/Application';
 import Dashboard from './components/dashboard_page/Dashboard';
 import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant'
 import {CssBaseline, ThemeProvider} from "@mui/material"
-import PropertySearch from './components/property_search/PropertySearch';
+import PropertySearch from './components/property_search/PropertyGrid';
 
 
 function App() {
