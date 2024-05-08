@@ -10,6 +10,7 @@ import Dashboard from './components/dashboard_page/Dashboard';
 import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant'
 import {CssBaseline, ThemeProvider} from "@mui/material"
 import PropertySearch from './components/property_search/PropertyGrid';
+import PropertyList from './components/bookmarked_properties/propertyList';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path='/dashboard' element={<Dashboard />}/>
             <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
             <Route path='/search' element={<PropertySearch />} />
+            <Route path='/PropertyList' element={<PropertyList />} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -56,6 +58,9 @@ function Home() {
         </Link>
         <Link to="/tenant/property/testID">
           <button>Go to Tenant Property Details</button>
+      </Link>
+      <Link to="/PropertyList">
+          <button>Go to property lists</button>
       </Link>
     </div>
 

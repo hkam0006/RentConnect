@@ -10,10 +10,10 @@ import AddIcon from '@mui/icons-material/Add';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AddPropertyModal from './AddPropertyModal';
 import { useNavigate } from "react-router-dom"
+import { useSavedProperties } from '../bookmarked_properties/SavedPropertiesContext';
 
 
 export function PropertiesTable({ properties, handleAddProperties, propManagers }) {
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -83,6 +83,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
                 <Stack spacing={1}>
                   <Button variant='contained' onClick={() => navigate(`/property/${row.id}`)}>View</Button>
                   <Button variant='outlined'>More</Button>
+                  <Button variant='outlined'>Save</Button>
                 </Stack>
               </TableCell>
             </TableRow>

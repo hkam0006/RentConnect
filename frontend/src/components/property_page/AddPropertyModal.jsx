@@ -21,7 +21,8 @@ export default function AddPropertyModal({ handleClose, propManagers }) {
         bedrooms: "0",
         bathrooms: "0",
         car_spaces: "0",
-        status: "Active"
+        status: "Active",
+        applied: false,
     })
 
     const handleChange = e => {
