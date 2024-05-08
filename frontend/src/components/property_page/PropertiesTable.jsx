@@ -31,8 +31,8 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
 
   return <>
     {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
-    {properties.length > 0 ? <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3, height: "700px" }}>
-      <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+    {properties.length > 0 ? <TableContainer sx={{ borderRadius: 3, height: "700px" }}>
+      <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table" >
         <TableHead>
           <TableRow>
             <StyledTableCell><Typography fontSize={"12px"} fontWeight={700}>Property </Typography></StyledTableCell>
@@ -69,7 +69,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
                       </Stack>
                     </Stack>
                     <Typography>${row.price} {row.payFreq}</Typography>
-                    <Typography>Apartment Type: {row.type}</Typography>
+                    <Typography>Type: {row.type}</Typography>
                     <Typography>Available: {row.available}</Typography>
                     <Button variant='outlined' size='small' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                   </Stack>
@@ -90,7 +90,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
         </TableBody>
       </Table>
       <Stack sx={{ position: "sticky", bottom: "10px" }} alignItems="center">
-        <Fab color="primary" aria-label="add" onClick={() => handleOpen()}>
+        <Fab color="primary" aria-label="add" onClick={() => handleOpen()} sx={{ boxShadow: 10 }}>
           <AddIcon />
         </Fab>
       </Stack>

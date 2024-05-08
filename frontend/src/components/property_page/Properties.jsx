@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container } from "@mui/material"
+import { Container, Paper } from "@mui/material"
 import { PropertyStatCards } from './PropertyStatCards';
 import { PropertiesTable } from './PropertiesTable';
 import { PropertySearch } from './PropertySearch';
@@ -9,6 +9,7 @@ import NavigationMenu from '../navigation_menu/NavigationMenus';
 import ListingImage from './listing.jpg'
 import ListingImageApt from './listing2.jpg'
 import useApp from '../../hooks/useApp';
+import AppLoader from './AppLoader';
 
 function createData(id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager) {
   return { id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager };
@@ -58,29 +59,31 @@ export default function Properties() {
     }
   }, [])
 
-
+  if (loading) return <AppLoader />
 
   return (
     <div>
-    <NavigationMenu/>
-    <Container sx={{ mt: 5, height: "80vh", paddingTop: '64px' }} >
-      <PropertyStatCards
-        totalApplications={totalApplications}
-        avgDOM={dom}
-        totalLeased={leased}
-      />
-      <PropertySearch
-        filterProperties={setProperties}
-        unfilteredProperties={unfiltered}
-        propManagers={propManagers}
-        properties={properties}
-      />
-      <PropertiesTable
-        properties={properties}
-        handleAddProperties={setProperties}
-        propManagers={propManagers}
-      />
-    </Container >
-  </div>
+      <NavigationMenu />
+      <div style={{ padding: "20px", marginTop: "64px" }}>
+        <PropertyStatCards
+          totalApplications={totalApplications}
+          avgDOM={dom}
+          totalLeased={leased}
+        />
+        <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
+          <PropertySearch
+            filterProperties={setProperties}
+            unfilteredProperties={unfiltered}
+            propManagers={propManagers}
+            properties={properties}
+          />
+          <PropertiesTable
+            properties={properties}
+            handleAddProperties={setProperties}
+            propManagers={propManagers}
+          />
+        </Paper>
+      </div>
+    </div>
   )
 }

@@ -1,46 +1,37 @@
 import React, {useState} from 'react';
-import { Container, Stack,  Typography, Box, Paper, Grid, Divider, Card, CardContent, CardMedia, Button } from '@mui/material';
+import { Container, Stack, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-import EditIcon from '@mui/icons-material/Edit';
-import ImgElement from './ImgElement'
-import { PropertyApplicationsTable } from './PropertyApplicationsTable';
-import Icon from '@mui/material/Icon'
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import DeckIcon from '@mui/icons-material/Deck';
-import EditPropertyModal from './EditPropertyModal';
-import ImageCarousel from './ImageCarousel';
+import { UpcomingViewingsTable } from './UpcomingViewingsTable';
+import InspectionRequestModal from './InspectionRequestModal';
+import ImageCarousel from '../ImageCarousel';
 
 // Demo Images
-import ListingImage from './listing.jpg'
-import ListingImageAppt from './listing2.jpg'
+import ListingImage from '../listing.jpg'
+import ListingImageAppt from '../listing2.jpg'
 
-export default function PropertyDetails() {
+export default function PropertyDetailsTenant() {
 
-    // Dummy application
-    const app1 = {
-        matchScore: '55',
-        name: "John Doe",
-        rentToIncomeRatio: '25%',
-        inspectedDate: '25 April 2024',
-        status: 'Shortlisted'
+    // Dummy viewings
+    const viewing1 = {
+        date: "4th May 2024",
+        time: "11:25 AM"
     }
-    // Dummy application
-    const app2 = {
-        matchScore: '70',
-        name: "Jane Tenant",
-        rentToIncomeRatio: '43%',
-        inspectedDate: '25 April 2024',
-        status: 'Pending'
+    const viewing2 = {
+        date: "22nd May 2024",
+        time: "2:45 PM"
     }
-    // Dummy array of applications
-    const applications = [
-        app1,
-        app2
+
+    // Cuncomment below to view the table
+    const viewings = [
+        // viewing1,
+        // viewing2
     ]
 
     // Dummy property
@@ -70,29 +61,28 @@ export default function PropertyDetails() {
         }
     });
 
-    // For editting modal
-    const [open, setOpen] = useState(false);
-    const [data, setData] = useState(property);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    // For request inspection modal
+    const [inspectionRequestOpen, setInspectionRequestOpen] = useState(false);
+    const [inspectionRequestData, setInspectionRequestData] = useState(property);
+    const handleInspectionRequestOpen = () => setInspectionRequestOpen(true);
+    const handleInspectionRequestClose = () => setInspectionRequestOpen(false);
 
     // Edit modal submit functionality
-    const handleSubmit = () => {
-        console.log("Form data submitted: ", data);
+    const handleInspectionRequestSubmit = () => {
+        console.log("Viewing request submitted ", inspectionRequestData);
         // Foer editting, handle database changes here
-        setProperty({...property, ...data});
-        handleClose();
+        handleInspectionRequestClose();
     };
 
 
     return <>
-        {open && (
-            <EditPropertyModal 
-                open={open}
-                handleClose={handleClose} 
-                data={data}
-                setData={setData}
-                handleSubmit={handleSubmit}
+        {inspectionRequestOpen && (
+            <InspectionRequestModal
+                open={inspectionRequestOpen}
+                handleClose={handleInspectionRequestClose} 
+                data={inspectionRequestData}
+                setData={setInspectionRequestData}
+                handleSubmit={handleInspectionRequestSubmit}
             />
         )}
         <Container>
@@ -100,8 +90,23 @@ export default function PropertyDetails() {
                 <CardContent>
                     <Grid container justifyContent='flex-end'>
                         <Stack direction='row' spacing={1}>
-                            <Button xs={{ mt: 5, mr: 2 }} variant='outlined' size='medium' endIcon={<OpenInNewIcon />}>Apply Link</Button>
-                            <Button onClick={() => handleOpen()} xs={{ mt: 5 }} variant='outlined' size='medium' endIcon={<EditIcon />}>Edit</Button>
+                            <Button 
+                                xs={{ mt: 5, mr: 2 }} 
+                                variant='contained' 
+                                size='medium'
+                                style={{ colour: 'white' }}
+                            >
+                                Message the agent
+                            </Button>
+                            <Button 
+                                xs={{ mt: 5, mr: 2 }} 
+                                variant='contained' 
+                                size='medium'
+                                style={{ backgroundColor: 'green', colour: 'white' }}
+                                endIcon={<OpenInNewIcon />}
+                            >
+                                Apply
+                            </Button>
                         </Stack>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
@@ -114,16 +119,19 @@ export default function PropertyDetails() {
                                 <Typography variant="h6">
                                     {property.type}
                                 </Typography>
-                                <Typography sx={{ mt: 8 }} variant="h6">
-                                    <BedIcon /> {property.bedrooms} <BathtubIcon /> {property.bathrooms} <DriveEtaIcon /> {property.carSpots} <SquareFootIcon /> {property.squareMetres}m²
+                                <Typography sx={{ mt: 6 }} variant="h5">
+                                    ${property.price} per week
                                 </Typography>
-                                <Typography sx={{ mt: 5 }} variant="h5">
-                                ${property.price} per week
+                                <Typography sx={{ mt: 5 }} variant="h6">
+                                    <BedIcon /> {property.bedrooms} <BathtubIcon /> {property.bathrooms} <DriveEtaIcon /> {property.carSpots} <SquareFootIcon /> {property.squareMetres}m²
+                                </Typography> 
+                                <Typography sx={{ mt: 2 }}>
+                                    Available from: {property.available}
                                 </Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={6} id="photos">
-                            <ImageCarousel images={property.listingImages}/>
+                            <ImageCarousel images={property.listingImages} />
                         </Grid>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
@@ -150,13 +158,14 @@ export default function PropertyDetails() {
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
                     <Grid container spacing={2}>
-                        <Grid item xs={12}>
+                        <Grid item xs={6}>
                             <Box>
-                                <Typography variant="h4">
-                                    Applications
+                                <Typography variant="h5">
+                                    Upcoming viewings
                                 </Typography>
-                                <PropertyApplicationsTable
-                                    applications={applications}
+                                <UpcomingViewingsTable
+                                    viewings={viewings}
+                                    property={property}
                                 />
                             </Box>
                         </Grid>
@@ -166,13 +175,6 @@ export default function PropertyDetails() {
         </Container>
     </>
 }
-
-// Example list of ementites for a property
-const amenities = {
-    airConditioning: ['Air conditioning', AcUnitIcon],
-    wardrobes: ['Built-in wardrobes', CheckroomIcon],
-    deck: ['Deck', DeckIcon]
-};
 
 // Function to display amenities of a property
 function AmenitiesList({ amenities }) {

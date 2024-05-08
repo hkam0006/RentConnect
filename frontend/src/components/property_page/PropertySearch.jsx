@@ -67,14 +67,14 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
   }
 
   return (
-    <Grid container spacing={2} sx={{ mt: "2px" }}>
-      <Grid xs={12} sm={4} item >
-        <TextField name='query' value={query} onChange={handleSearchChange} fullWidth size="small" placeholder='Search Property Address' variant='standard'></TextField>
+    <Grid container spacing={2} sx={{ mt: "2px" }} px={2}>
+      <Grid xs={12} sm={4} item>
+        <TextField name='query' value={query} onChange={handleSearchChange} fullWidth size="small" placeholder='Search Property Address' variant='outlined'></TextField>
       </Grid>
       <Grid xs={12} sm={4} item >
         <FormControl fullWidth size='small'>
           <Select
-            variant='standard'
+            variant='outlined'
             id="property-manager-select"
             name='propManager'
             displayEmpty
@@ -91,7 +91,7 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
       <Grid xs={12} sm={4} item >
         <FormControl fullWidth size='small'>
           <Select
-            variant='standard'
+            variant='outlined'
             id="property-status-select"
             value={status}
             onChange={handleApplicationStatus}
