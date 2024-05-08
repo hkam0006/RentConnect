@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ImgElement from '../property_page/ImgElement';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Box } from "@mui/material";
-import { Bed as BedIcon, Bathtub as BathtubIcon, DirectionsCar as DirectionsCarIcon } from '@mui/icons-material';
+import { Bed as BedIcon, Bathtub as BathtubIcon, DirectionsCar as DirectionsCarIcon, Diversity1 } from '@mui/icons-material';
 import { Fab } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AddPropertyModal from '../property_page/AddPropertyModal';
@@ -20,40 +20,40 @@ export function PropertiesListItems({ properties, handleAddProperties, propManag
   // Filter properties based on the appliedFilter state
   let filteredProperties = properties;
   if (appliedFilter) {
-    filteredProperties = properties.filter(property => property.applied);
-  }
-
-  // If appliedFilter is true and there are no properties with applied attribute set to true, set filteredProperties to an empty array
-  if (appliedFilter && filteredProperties.length === 0) {
+    // If appliedFilter is true, set filteredProperties to an empty array
     filteredProperties = [];
   }
+
   console.log("All Properties:", properties);
   return (
     <>
       {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
-      <div id="root1">
-        <Box>
+      <div >
+      <Paper sx={{ 
+maxWidth: 1/2
+}}>
           <TableContainer sx={{ borderRadius: 3, height: "700px"}}>
             <Table stickyHeader aria-label="simple table" size='medium'>
-              <TableHead>
+              <TableHead  >
                 <TableRow>
-                  <Button onClick={() => setAppliedFilter(false)} variant={!appliedFilter ? 'contained' : 'outlined' } size="large" style={{marginLeft:"10px"}}>
+                  <Button onClick={() => setAppliedFilter(false)} variant={!appliedFilter ? 'contained' : 'outlined' } size="large" style={{marginLeft:"10px", marginTop: "10px"}}>
                     <Typography fontSize={"12px"} fontWeight={700}>
                       Saved
                     </Typography>
                   </Button>
-                  <Button onClick={() => setAppliedFilter(true)} variant={appliedFilter ? 'contained' : 'outlined'} size="large">
+                  <Button onClick={() => setAppliedFilter(true)} variant={appliedFilter ? 'contained' : 'outlined'} size="large" style={{marginLeft:"10px", marginTop: "10px"}}>
                     <Typography fontSize={"12px"} fontWeight={700}>
                       Applied
                     </Typography>
                   </Button>
                 </TableRow>
               </TableHead>
-              <TableBody>
+              <TableBody >
                 {filteredProperties.map((row, index) => (
                   <TableRow
                     key={index}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
+                    
                   >
                     <TableCell width={{ width: "fit-content" }}>
                       <Typography variant='body' fontWeight={700}>{row.address}</Typography>
@@ -92,7 +92,7 @@ export function PropertiesListItems({ properties, handleAddProperties, propManag
               </TableBody>
             </Table>
           </TableContainer>
-        </Box>
+          </Paper>
       </div>
     </>
   );

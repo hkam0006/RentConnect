@@ -1,3 +1,4 @@
-#root1 {
+.custom-root {
     width: 50%;
+    overflow-x: hidden;
   }
