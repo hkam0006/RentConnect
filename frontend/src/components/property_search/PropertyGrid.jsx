@@ -7,6 +7,7 @@ import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import { supabase } from '../../supabase';
 import { Bookmark, FilterList, Search } from '@mui/icons-material';
+import AppLoader from '../property_page/AppLoader';
 
 
 const NoPropertiesFound = () => {
@@ -19,6 +20,7 @@ const NoPropertiesFound = () => {
 export default function PropertySearch() {
 
   const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true)
 
   const getProperties = async () => {
     const res = await supabase.from("PROPERTY").select("*");
@@ -30,8 +32,12 @@ export default function PropertySearch() {
   }
 
   useEffect(() => {
-    getProperties()
+    getProperties().then(() => setLoading(false))
   }, [])
+
+  if (loading) {
+    return <AppLoader />
+  }
 
   return (
     <Box sx={{ padding: 2, marginTop: "64px" }}>
@@ -53,8 +59,8 @@ export default function PropertySearch() {
         spacing={3}
         mt={1}
       >
-        {properties.map((item) => <Grid key={item.property_id} item sx={12} sm={4}>
-          <Card >
+        {properties.map((item) => <Grid key={item.property_id} item sx={12} sm={6} md={4} lg={3}>
+          <Card sx={{ width: "100%" }}>
             <CardMedia>
               <Carousel
                 autoPlay={false}
