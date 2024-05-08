@@ -6,7 +6,7 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import { supabase } from '../../supabase';
-import { Bookmark, FilterList, Search } from '@mui/icons-material';
+import { Bookmark, FilterList, Search, SquareFoot } from '@mui/icons-material';
 import AppLoader from '../property_page/AppLoader';
 
 
@@ -60,7 +60,7 @@ export default function PropertySearch() {
         mt={1}
       >
         {properties.map((item) => <Grid key={item.property_id} item sx={12} sm={6} md={4} lg={3}>
-          <Card sx={{ width: "100%" }}>
+          <Card sx={{ width: "fit-content" }}>
             <CardMedia>
               <Carousel
                 autoPlay={false}
@@ -88,16 +88,19 @@ export default function PropertySearch() {
               </Carousel>
             </CardMedia>
             <CardContent>
-              <Stack direction='row' justifyContent='space-between' alignItems={'center'}>
-                <Typography variant='body' >
-                  {fullAddress(
-                    item.property_street_number,
-                    item.property_street_name,
-                    item.property_street_type,
-                    item.property_suburb,
-                    item.property_state
-                  )}
-                </Typography>
+              <Stack direction='row' justifyContent='space-between' alignItems={'center'} spacing={1}>
+                <Stack>
+                  <Typography variant='body' >
+                    {fullAddress(
+                      item.property_street_number,
+                      item.property_street_name,
+                      item.property_street_type,
+                      item.property_suburb,
+                      item.property_state
+                    )}
+                  </Typography>
+                  <Typography variant='body2'>{item.property_type}</Typography>
+                </Stack>
                 <IconButton size='small' aria-label='bookmark' >
                   <Bookmark />
                 </IconButton>
@@ -119,7 +122,13 @@ export default function PropertySearch() {
                     <Typography alignContent="center" fontWeight={700} variant='h6'>{item.property_car_spot_count}</Typography>
                   </Stack>
                   <Divider orientation='vertical' />
-                  <Typography variant='subtitle'>{item.property_type}</Typography>
+                  <Stack direction='row' spacing={0.2} alignItems={"center"}>
+                    <SquareFoot />
+                    <Typography alignContent="center" fontWeight={700} variant='body'>
+                      {item.property_footprint}m<sup>2</sup>
+                    </Typography>
+                  </Stack>
+
                 </Stack>
               </Stack>
             </CardContent>

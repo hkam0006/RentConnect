@@ -10,6 +10,7 @@ import ListingImage from './listing.jpg'
 import ListingImageApt from './listing2.jpg'
 import useApp from '../../hooks/useApp';
 import AppLoader from './AppLoader';
+import { supabase } from '../../supabase';
 
 function createData(id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager) {
   return { id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager };
@@ -28,35 +29,35 @@ const propManagers = [
   "Elon Musk"
 ]
 
+// DEFAULT COMPANY ID NUMBER
+
+const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
+
 export default function Properties() {
   const { fetchProperties } = useApp();
   const [properties, setProperties] = useState([]);
   const [unfiltered, setUnfiltered] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null)
 
   const [totalApplications, setTotalApplications] = useState(0);
   const [dom, setDOM] = useState(0);
   const [leased, setLeased] = useState(0);
 
-  useEffect(() => {
-    let unsub = null;
-    fetchProperties(
-      "testID",
-      setLoading,
-      setProperties,
-      setUnfiltered,
-      setDOM,
-      setLeased,
-      setTotalApplications
-    ).then((res) => {
-      unsub = res;
-    })
+  const getPropertyData = async () => {
+    const { data, error } = await supabase
+      .from("PROPERTY")
+      .select("*")
+      .eq("company_id", TEST_COMPANY_ID)
 
-    return () => {
-      if (unsub) {
-        unsub()
-      }
-    }
+    setProperties(data);
+    setError(data);
+    setUnfiltered(data);
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    getPropertyData()
   }, [])
 
   if (loading) return <AppLoader />
@@ -81,6 +82,7 @@ export default function Properties() {
             properties={properties}
             handleAddProperties={setProperties}
             propManagers={propManagers}
+            setProperties={setProperties}
           />
         </Paper>
       </div>

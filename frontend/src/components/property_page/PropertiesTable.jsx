@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ImgElement from './ImgElement';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Box } from "@mui/material"
 import { styled } from '@mui/material/styles';
@@ -10,9 +10,11 @@ import AddIcon from '@mui/icons-material/Add';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AddPropertyModal from './AddPropertyModal';
 import { useNavigate } from "react-router-dom"
+import { supabase } from '../../supabase';
+import { getApp } from 'firebase/app';
 
 
-export function PropertiesTable({ properties, handleAddProperties, propManagers }) {
+export function PropertiesTable({ properties, handleAddProperties, propManagers, setProperties }) {
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -27,12 +29,20 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
     },
   }));
 
+  const getApplicationNumber = async (property_id) => {
+    const { data, error } = await supabase
+      .from("APPLICATION")
+      .select("*")
+      .eq("property_id", property_id)
+    return data
+  }
+
   const navigate = useNavigate();
 
   return <>
     {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
     {properties.length > 0 ? <TableContainer sx={{ borderRadius: 3, height: "700px" }}>
-      <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table" >
+      <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Table of properties" >
         <TableHead>
           <TableRow>
             <StyledTableCell><Typography fontSize={"12px"} fontWeight={700}>Property </Typography></StyledTableCell>
@@ -52,33 +62,33 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers 
                 {/* <Card sx={{ padding: 2, }} > */}
                 <Typography variant='body' fontWeight={700}>{row.address}</Typography>
                 <Stack direction='row' spacing={2} justifyContent="start" sx={{ width: "fit-content" }} >
-                  <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.listingImage} alt='Stock Listing Image' />
+                  <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.property_pictures[0]} alt='Stock Listing Image' />
                   <Stack>
                     <Stack direction='row' spacing={2}>
                       <Stack direction='row' spacing={0.5} alignItems={"center"}>
                         <BedIcon />
-                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.bedrooms}</Typography>
+                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.property_bedroom_count}</Typography>
                       </Stack>
                       <Stack direction='row' spacing={0.5} alignItems={"center"}>
                         <BathtubIcon />
-                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.bathrooms}</Typography>
+                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.property_bathroom_count}</Typography>
                       </Stack>
                       <Stack direction='row' spacing={0.5} alignItems={"center"}>
                         <DirectionsCarIcon />
-                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.car_spaces}</Typography>
+                        <Typography alignContent="center" fontWeight={700} variant='h6'>{row.property_car_spot_count}</Typography>
                       </Stack>
                     </Stack>
-                    <Typography>${row.price} {row.payFreq}</Typography>
-                    <Typography>Type: {row.type}</Typography>
-                    <Typography>Available: {row.available}</Typography>
+                    <Typography>${row.price} {row.property_rent_frequency}</Typography>
+                    <Typography>Type: {row.property_type}</Typography>
+                    <Typography>Available: {row.property_lease_start}</Typography>
                     <Button variant='outlined' size='small' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                   </Stack>
                 </Stack>
                 {/* </Card> */}
               </TableCell>
-              <TableCell align="right"><Typography variant='h6'>{row.vacancy}</Typography></TableCell>
-              <TableCell align="right"><Typography variant='h6'> {row.attendees}</Typography></TableCell>
-              <TableCell align="right"><Typography variant='h6'>{row.applications}</Typography></TableCell>
+              <TableCell align="right"><Typography variant='h6'>{Math.round((new Date() - new Date(row.property_listing_date)) / (1000 * 3600 * 24))}</Typography></TableCell>
+              <TableCell align="right"><Typography variant='h6'> {row.property_attendees}</Typography></TableCell>
+              <TableCell align="right"><Typography variant='h6'>{row.application_count}</Typography></TableCell>
               <TableCell align="right">
                 <Stack spacing={1}>
                   <Button variant='contained' onClick={() => navigate(`/property/${row.id}`)}>View</Button>
