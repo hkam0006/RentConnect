@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import ApplicationDetails from './components/applications/ApplicationDetails';
+import ApplicationDetails from './components/application_details/ApplicationDetails';
 import './App.css';
 import theme from './theme';
 import Properties from './components/property_page/Properties';
 import PropertyDetails  from './components/property_page/PropertyDetails';
 import Contacts from './components/contacts/Contacts';
 import Application from './components/applications/Application';
+import RentalProfile from './components/rental_profile/RentalProfile'
 import {CssBaseline, ThemeProvider} from "@mui/material"
 
 
@@ -22,6 +23,7 @@ function App() {
             <Route path='/property' element={<Properties />} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
             <Route path='/contacts' element={<Contacts />}/>
+            <Route path='/RentalProfile' element={<RentalProfile />}></Route>
           </Routes>
         </Router>
     </ThemeProvider>
@@ -45,6 +47,9 @@ function Home() {
       </Link>
       <Link to="/contacts">
         <button>Go to Contacts</button>
+      </Link>
+      <Link to="/RentalProfile">
+        <button>Go to Rental Profile</button>
       </Link>
     </div>
     
