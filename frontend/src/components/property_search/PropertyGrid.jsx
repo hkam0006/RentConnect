@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, CardMedia, Container, Divider, Grid, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardMedia, Divider, Grid, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import Carousel from 'react-material-ui-carousel'
 import React, { useEffect, useState } from 'react'
 import ImgElement from '../property_page/ImgElement';
@@ -8,9 +8,6 @@ import BedIcon from '@mui/icons-material/Bed';
 import { supabase } from '../../supabase';
 import { Bookmark, FilterList, Search } from '@mui/icons-material';
 
-// Demo Images
-import ListingImage from '../property_page/listing.jpg'
-import ListingImageTwo from '../property_page/listing2.jpg'
 
 const NoPropertiesFound = () => {
   return <Stack justifyContent={'center'} textAlign={'center'} mt={5}>
@@ -25,7 +22,6 @@ export default function PropertySearch() {
 
   const getProperties = async () => {
     const res = await supabase.from("PROPERTY").select("*");
-    console.log(res.data)
     setProperties(res.data)
   }
 
@@ -38,7 +34,7 @@ export default function PropertySearch() {
   }, [])
 
   return (
-    <Container style={{ marginTop: "64px", padding: "20px" }}>
+    <Box sx={{ padding: 2, marginTop: "64px" }}>
       <Stack direction={'row'} spacing={2}>
         <TextField
           placeholder='Search properties...' fullWidth
@@ -52,27 +48,48 @@ export default function PropertySearch() {
         />
         <Button variant='contained'><FilterList /></Button>
       </Stack>
-      {properties.length > 0 ? <Grid container spacing={3} mt={1}>
-        {properties.map((property) => <Grid key={property.property_id} item sx={12} sm={4}>
+      {properties.length > 0 ? <Grid
+        container
+        spacing={3}
+        mt={1}
+      >
+        {properties.map((item) => <Grid key={item.property_id} item sx={12} sm={4}>
           <Card >
             <CardMedia>
-              <Carousel autoPlay={false} indicators={false} swipe={true} fullHeightHover={true} animation={"slide"} navButtonsAlwaysVisible cycleNavigation={false}>
-                <ImgElement src={ListingImage} alt='Stock Listing Image' sx={{ width: "100%", objectFit: "cover" }} />
-                <ImgElement src={ListingImageTwo} alt='Stock Listing Image' sx={{ width: "100%" }} />
-                <ImgElement src={ListingImageTwo} alt='Stock Listing Image' sx={{ width: "100%" }} />
-                <ImgElement src={ListingImageTwo} alt='Stock Listing Image' sx={{ width: "100%" }} />
-                <ImgElement src={ListingImageTwo} alt='Stock Listing Image' sx={{ width: "100%" }} />
+              <Carousel
+                autoPlay={false}
+                indicators={false}
+                swipe={true}
+                fullHeightHover={true}
+                animation={"slide"}
+                navButtonsAlwaysVisible={item.property_pictures.length > 1}
+                navButtonsAlwaysInvisible={item.property_pictures.length == 1}
+                stopAutoPlayOnHover={true}
+                cycleNavigation={false}
+              >
+                {item.property_pictures.map((pic, index) =>
+                  <ImgElement
+                    key={index}
+                    src={pic}
+                    alt='Stock Listing Image'
+                    sx={{
+                      width: "100%",
+                      height: "200px",
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
               </Carousel>
             </CardMedia>
             <CardContent>
               <Stack direction='row' justifyContent='space-between' alignItems={'center'}>
                 <Typography variant='body' >
                   {fullAddress(
-                    property.property_street_number,
-                    property.property_street_name,
-                    property.property_street_type,
-                    property.property_suburb,
-                    property.property_state
+                    item.property_street_number,
+                    item.property_street_name,
+                    item.property_street_type,
+                    item.property_suburb,
+                    item.property_state
                   )}
                 </Typography>
                 <IconButton size='small' aria-label='bookmark' >
@@ -83,26 +100,26 @@ export default function PropertySearch() {
                 <Stack direction={'row'} spacing={1} alignItems={"center"}>
                   <Stack direction='row' spacing={0.5} alignItems={"center"}>
                     <BedIcon />
-                    <Typography alignContent="center" fontWeight={700} variant='h6'>{property.property_bedroom_count}</Typography>
+                    <Typography alignContent="center" fontWeight={700} variant='h6'>{item.property_bedroom_count}</Typography>
                   </Stack>
                   <Divider orientation='vertical' />
                   <Stack direction='row' spacing={0.5} alignItems={"center"}>
                     <BathtubIcon />
-                    <Typography alignContent="center" fontWeight={700} variant='h6'>{property.property_bathroom_count}</Typography>
+                    <Typography alignContent="center" fontWeight={700} variant='h6'>{item.property_bathroom_count}</Typography>
                   </Stack>
                   <Divider orientation='vertical' />
                   <Stack direction='row' spacing={0.5} alignItems={"center"}>
                     <DirectionsCarIcon />
-                    <Typography alignContent="center" fontWeight={700} variant='h6'>{property.property_car_spot_count}</Typography>
+                    <Typography alignContent="center" fontWeight={700} variant='h6'>{item.property_car_spot_count}</Typography>
                   </Stack>
                   <Divider orientation='vertical' />
-                  <Typography variant='subtitle'>{property.propertyType}</Typography>
+                  <Typography variant='subtitle'>{item.property_type}</Typography>
                 </Stack>
               </Stack>
             </CardContent>
           </Card>
         </Grid>)}
       </Grid> : <NoPropertiesFound />}
-    </Container >
+    </Box>
   )
 }
