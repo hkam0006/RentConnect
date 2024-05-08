@@ -56,20 +56,20 @@ export default function PropertySearch() {
       </Stack>
       {properties.length > 0 ? <Grid
         container
-        spacing={3}
+        spacing={2}
         mt={1}
+        alignItems={'stretch'}
       >
-        {properties.map((item) => <Grid key={item.property_id} item sx={12} sm={6} md={4} lg={3}>
-          <Card sx={{ width: "fit-content" }}>
+        {properties.map((item) => <Grid key={item.property_id} item sx={12} sm={6} md={4} xl={2}>
+          <Card sx={{ width: "100%", height: "100%" }}>
             <CardMedia>
               <Carousel
                 autoPlay={false}
                 indicators={false}
                 swipe={true}
                 fullHeightHover={true}
-                animation={"slide"}
-                navButtonsAlwaysVisible={item.property_pictures.length > 1}
-                navButtonsAlwaysInvisible={item.property_pictures.length == 1}
+                animation={"none"}
+                navButtonsAlwaysVisible={true}
                 stopAutoPlayOnHover={true}
                 cycleNavigation={false}
               >
