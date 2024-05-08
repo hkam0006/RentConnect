@@ -143,9 +143,7 @@ export default function PropertyDetailsTenant() {
                             <Typography>
                                 {property.description}
                             </Typography>
-                        </Grid>
-                        <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
-                        <Grid item xs>
+                            <Divider sx={{ mt: 2, mb: 2 }}/>
                             <Typography variant="h5" gutterBottom>
                                 Amenities
                             </Typography>
@@ -154,11 +152,7 @@ export default function PropertyDetailsTenant() {
                                     amenities={property.amenities}
                                 />
                             </Typography>
-                        </Grid>
-                    </Grid>
-                    <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                            <Divider sx={{ mt: 2, mb: 2 }}/>
                             <Box>
                                 <Typography variant="h5">
                                     Upcoming viewings
@@ -169,6 +163,17 @@ export default function PropertyDetailsTenant() {
                                 />
                             </Box>
                         </Grid>
+                        <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
+                        <Box
+                            display="flex"
+                            // alignItems="center"
+                            justifyContent="center"
+                            style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
+                        >
+                            <Typography variant="h4">
+                                Map goes here
+                            </Typography>
+                        </Box>
                     </Grid>
                 </CardContent>
             </Card>

@@ -28,7 +28,7 @@ function App() {
             <Route path='/RentalProfile' element={<RentalProfile />}></Route>
             <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
             <Route path='/search' element={<PropertySearch />} />
-            <Route path='/MyApplication' element={<ReceivedApplication />} />
+            {/* <Route path='/MyApplication' element={<ReceivedApplication />} /> */}
           </Routes>
         </Router>
     </ThemeProvider>
