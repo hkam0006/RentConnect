@@ -50,15 +50,69 @@ function getPropertySecondLine(property) {
 }
 
 export default function RenterApplication() {
+    // variables and methods for opening and closing dialog
     const [open, setOpen] = React.useState(false);
-
     const handleClickOpen = () => {
         setOpen(true);
     };
-
     const handleClose = () => {
         setOpen(false);
     };
+
+    // variables and methods for the stepper and progressing application
+    const [stepperValue, setStepperValue] = React.useState(0);
+    const progressApplication = () => {
+        const newStepperValue = stepperValue + 1;
+        setStepperValue(newStepperValue);
+        changeToGoBackButton();
+        if (newStepperValue === 3) {
+            changeToApplyButton();
+        }
+    }
+    const goBackApplication = () => {
+        const newStepperValue = stepperValue - 1;
+        setStepperValue(newStepperValue);
+        changeToNextButton();
+        if (newStepperValue === 0) { changeToCloseButton() }
+    }
+
+    // setting values and functions for primary button
+    const [primaryButtonNextState, setPrimaryButtonNextState] = React.useState(true);
+    const [primaryButtonLabel, setPrimaryButtonLabel] = React.useState("Next");
+    const primaryButton = () => {
+        if (primaryButtonNextState) {
+            progressApplication();
+        } else {
+            handleClose();
+        }
+    }
+    const changeToApplyButton = () => {
+        setPrimaryButtonNextState(false);
+        setPrimaryButtonLabel("Apply");
+    }
+    const changeToNextButton = () => {
+        setPrimaryButtonNextState(true);
+        setPrimaryButtonLabel("Next");
+    }
+
+    // setting values and functions for secondary button
+    const [secondaryButtonCloseState, setSecondaryButtonCloseState] = React.useState(true);
+    const [secondaryButtonLabel, setSecondaryButtonLabel] = useState("Close");
+    const changeToGoBackButton = () => {
+        setSecondaryButtonLabel("Back");
+        setSecondaryButtonCloseState(false);
+    }
+    const changeToCloseButton = () => {
+        setSecondaryButtonLabel("Close");
+        setSecondaryButtonCloseState(true);
+    }
+    const secondaryButton = () => {
+        if (secondaryButtonCloseState) {
+            handleClose();
+        } else {
+            goBackApplication();
+        }
+    }
 
     // Dummy property
     const [property, setProperty] = useState({
@@ -168,7 +222,7 @@ export default function RenterApplication() {
                                     <Grid item sx={{ width: "100%", minHeight: "100%"}}>
                                         <Card sx={{ width: "100%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                                             <CardContent>
-                                                <Stepper activeStep={0} alternativeLabel>
+                                                <Stepper activeStep={stepperValue} alternativeLabel>
                                                     {steps.map((label) => (
                                                         <Step key={label}>
                                                             <StepLabel>{label}</StepLabel>
@@ -198,8 +252,8 @@ export default function RenterApplication() {
                         </Grid>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose}>Close</Button>
-                        <Button variant="contained" onClick={handleClose}>Next</Button>
+                        <Button onClick={secondaryButton}>{secondaryButtonLabel}</Button>
+                        <Button variant="contained" onClick={primaryButton}>{primaryButtonLabel}</Button>
                     </DialogActions>
                 </Dialog>
             </Grid>
