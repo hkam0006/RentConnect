@@ -197,13 +197,112 @@ export default function RenterApplication() {
                     <Grid container spacing={2} direction={"column"}>
                         <Grid item xs={12}><Typography variant={"h5"}>Getting closer, now where have you previously worked?</Typography></Grid>
                         <Grid item xs={12}><Typography variant={"body"}>For your application, RentConnect requires you to provide some information about your previous employment.</Typography></Grid>
-                        <Grid item xs={6}>
-                            <TextField required id="outlined-required" label="License Number" defaultValue="" />
+                        <Grid item xs={8}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={4}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Industry</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            //value={age}
+                                            label="Industry"
+                                            //onChange={handleChange}
+                                        >
+                                            <MenuItem value={10}>Academic Research</MenuItem>
+                                            <MenuItem value={20}>Business Services</MenuItem>
+                                            <MenuItem value={20}>Creative</MenuItem>
+                                            <MenuItem value={30}>Corporate Professionals</MenuItem>
+                                            <MenuItem value={30}>Financial or Real Estate</MenuItem>
+                                            <MenuItem value={30}>Hospitality</MenuItem>
+                                            <MenuItem value={30}>IT and Engineering</MenuItem>
+                                            <MenuItem value={30}>Law or Public Sector</MenuItem>
+                                            <MenuItem value={30}>Manufacturing or Retail</MenuItem>
+                                            <MenuItem value={30}>Medical</MenuItem>
+                                            <MenuItem value={30}>Skilled Labour</MenuItem>
+                                            <MenuItem value={30}>Other or Unemployed</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="demo-simple-select-label">Occupation</InputLabel>
+                                        <Select disabled
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            //value={age}
+                                            label="Occupation"
+                                            //onChange={handleChange}
+                                        >
+                                            <MenuItem value={10}>Academic Research</MenuItem>
+                                            <MenuItem value={20}>Business Services</MenuItem>
+                                            <MenuItem value={20}>Creative</MenuItem>
+                                            <MenuItem value={30}>Corporate Professionals</MenuItem>
+                                            <MenuItem value={30}>Financial or Real Estate</MenuItem>
+                                            <MenuItem value={30}>Hospitality</MenuItem>
+                                            <MenuItem value={30}>IT and Engineering</MenuItem>
+                                            <MenuItem value={30}>Law or Public Sector</MenuItem>
+                                            <MenuItem value={30}>Manufacturing or Retail</MenuItem>
+                                            <MenuItem value={30}>Medical</MenuItem>
+                                            <MenuItem value={30}>Skilled Labour</MenuItem>
+                                            <MenuItem value={30}>Other or Unemployed</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={4}>
+                                    <TextField fullWidth required id="outlined-required" label="Employer Name" defaultValue="" />
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <TextField fullWidth required id="outlined-required" label="Employer Number" defaultValue="" />
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <TextField fullWidth required id="outlined-required" label="Employer Email" defaultValue="" />
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item xs={6}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateField required label="Date of Expiry" />
-                            </LocalizationProvider>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Grid item xs={6}><Typography variant={"body1"}>Time with Current Employer</Typography></Grid>
+                                    <Grid container spacing={2} style={{paddingTop: "5px"}}>
+                                        <Grid item xs={6}>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <TextField fullWidth required id="outlined-required" label="Years" defaultValue="" />
+                                            </LocalizationProvider>                                </Grid>
+                                        <Grid item xs={6}>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DateField required label="Months" />
+                                            </LocalizationProvider>                                </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Grid item xs={6}><Typography variant={"body1"}>After-tax Income</Typography></Grid>
+                                    <Grid container spacing={2} style={{paddingTop: "5px"}}>
+                                        <Grid item xs={6}>
+                                            <FormControl fullWidth>
+                                                <InputLabel id="demo-simple-select-label">Frequency of Income</InputLabel>
+                                                <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                    //value={age}
+                                                        label="Frequency of Income"
+                                                    //onChange={handleChange}
+                                                >
+                                                    <MenuItem value={10}>Monthly</MenuItem>
+                                                    <MenuItem value={20}>Fortnightly</MenuItem>
+                                                    <MenuItem value={20}>Weekly</MenuItem>
+                                                </Select>
+                                            </FormControl>                            </Grid>
+                                        <Grid item xs={6}>
+                                            <TextField fullWidth required id="outlined-required" label="Income" defaultValue="" />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </CardContent>
