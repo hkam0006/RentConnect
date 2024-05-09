@@ -142,9 +142,83 @@ export default function RenterApplication() {
     const steps = [
         'Personal Information',
         'ID Documents',
-        'Credit Assessment',
-        'Justification',
+        'Employment History',
+        'Supporting Documents',
     ];
+
+    function PersonalInformation() {
+        return (
+            <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
+                <CardContent>
+                    <Grid container spacing={2} direction={"column"}>
+                        <Grid item xs={12}><Typography variant={"h5"}>To provide the best chance of a successful application, please provide us with some information about yourself.</Typography></Grid>
+                        <Grid item xs={12}>
+                            <Box sx={{ display: "flex", justifyContent: 'space-between', p: 1 }}>
+                                <TextField required id="outlined-required" label="First Name" defaultValue="Hello World" />
+                                <TextField required id="outlined-required" label="Last Name" defaultValue="Hello World" />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DateField required label="Date of Birth" defaultValue={dayjs('2022-04-17')} />
+                                </LocalizationProvider>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    // card for providing ID documents
+    function IDDocuments() {
+        return (
+            <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
+                <CardContent>
+                    <Grid container spacing={2} direction={"column"}>
+                        <Grid item xs={12}><Typography variant={"h5"}>Thanks! Now moving onto your identification...</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"body"}>Note: RentConnect currently only supports Australian Drivers License.</Typography></Grid>
+                        <Grid item xs={6}>
+                            <TextField required id="outlined-required" label="License Number" defaultValue="" />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateField required label="Date of Expiry" />
+                            </LocalizationProvider>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    // card for providing employment history
+    function EmploymentHistory() {
+        return (
+            <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
+                <CardContent>
+                    <Grid container spacing={2} direction={"column"}>
+                        <Grid item xs={12}><Typography variant={"h5"}>Getting closer, now where have you previously worked?</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"body"}>For your application, RentConnect requires you to provide some information about your previous employment.</Typography></Grid>
+                        <Grid item xs={6}>
+                            <TextField required id="outlined-required" label="License Number" defaultValue="" />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateField required label="Date of Expiry" />
+                            </LocalizationProvider>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    function ApplicationForm() {
+        switch (stepperValue) {
+            case 0: return <PersonalInformation />
+            case 1: return <IDDocuments />
+            case 2: return <EmploymentHistory />
+            default: return <PersonalInformation />
+        }
+    }
 
     return (
         <React.Fragment>
@@ -235,17 +309,7 @@ export default function RenterApplication() {
 
                                     {/* card for the application to be filled out */}
                                     <Grid item xs>
-                                        <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
-                                            <CardContent>
-                                                <Box sx={{ display: "flex", justifyContent: 'space-between', p: 1 }}>
-                                                    <TextField required id="outlined-required" label="First Name" defaultValue="Hello World" />
-                                                    <TextField required id="outlined-required" label="Last Name" defaultValue="Hello World" />
-                                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                        <DateField required label="Date of Birth" defaultValue={dayjs('2022-04-17')} />
-                                                    </LocalizationProvider>
-                                                </Box>
-                                            </CardContent>
-                                        </Card>
+                                        <ApplicationForm />
                                     </Grid>
                                 </Grid>
                             </Grid>
