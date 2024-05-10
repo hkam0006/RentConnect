@@ -62,14 +62,17 @@ export default function PropertyList() {
 
   return (
     <div>
-      <NavigationMenu />
+      <NavigationMenu>
       <div style={{ padding: "20px", marginTop: "64px" }}>
         <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
           <PropertiesListItems
             properties={properties}
           />
         </Paper>
+        
       </div>
+      </NavigationMenu>
     </div>
+    
   )
 }
