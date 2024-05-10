@@ -12,6 +12,7 @@ import {CssBaseline, ThemeProvider} from "@mui/material";
 import PropertySearch from './components/property_search/PropertyGrid';
 import RentalProfile from './components/rental_profile/RentalProfile';
 import RenterApplication from './components/application_details/RenterApplication';
+import ReceivedApplication from './components/applications/manager/RecievedApplication';
 
 function App() {
     return (
@@ -30,7 +31,7 @@ function App() {
             <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
             <Route path='/search' element={<PropertySearch />} />
             <Route path='/renterapplication' element={<RenterApplication />} />
-            {/* <Route path='/MyApplication' element={<ReceivedApplication />} /> */}
+            <Route path='/MyApplication' element={<ReceivedApplication />} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -66,6 +67,9 @@ function Home() {
       </Link>
         <Link to="/renterapplication">
             <button>Go to Renter Application</button>
+        </Link>
+        <Link to="/MyApplication">
+            <button>Go to My Application</button>
         </Link>
     </div>
 
