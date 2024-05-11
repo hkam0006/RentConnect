@@ -109,17 +109,23 @@ export default function PropertySearch() {
                 <Stack direction={'row'} spacing={1} alignItems={"center"}>
                   <Stack direction='row' spacing={0.5} alignItems={"center"}>
                     <BedIcon />
-                    <Typography alignContent="center" fontWeight={700} variant='h6'>{item.property_bedroom_count}</Typography>
+                    <Typography alignContent="center" fontWeight={700} variant='h6'>
+                      {item.property_bedroom_count}
+                    </Typography>
                   </Stack>
                   <Divider orientation='vertical' />
                   <Stack direction='row' spacing={0.5} alignItems={"center"}>
                     <BathtubIcon />
-                    <Typography alignContent="center" fontWeight={700} variant='h6'>{item.property_bathroom_count}</Typography>
+                    <Typography alignContent="center" fontWeight={700} variant='h6'>
+                      {item.property_bathroom_count}
+                    </Typography>
                   </Stack>
                   <Divider orientation='vertical' />
                   <Stack direction='row' spacing={0.5} alignItems={"center"}>
                     <DirectionsCarIcon />
-                    <Typography alignContent="center" fontWeight={700} variant='h6'>{item.property_car_spot_count}</Typography>
+                    <Typography alignContent="center" fontWeight={700} variant='h6'>
+                      {item.property_car_spot_count}
+                    </Typography>
                   </Stack>
                   <Divider orientation='vertical' />
                   <Stack direction='row' spacing={0.2} alignItems={"center"}>

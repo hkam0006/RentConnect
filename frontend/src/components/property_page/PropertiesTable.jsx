@@ -13,6 +13,9 @@ import { useNavigate } from "react-router-dom"
 import { supabase } from '../../supabase';
 import { getApp } from 'firebase/app';
 
+const fullAddress = (number, name, type, suburb, state) => {
+  return `${number} ${name} ${type}, ${suburb}, ${state}`
+}
 
 export function PropertiesTable({ properties, handleAddProperties, propManagers, setProperties }) {
 
@@ -60,7 +63,15 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
             >
               <TableCell width={{ width: "fit-content" }}>
                 {/* <Card sx={{ padding: 2, }} > */}
-                <Typography variant='body' fontWeight={700}>{row.address}</Typography>
+                <Typography variant='body' fontWeight={700}>
+                  {fullAddress(
+                    row.property_street_number,
+                    row.property_street_name,
+                    row.property_street_type,
+                    row.property_suburb,
+                    row.property_state
+                  )}
+                </Typography>
                 <Stack direction='row' spacing={2} justifyContent="start" sx={{ width: "fit-content" }} >
                   <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.property_pictures[0]} alt='Stock Listing Image' />
                   <Stack>
