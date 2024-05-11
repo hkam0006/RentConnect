@@ -7,10 +7,12 @@ import PropertyDetails  from './components/property_page/PropertyDetails';
 import Contacts from './components/contacts/Contacts';
 import Application from './components/applications/Application';
 import Dashboard from './components/dashboard_page/Dashboard';
-import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant'
-import {CssBaseline, ThemeProvider} from "@mui/material"
+import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant';
+import {CssBaseline, ThemeProvider} from "@mui/material";
 import PropertySearch from './components/property_search/PropertyGrid';
-import RentalProfile from './components/rental_profile/RentalProfile'
+import RentalProfile from './components/rental_profile/RentalProfile';
+import RenterApplication from './components/application_details/RenterApplication';
+import ReceivedApplication from './components/applications/manager/RecievedApplication';
 
 function App() {
     return (
@@ -28,7 +30,8 @@ function App() {
             <Route path='/RentalProfile' element={<RentalProfile />}></Route>
             <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
             <Route path='/search' element={<PropertySearch />} />
-            {/* <Route path='/MyApplication' element={<ReceivedApplication />} /> */}
+            <Route path='/renterapplication' element={<RenterApplication />} />
+            <Route path='/MyApplication' element={<ReceivedApplication />} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -62,6 +65,12 @@ function Home() {
       <Link to="/RentalProfile">
         <button>Go to Rental Profile</button>
       </Link>
+        <Link to="/renterapplication">
+            <button>Go to Renter Application</button>
+        </Link>
+        <Link to="/MyApplication">
+            <button>Go to My Application</button>
+        </Link>
     </div>
 
   );

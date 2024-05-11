@@ -19,11 +19,11 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
           <TextField
             margin="dense"
             name="name"
-            label="Name"
+            label="Street"
             type="text"
             fullWidth
             variant="standard"
-            value={data.name}
+            value={data.street}
             onChange={handleInputChange}
           />
           <TextField

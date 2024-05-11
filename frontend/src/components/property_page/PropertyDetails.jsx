@@ -45,7 +45,8 @@ export default function PropertyDetails() {
 
     // Dummy property
     const [property, setProperty] = useState({
-        name: '1702/655 Chapel Street, South Yarra 3141',
+        street: '1702/655 Chapel Street',
+        suburb: 'South Yarra 3141',
         bedrooms: 2,
         bathrooms: 2,
         carSpots: 1,
@@ -105,24 +106,27 @@ export default function PropertyDetails() {
                         </Stack>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2} sx={{height: '400px'}}>
-                        <Grid item xs={6}>
+                    <Grid container spacing={2} sx={{maxHeight: '510px'}}>
+                        <Grid item xs={4}>
                             <Typography variant="h4" gutterBottom>
-                                {property.name}
+                                {property.street}
+                            </Typography>
+                            <Typography variant="h5" gutterBottom> 
+                                {property.suburb}
                             </Typography>
                             <Box>
-                                <Typography variant="h6">
+                                <Typography variant="h7" sx={{ mt: 5 }}>
                                     {property.type}
                                 </Typography>
-                                <Typography sx={{ mt: 8 }} variant="h6">
+                                <Typography sx={{ mt: 5 }} variant="h6">
                                     <BedIcon /> {property.bedrooms} <BathtubIcon /> {property.bathrooms} <DriveEtaIcon /> {property.carSpots} <SquareFootIcon /> {property.squareMetres}m²
                                 </Typography>
-                                <Typography sx={{ mt: 5 }} variant="h5">
-                                ${property.price} per week
+                                <Typography sx={{ mt: 15 }} variant="h5">
+                                    ${property.price} per week
                                 </Typography>
                             </Box>
                         </Grid>
-                        <Grid item xs={6} id="photos">
+                        <Grid item xs={8} id="photos">
                             <ImageCarousel images={property.listingImages}/>
                         </Grid>
                     </Grid>
