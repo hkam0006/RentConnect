@@ -5,6 +5,8 @@ The data returns as an array of objects, the objects are the rows from the table
 ## How to use the queries
 Call the function to get the data:
 '''
+import useGetPropertyByID from "../../queries/property/useGetPropertyByID"
+
 const property_data = useGetPropertyByID("cf96fd08-1903-4a93-95a9-51c675f9ff41");
 '''
 
