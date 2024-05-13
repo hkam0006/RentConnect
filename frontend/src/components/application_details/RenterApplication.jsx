@@ -18,7 +18,7 @@ import Paper from "@mui/material/Paper";
 import {styled} from "@mui/material/styles";
 import CardHeader from "@mui/material/CardHeader";
 import defaultImageUrl from "../dashboard_page/house_default.jpg";
-import {useState} from "react";
+import {useEffect, useReducer, useState} from "react";
 import BedIcon from "@mui/icons-material/Bed";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import DriveEtaIcon from "@mui/icons-material/DriveEta";
@@ -76,14 +76,21 @@ export default function RenterApplication() {
         if (newStepperValue === 0) { changeToCloseButton() }
     }
 
+    // react hook to force update if required
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
+
     // setting values and functions for primary button
     const [primaryButtonNextState, setPrimaryButtonNextState] = React.useState(true);
     const [primaryButtonLabel, setPrimaryButtonLabel] = React.useState("Next");
     const primaryButton = () => {
-        if (primaryButtonNextState) {
-            progressApplication();
+        if (dataValidation()) {
+            if (primaryButtonNextState) {
+                progressApplication();
+            } else {
+                handleClose();
+            }
         } else {
-            handleClose();
+            forceUpdate();
         }
     }
     const changeToApplyButton = () => {
@@ -93,6 +100,16 @@ export default function RenterApplication() {
     const changeToNextButton = () => {
         setPrimaryButtonNextState(true);
         setPrimaryButtonLabel("Next");
+    }
+
+    function dataValidation() {
+        switch (stepperValue) {
+            case 0: return personalInformationValidation()
+            //case 1: return <IDDocuments />
+            //case 2: return <EmploymentHistory />
+            //case 3: return <SupportingDocuments />
+            default: return false;
+        }
     }
 
     // setting values and functions for secondary button
@@ -138,6 +155,39 @@ export default function RenterApplication() {
         description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     });
 
+    const [applicant, setApplicant] = React.useState({
+        first_name: "",
+        last_name: "",
+        date_of_birth: dayjs('2002-04-17'),
+        mobile: "",
+        email: "",
+        license_number: "",
+        license_expiry: dayjs('2034-01-04'),
+        industry: "",
+        occupation: "",
+        employer_name: "",
+        employer_contact: "",
+        employer_email: "",
+        employment_time: 5.3,
+        annual_income: 80000,
+    });
+
+    const [personalInformation, setPersonalInformation] = React.useState({
+        first_name: "John",
+        last_name: "Smith",
+        date_of_birth: dayjs('2002-04-17'),
+        mobile: "0499999999",
+        email: "john.smith@example.com",
+    });
+
+    const [personalInformationErrors, setPersonalInformationErrors] = React.useState({
+        first_name: false,
+        last_name: false,
+        date_of_birth: false,
+        mobile: false,
+        email: false,
+    });
+
     // stepper string values
     const steps = [
         'Personal Information',
@@ -146,7 +196,14 @@ export default function RenterApplication() {
         'Supporting Documents',
     ];
 
-    function PersonalInformation() {
+    function PersonalInformation({formData, onFormChange, formErrors}) {
+        const handleChange = (e) => {
+            const { name, value } = e.target;
+            // Update form data
+            onFormChange({ ...formData, [name]: value }, personalInformationValidation());
+            // run test
+        };
+
         return (
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
@@ -155,14 +212,31 @@ export default function RenterApplication() {
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required id="outlined-required" label="First Name" defaultValue="Hello" />
+                                    <TextField fullWidth required
+                                               name="first_name"
+                                               id="outlined-required"
+                                               label="First Name"
+                                               defaultValue={formData.first_name}
+                                               onBlur={handleChange}
+                                               error={formErrors.first_name}
+                                    />
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required id="outlined-required" label="Last Name" defaultValue="World" />
+                                    <TextField fullWidth required
+                                               name="last_name" id="outlined-required"
+                                               label="Last Name" defaultValue={formData.last_name}
+                                               onBlur={handleChange}
+                                               error={formErrors.last_name}
+                                    />
                                 </Grid>
                                 <Grid item xs={4}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DateField required label="Date of Birth" defaultValue={dayjs('2002-04-17')} format="DD/MM/YYYY" />
+                                        <DateField required
+                                                   name="date_of_birth" label="Date of Birth"
+                                                   defaultValue={formData.date_of_birth} format="DD/MM/YYYY"
+                                                   onBlur={handleChange}
+                                                   error={formErrors.date_of_birth}
+                                        />
                                     </LocalizationProvider>
                                 </Grid>
                             </Grid>
@@ -170,10 +244,20 @@ export default function RenterApplication() {
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
-                                    <TextField fullWidth required id="outlined-required" label="Employer Name" defaultValue="0456375634" />
+                                    <TextField fullWidth required
+                                               name="mobile" id="outlined-required"
+                                               label="Mobile Number" defaultValue={formData.mobile}
+                                               onBlur={handleChange}
+                                               error={formErrors.mobile}
+                                    />
                                 </Grid>
                                 <Grid item xs={6}>
-                                    <TextField fullWidth required id="outlined-required" label="Email Address" defaultValue="hello.world@example.com" />
+                                    <TextField fullWidth required
+                                               name="email" id="outlined-required"
+                                               label="Email Address" defaultValue={formData.email}
+                                               onBlur={handleChange}
+                                               error={formErrors.email}
+                                    />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -181,6 +265,52 @@ export default function RenterApplication() {
                 </CardContent>
             </Card>
         );
+    }
+
+    function handlePersonalInformationChange(newData, callback) {
+        setPersonalInformation(newData);
+
+        if (callback && typeof callback === 'function') {
+            callback();
+        }
+    }
+
+    function personalInformationValidation() {
+        if (personalInformation.first_name.trim() === "") {
+            personalInformationErrors.first_name = true;
+            return false;
+        } else {
+            personalInformationErrors.first_name = false;
+        }
+
+        if (personalInformation.last_name.trim() === "") {
+            personalInformationErrors.last_name = true;
+            return false;
+        } else {
+            personalInformationErrors.last_name = false;
+        }
+
+        if (personalInformation.date_of_birth >= dayjs()) {
+            personalInformationErrors.date_of_birth = true;
+            return false;
+        } else {
+            personalInformationErrors.date_of_birth = false;
+        }
+
+        if (!(/^04\d{8}$/.test(personalInformation.mobile))) { // all numbers, starts with 04 and 10 characters long
+            personalInformationErrors.mobile = true;
+            return false;
+        } else {
+            personalInformationErrors.mobile = false;
+        }
+
+        if (personalInformation.email.trim() === "") {
+            personalInformationErrors.email = true;
+            return false;
+        } else {
+            personalInformationErrors.email = false;
+            return true;
+        }
     }
 
     // card for providing ID documents
@@ -455,7 +585,7 @@ export default function RenterApplication() {
 
     function ApplicationForm() {
         switch (stepperValue) {
-            case 0: return <PersonalInformation />
+            case 0: return <PersonalInformation formData={personalInformation} onFormChange={handlePersonalInformationChange} formErrors={personalInformationErrors} />
             case 1: return <IDDocuments />
             case 2: return <EmploymentHistory />
             case 3: return <SupportingDocuments />
