@@ -158,11 +158,11 @@ export default function RenterApplication() {
     const [applicant, setApplicant] = React.useState({
         first_name: "",
         last_name: "",
-        date_of_birth: dayjs('2002-04-17'),
+        date_of_birth: "17/04/2002",
         mobile: "",
         email: "",
         license_number: "",
-        license_expiry: dayjs('2034-01-04'),
+        license_expiry: "04/01/2034",
         industry: "",
         occupation: "",
         employer_name: "",
@@ -233,7 +233,7 @@ export default function RenterApplication() {
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateField required
                                                    name="date_of_birth" label="Date of Birth"
-                                                   defaultValue={formData.date_of_birth} format="DD/MM/YYYY"
+                                                   defaultValue={dayjs(formData.date_of_birth,'DD/MM/YYYY')} format="DD/MM/YYYY"
                                                    onBlur={handleChange}
                                                    error={formErrors.date_of_birth}
                                         />
@@ -290,7 +290,7 @@ export default function RenterApplication() {
             personalInformationErrors.last_name = false;
         }
 
-        if (personalInformation.date_of_birth >= dayjs()) {
+        if (!(dayjs(personalInformation.date_of_birth,'DD/MM/YYYY').isBefore(dayjs()))) {
             personalInformationErrors.date_of_birth = true;
             return false;
         } else {
