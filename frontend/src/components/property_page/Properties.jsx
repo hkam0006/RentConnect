@@ -11,6 +11,7 @@ import ListingImageApt from './listing2.jpg'
 import useApp from '../../hooks/useApp';
 import AppLoader from './AppLoader';
 import { supabase } from '../../supabase';
+import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID';
 
 function createData(id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager) {
   return { id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager };
@@ -34,7 +35,7 @@ const propManagers = [
 const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
 
 export default function Properties() {
-  const { fetchProperties } = useApp();
+  const { fetchProperties } = useGetPropertiesByCompanyID(TEST_COMPANY_ID);
   const [properties, setProperties] = useState([]);
   const [unfiltered, setUnfiltered] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,23 +45,20 @@ export default function Properties() {
   const [dom, setDOM] = useState(0);
   const [leased, setLeased] = useState(0);
 
-  const getPropertyData = async () => {
-    const { data, error } = await supabase
-      .from("PROPERTY")
-      .select("*")
-      .eq("company_id", TEST_COMPANY_ID)
-
-    setProperties(data);
-    setError(data);
-    setUnfiltered(data);
-    setLoading(false)
-  }
-
   useEffect(() => {
-    getPropertyData()
+    (async () => {
+      const { data, error } = await fetchProperties()
+
+      setProperties(data);
+      setError(error);
+      setUnfiltered(data);
+      setLoading(false)
+    })();
   }, [])
 
   if (loading) return <AppLoader />
+
+
 
   return (
     <div>
