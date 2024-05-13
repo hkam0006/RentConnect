@@ -65,27 +65,27 @@ export default function Properties() {
   return (
     <div>
       <NavigationMenu>
-      <div style={{ padding: "20px", marginTop: "64px" }}>
-        <PropertyStatCards
-          totalApplications={totalApplications}
-          avgDOM={dom}
-          totalLeased={leased}
-        />
-        <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
-          <PropertySearch
-            filterProperties={setProperties}
-            unfilteredProperties={unfiltered}
-            propManagers={propManagers}
-            properties={properties}
+        <div style={{ padding: "20px", marginTop: "64px" }}>
+          <PropertyStatCards
+            totalApplications={totalApplications}
+            avgDOM={dom}
+            totalLeased={leased}
           />
-          <PropertiesTable
-            properties={properties}
-            handleAddProperties={setProperties}
-            propManagers={propManagers}
-            setProperties={setProperties}
-          />
-        </Paper>
-      </div>
+          <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
+            <PropertySearch
+              filterProperties={setProperties}
+              unfilteredProperties={unfiltered}
+              propManagers={propManagers}
+              properties={properties}
+            />
+            <PropertiesTable
+              properties={properties}
+              handleAddProperties={setProperties}
+              propManagers={propManagers}
+              setProperties={setProperties}
+            />
+          </Paper>
+        </div>
       </NavigationMenu>
     </div>
   )

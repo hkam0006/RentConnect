@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { Container, Stack,  Typography, Box, Paper, Grid, Divider, Card, CardContent, CardMedia, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Container, Stack, Typography, Box, Paper, Grid, Divider, Card, CardContent, CardMedia, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
@@ -19,6 +19,7 @@ import ImageCarousel from './ImageCarousel';
 import ListingImage from './listing.jpg'
 import ListingImageAppt from './listing2.jpg'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
+import { useParams } from 'react-router-dom';
 
 export default function PropertyDetails() {
 
@@ -71,6 +72,9 @@ export default function PropertyDetails() {
         }
     });
 
+    // property ID to query database.
+    const { propertyId } = useParams()
+
     // For editting modal
     const [open, setOpen] = useState(false);
     const [data, setData] = useState(property);
@@ -81,91 +85,91 @@ export default function PropertyDetails() {
     const handleSubmit = () => {
         console.log("Form data submitted: ", data);
         // Foer editting, handle database changes here
-        setProperty({...property, ...data});
+        setProperty({ ...property, ...data });
         handleClose();
     };
 
 
     return <>
         {open && (
-            <EditPropertyModal 
+            <EditPropertyModal
                 open={open}
-                handleClose={handleClose} 
+                handleClose={handleClose}
                 data={data}
                 setData={setData}
                 handleSubmit={handleSubmit}
             />
         )}
         <NavigationMenu>
-        <Container>
-            <Card>
-                <CardContent>
-                    <Grid container justifyContent='flex-end'>
-                        <Stack direction='row' spacing={1}>
-                            <Button xs={{ mt: 5, mr: 2 }} variant='outlined' size='medium' endIcon={<OpenInNewIcon />}>Apply Link</Button>
-                            <Button onClick={() => handleOpen()} xs={{ mt: 5 }} variant='outlined' size='medium' endIcon={<EditIcon />}>Edit</Button>
-                        </Stack>
-                    </Grid>
-                    <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2} sx={{height: '400px'}}>
-                        <Grid item xs={6}>
-                            <Typography variant="h4" gutterBottom>
-                                {property.name}
-                            </Typography>
-                            <Box>
-                                <Typography variant="h6">
-                                    {property.type}
+            <Container>
+                <Card>
+                    <CardContent>
+                        <Grid container justifyContent='flex-end'>
+                            <Stack direction='row' spacing={1}>
+                                <Button xs={{ mt: 5, mr: 2 }} variant='outlined' size='medium' endIcon={<OpenInNewIcon />}>Apply Link</Button>
+                                <Button onClick={() => handleOpen()} xs={{ mt: 5 }} variant='outlined' size='medium' endIcon={<EditIcon />}>Edit</Button>
+                            </Stack>
+                        </Grid>
+                        <Divider sx={{ mt: 2, mb: 2 }} />
+                        <Grid container spacing={2} sx={{ height: '400px' }}>
+                            <Grid item xs={6}>
+                                <Typography variant="h4" gutterBottom>
+                                    {property.name}
                                 </Typography>
-                                <Typography sx={{ mt: 8 }} variant="h6">
-                                    <BedIcon /> {property.bedrooms} <BathtubIcon /> {property.bathrooms} <DriveEtaIcon /> {property.carSpots} <SquareFootIcon /> {property.squareMetres}m²
+                                <Box>
+                                    <Typography variant="h6">
+                                        {property.type}
+                                    </Typography>
+                                    <Typography sx={{ mt: 8 }} variant="h6">
+                                        <BedIcon /> {property.bedrooms} <BathtubIcon /> {property.bathrooms} <DriveEtaIcon /> {property.carSpots} <SquareFootIcon /> {property.squareMetres}m²
+                                    </Typography>
+                                    <Typography sx={{ mt: 5 }} variant="h5">
+                                        ${property.price} per week
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={6} id="photos">
+                                <ImageCarousel images={property.listingImages} />
+                            </Grid>
+                        </Grid>
+                        <Divider sx={{ mt: 2, mb: 2 }} />
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <Typography variant="h5" gutterBottom>
+                                    Description
                                 </Typography>
-                                <Typography sx={{ mt: 5 }} variant="h5">
-                                ${property.price} per week
+                                <Typography>
+                                    {property.description}
                                 </Typography>
-                            </Box>
-                        </Grid>
-                        <Grid item xs={6} id="photos">
-                            <ImageCarousel images={property.listingImages}/>
-                        </Grid>
-                    </Grid>
-                    <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <Typography variant="h5" gutterBottom>
-                                Description
-                            </Typography>
-                            <Typography>
-                                {property.description}
-                            </Typography>
-                        </Grid>
-                        <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
-                        <Grid item xs>
-                            <Typography variant="h5" gutterBottom>
-                                Amenities
-                            </Typography>
-                            <Typography>
-                                <AmenitiesList
-                                    amenities={property.amenities}
-                                />
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                    <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Box>
-                                <Typography variant="h4">
-                                    Applications
+                            </Grid>
+                            <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
+                            <Grid item xs>
+                                <Typography variant="h5" gutterBottom>
+                                    Amenities
                                 </Typography>
-                                <PropertyApplicationsTable
-                                    applications={applications}
-                                />
-                            </Box>
+                                <Typography>
+                                    <AmenitiesList
+                                        amenities={property.amenities}
+                                    />
+                                </Typography>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </CardContent>
-            </Card>
-        </Container>
+                        <Divider sx={{ mt: 2, mb: 2 }} />
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Box>
+                                    <Typography variant="h4">
+                                        Applications
+                                    </Typography>
+                                    <PropertyApplicationsTable
+                                        applications={applications}
+                                    />
+                                </Box>
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+            </Container>
         </NavigationMenu>
     </>
 }
