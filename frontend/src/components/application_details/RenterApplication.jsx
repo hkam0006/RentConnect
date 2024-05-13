@@ -191,6 +191,136 @@ export default function RenterApplication() {
 
     // card for providing employment history
     function EmploymentHistory() {
+        const [occupationIndustry, setOccupationIndustry] = useState("");
+
+        function occupationIndustryChange(e) {
+            setOccupationIndustry(e.target.value);
+        }
+
+        function getOccupationList() {
+            const academicOptions = [
+                {label: "Historian", value: "historian"}, {label: "Lab Technician", value: "labtech"}, {label: "Librarian", value: "librarian"},
+                {label: "Researcher", value: "researcher"}, {label: "Scientist/Mathematician", value: "scientist"}, {label: "Teacher", value: "teacher"},
+                {label: "University Lecturer/Teacher", value: "lecturer"},
+            ];
+
+            const businessOptions = [
+                {label: "Account Manager", value: "accmanager"}, {label: "Admin/Data-entry/Secretary", value: "admin"}, {label: "Business Trainer", value: "trainer"},
+                {label: "Clerical Worker", value: "clerical"}, {label: "Consultant", value: "consultant"}, {label: "Customer Service Consultant", value: "customerservice"},
+                {label: "Instructor", value: "instructor"}, {label: "Sales/Marketing/Advertising", value: "sales"}, {label: "Sales Representative", value: "salesrep"},
+                {label: "Travel Agent/Consultant", value: "travel"},
+            ];
+
+            const creativeOptions = [
+                {label: "Actor/Performer", value: "actor"}, {label: "Architect", value: "architect"}, {label: "Artist/Designer/Illustrator", value: "artist"},
+                {label: "Journalist/Proofreader", value: "journalist"}, {label: "Landscape Architect", value: "landscape"}, {label: "Musician", value: "musician"},
+                {label: "Sound Tech", value: "soundtech"}, {label: "Writer/Editor", value: "writer"},
+            ];
+
+            const corporateOptions = [
+                {label: "Executive", value: "exec"}, {label: "HR/Recruitment", value: "hr"}, {label: "Manager/Supervisor", value: "manager"},
+                {label: "Public Relations", value: "pr"},
+            ];
+
+            const financialOptions = [
+                {label: "Accountant", value: "accountant"}, {label: "Building/Construction Manager", value: "building"}, {label: "Bursar", value: "bursar"},
+                {label: "Caretaker/Janitor", value: "caretaker"}, {label: "Insurance/Banking", value: "insurance"}, {label: "Real Estate/Property", value: "realestate"},
+            ];
+
+            const hospitalityOptions = [
+                {label: "Baker/Pastry Cook/Chef", value: "chef"}, {label: "Catering/Restaurant Manager", value: "catering"}, {label: "Dishwasher/Kitchenhand", value: "dishwasher"},
+                {label: "Hospitality", value: "hospitality"}, {label: "Hotel Manager/Supervisor", value: "hotelmanager"},
+            ];
+
+            const itOptions = [
+                {label: "Electrical/Electronic Engineer", value: "elecengineer"}, {label: "Engineer", value: "engineer"}, {label: "IT Professional", value: "itprof"},
+                {label: "Maintenance Engineer", value: "maintenance"},
+            ];
+
+            const lawOptions = [
+                {label: "Barrister/Solicitor", value: "barrister"}, {label: "Coroner/Judge/Magistrate", value: "coroner"}, {label: "Customs Agent", value: "customs"},
+                {label: "Defence Forces", value: "defence"}, {label: "Fire Brigade/Police", value: "firepolice"}, {label: "Legal Officer", value: "legalofficer"},
+                {label: "Politician", value: "politician"}, {label: "Public Servant", value: "publicservant"}, {label: "Safety Inspector", value: "inspector"},
+                {label: "Security Services/Officer", value: "security"}, {label: "Social Worker", value: "socialworker"},
+            ];
+
+            const manufacturingOptions = [
+                {label: "Assembler", value: "assembler"}, {label: "Cashier", value: "cashier"}, {label: "Driver/Operator", value: "driver"},
+                {label: "Importer/Exporter", value: "importexport"}, {label: "Labour/Factory Worker/Process Worker", value: "labour"}, {label: "Logistics", value: "logistics"},
+                {label: "Production", value: "production"}, {label: "Retail/Small Business Manager", value: "retailmanager"}, {label: "Wholesale Manager", value: "wholesale"},
+            ];
+
+            const medicalOptions = [
+                {label: "Ambulance Officer/Manager", value: "ambulance"}, {label: "Doctor/Specialist/Surgeon", value: "doctor"}, {label: "Medical Lab Tech", value: "medicallab"},
+                {label: "Nurse/Midwife", value: "nurse"}, {label: "Pharmacist", value: "pharmacist"}, {label: "Veterinarian", value: "vet"},
+            ];
+
+            const labourOptions = [
+                {label: "Air Traffic Controller", value: "atc"}, {label: "Butcher/Smallgoods", value: "butcher"}, {label: "Childcare/Youth Worker", value: "childcare"},
+                {label: "Construction Worker", value: "construction"}, {label: "Farmer", value: "farmer"}, {label: "Gardener/Landscaper", value: "gardener"},
+                {label: "Greenkeeper/Groundsperson", value: "greenkeeper"}, {label: "Mechanic", value: "mechanic"}, {label: "Nursery and Garden Labourer", value: "nursery"},
+                {label: "Tradesperson", value: "trades"}, {label: "Translator", value: "translator"},
+            ];
+
+            const otherOptions = [
+                {label: "Home Duties", value: "homeduties"}, {label: "Professional Sportsperson", value: "sports"}, {label: "Retired", value: "retired"},
+                {label: "Self-Employed", value: "selfemployed"}, {label: "Sole Trader", value: "soletrader"}, {label: "Student", value: "student"},
+                {label: "Unemployed", value: "unemployed"}, {label: "Volunteer Work", value: "volunteer"},
+            ];
+
+            switch (occupationIndustry) {
+                case "academic":
+                    return academicOptions;
+                case "business":
+                    return businessOptions;
+                case "creative":
+                    return creativeOptions;
+                case "corporate":
+                    return corporateOptions;
+                case "financial":
+                    return financialOptions;
+                case "hospitality":
+                    return hospitalityOptions;
+                case "it":
+                    return itOptions;
+                case "law":
+                    return lawOptions;
+                case "manufacturing":
+                    return manufacturingOptions;
+                case "medical":
+                    return medicalOptions;
+                case "labour":
+                    return labourOptions;
+                case "other":
+                    return otherOptions;
+                default:
+                    return otherOptions;
+            }
+        }
+
+        // generates the select form for the occupation select
+        function OccupationSelect() {
+
+            if (occupationIndustry === "") {
+                return <Select disabled label={"Occupation"}></Select>
+            } else {
+                const occupationList = getOccupationList();
+
+                return (
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Occupation"
+                        //onChange={handleChange}
+                    >
+                        {occupationList.map((option) => (
+                            <MenuItem value={option.value}>{option.label}</MenuItem>
+                        ))}
+                    </Select>
+                );
+            }
+        }
+
         return (
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
@@ -205,48 +335,29 @@ export default function RenterApplication() {
                                         <Select
                                             labelId="demo-simple-select-label"
                                             id="demo-simple-select"
-                                            //value={age}
+                                            //value={occupationIndustry}
                                             label="Industry"
-                                            //onChange={handleChange}
+                                            onChange={occupationIndustryChange}
                                         >
-                                            <MenuItem value={10}>Academic Research</MenuItem>
-                                            <MenuItem value={20}>Business Services</MenuItem>
-                                            <MenuItem value={20}>Creative</MenuItem>
-                                            <MenuItem value={30}>Corporate Professionals</MenuItem>
-                                            <MenuItem value={30}>Financial or Real Estate</MenuItem>
-                                            <MenuItem value={30}>Hospitality</MenuItem>
-                                            <MenuItem value={30}>IT and Engineering</MenuItem>
-                                            <MenuItem value={30}>Law or Public Sector</MenuItem>
-                                            <MenuItem value={30}>Manufacturing or Retail</MenuItem>
-                                            <MenuItem value={30}>Medical</MenuItem>
-                                            <MenuItem value={30}>Skilled Labour</MenuItem>
-                                            <MenuItem value={30}>Other or Unemployed</MenuItem>
+                                            <MenuItem value={"academic"}>Academic Research</MenuItem>
+                                            <MenuItem value={"business"}>Business Services</MenuItem>
+                                            <MenuItem value={"creative"}>Creative</MenuItem>
+                                            <MenuItem value={"corporate"}>Corporate Professionals</MenuItem>
+                                            <MenuItem value={"financial"}>Financial or Real Estate</MenuItem>
+                                            <MenuItem value={"hospitality"}>Hospitality</MenuItem>
+                                            <MenuItem value={"it"}>IT and Engineering</MenuItem>
+                                            <MenuItem value={"law"}>Law or Public Sector</MenuItem>
+                                            <MenuItem value={"manufacturing"}>Manufacturing or Retail</MenuItem>
+                                            <MenuItem value={"medical"}>Medical</MenuItem>
+                                            <MenuItem value={"labour"}>Skilled Labour</MenuItem>
+                                            <MenuItem value={"other"}>Other or Unemployed</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">Occupation</InputLabel>
-                                        <Select disabled
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            //value={age}
-                                            label="Occupation"
-                                            //onChange={handleChange}
-                                        >
-                                            <MenuItem value={10}>Academic Research</MenuItem>
-                                            <MenuItem value={20}>Business Services</MenuItem>
-                                            <MenuItem value={20}>Creative</MenuItem>
-                                            <MenuItem value={30}>Corporate Professionals</MenuItem>
-                                            <MenuItem value={30}>Financial or Real Estate</MenuItem>
-                                            <MenuItem value={30}>Hospitality</MenuItem>
-                                            <MenuItem value={30}>IT and Engineering</MenuItem>
-                                            <MenuItem value={30}>Law or Public Sector</MenuItem>
-                                            <MenuItem value={30}>Manufacturing or Retail</MenuItem>
-                                            <MenuItem value={30}>Medical</MenuItem>
-                                            <MenuItem value={30}>Skilled Labour</MenuItem>
-                                            <MenuItem value={30}>Other or Unemployed</MenuItem>
-                                        </Select>
+                                        <OccupationSelect />
                                     </FormControl>
                                 </Grid>
                             </Grid>
