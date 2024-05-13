@@ -151,15 +151,31 @@ export default function RenterApplication() {
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
                     <Grid container spacing={2} direction={"column"}>
-                        <Grid item xs={12}><Typography variant={"h5"}>To provide the best chance of a successful application, please provide us with some information about yourself.</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"h5"}>To begin, tell us a bit about yourself.</Typography></Grid>
                         <Grid item xs={12}>
-                            <Box sx={{ display: "flex", justifyContent: 'space-between', p: 1 }}>
-                                <TextField required id="outlined-required" label="First Name" defaultValue="Hello World" />
-                                <TextField required id="outlined-required" label="Last Name" defaultValue="Hello World" />
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DateField required label="Date of Birth" defaultValue={dayjs('2022-04-17')} />
-                                </LocalizationProvider>
-                            </Box>
+                            <Grid container spacing={2}>
+                                <Grid item xs={4}>
+                                    <TextField fullWidth required id="outlined-required" label="First Name" defaultValue="Hello" />
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <TextField fullWidth required id="outlined-required" label="Last Name" defaultValue="World" />
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DateField required label="Date of Birth" defaultValue={dayjs('2002-04-17')} format="DD/MM/YYYY" />
+                                    </LocalizationProvider>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth required id="outlined-required" label="Employer Name" defaultValue="0456375634" />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <TextField fullWidth required id="outlined-required" label="Email Address" defaultValue="hello.world@example.com" />
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -421,11 +437,28 @@ export default function RenterApplication() {
         );
     }
 
+    function SupportingDocuments() {
+        return (
+            <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
+                <CardContent>
+                    <Grid container spacing={2} direction={"column"}>
+                        <Grid item xs={12}><Typography variant={"h5"}>Almost done! Just the final touches...</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"body"}>If you have any additional supporting documents, enter the URL below.</Typography></Grid>
+                        <Grid item xs={12}>
+                            <TextField fullWidth required id="outlined-required" label="Document URL" defaultValue="" />
+                        </Grid>
+                    </Grid>
+                </CardContent>
+            </Card>
+        );
+    }
+
     function ApplicationForm() {
         switch (stepperValue) {
             case 0: return <PersonalInformation />
             case 1: return <IDDocuments />
             case 2: return <EmploymentHistory />
+            case 3: return <SupportingDocuments />
             default: return <PersonalInformation />
         }
     }
