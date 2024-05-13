@@ -12,6 +12,7 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import Button from '@mui/material/Button';
+import NavigationMenu from '../navigation_menu/NavigationMenus';
 
 function createData(name, phonenumber, email, lastcontact) {
   return {
@@ -189,6 +190,7 @@ function Contacts() {
   );
 
   return (
+    <NavigationMenu>
     <Box sx={{ width: '100%', flexDirection: 'column'}}>
         <Box>
             <h1>Contacts</h1>
@@ -249,6 +251,7 @@ function Contacts() {
         />
       </Paper>
     </Box>
+    </NavigationMenu>
   );
 }
 

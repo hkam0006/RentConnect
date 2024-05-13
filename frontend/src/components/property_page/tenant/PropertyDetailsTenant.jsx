@@ -15,6 +15,7 @@ import ImageCarousel from '../ImageCarousel';
 // Demo Images
 import ListingImage from '../listing.jpg'
 import ListingImageAppt from '../listing2.jpg'
+import NavigationMenu from '../../navigation_menu/NavigationMenus';
 
 export default function PropertyDetailsTenant() {
 
@@ -85,6 +86,7 @@ export default function PropertyDetailsTenant() {
                 handleSubmit={handleInspectionRequestSubmit}
             />
         )}
+        <NavigationMenu>
         <Container>
             <Card>
                 <CardContent>
@@ -173,6 +175,7 @@ export default function PropertyDetailsTenant() {
                 </CardContent>
             </Card>
         </Container>
+        </NavigationMenu>
     </>
 }
 

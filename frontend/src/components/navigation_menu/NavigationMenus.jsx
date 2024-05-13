@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SideDrawer from "./SideDrawer";
 import { Link, useNavigate } from 'react-router-dom';
+import logo from "./RENTCONNECT-2.png"
 
 const drawerWidth = 200;
 
@@ -29,13 +30,9 @@ export default function NavigationMenu({ children }) {
         <Box sx={{ display: 'flex' }}>
             <AppBar sx={{backgroundColor: 'white', color: 'black', zIndex: 1201}}>
                 <Toolbar>
-                    <a href='/'>
-                        <Logo
-                            alt=""
-                            width="50"
-                            height="50"
-                            className="d-inline-block align-top"
-                        />
+                    <a href='/'style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+                        
+                    <img src={logo} alt="Logo" width="70" height="70" />
                     </a>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left', paddingRight: '10px' }}>
                         <a href='/' style={{ textDecoration: "none", color: "inherit" }} >
