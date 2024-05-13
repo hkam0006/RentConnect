@@ -15,6 +15,7 @@ import ImageCarousel from '../ImageCarousel';
 // Demo Images
 import ListingImage from '../listing.jpg'
 import ListingImageAppt from '../listing2.jpg'
+import NavigationMenu from '../../navigation_menu/NavigationMenus';
 
 export default function PropertyDetailsTenant() {
 
@@ -221,5 +222,6 @@ function AmenitiesList({ amenities }) {
                 ))}
             </Grid>
         </Grid>
+        
     );
 }

@@ -4,6 +4,7 @@ import { app } from '../../firebaseConfig'
 import { getFirestore, collection, doc, getDoc, getDocs, arrayUnion, updateDoc } from 'firebase/firestore/lite'
 import { List, ListItem, Typography, CircularProgress, Grid, Paper, Button, TextField, Box, Divider } from '@mui/material'
 import { Chat, Check, Close, Star, StarBorder } from '@mui/icons-material'
+import NavigationMenu from '../navigation_menu/NavigationMenus'
 
 function ApplicationDetails() {
     const [applicationData, setApplicationData] = useState(null)
@@ -202,7 +203,8 @@ function ApplicationDetails() {
             return <CircularProgress />
         } else {
             return (
-                <Box className='content' sx={{ width: '100%'}}>
+                <div>
+                <Box className='content' sx={{ width: '100%',  marginLeft: '200px'}}>
                     <Paper className='paper' sx={{ padding: 2, width: '100%', height: '100%', marginTop: '30px' }} elevation={10}>
                         <Grid container alignItems='center'>
                             <Grid item xs={6}>
@@ -782,6 +784,7 @@ function ApplicationDetails() {
                         ))}
                     </Paper>
                 </Box>
+                </div>
             )
         }
     }
@@ -806,7 +809,9 @@ function ApplicationDetails() {
     }
 
     return (
-        <Grid container spacing={0}>
+        <div>
+        <NavigationMenu>
+        <Grid container spacing={0} sx={{ marginTop: '64px' }}>
             <Grid item xs={3}>
                 <Outline />
             </Grid>
@@ -849,6 +854,9 @@ function ApplicationDetails() {
                 </Box>
             </Grid>
         </Grid>
+        </NavigationMenu>
+        </div>
+
     )
 }
 

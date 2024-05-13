@@ -64,7 +64,7 @@ export default function Properties() {
 
   return (
     <div>
-      <NavigationMenu />
+      <NavigationMenu>
       <div style={{ padding: "20px", marginTop: "64px" }}>
         <PropertyStatCards
           totalApplications={totalApplications}
@@ -86,6 +86,7 @@ export default function Properties() {
           />
         </Paper>
       </div>
+      </NavigationMenu>
     </div>
   )
 }
