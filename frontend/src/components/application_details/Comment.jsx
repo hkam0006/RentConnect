@@ -8,7 +8,7 @@ function Comment({ comment, setComment, showComment, commentPosition, comments, 
     return (
         <Box>
             {showComment && (
-                <Box style={{ position: 'absolute', top: commentPosition + 'px', width: '22%' }}>
+                <Box style={{ position: 'absolute', top: commentPosition + 'px', width: '21%' }}>
                     {comments.map((singleComment, index) =>
                         <CommentContent key={`comment-${index}`} comment={singleComment} />
                     )}

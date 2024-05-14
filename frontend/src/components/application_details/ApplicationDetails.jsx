@@ -147,7 +147,8 @@ function ApplicationDetails() {
     
     return (
         <Box sx={{ padding: 2 }}>
-            <Grid container>
+            <NavigationMenu />
+            <Grid container sx={{ marginTop: '64px', marginLeft: '190px', width: 'calc(100% - 190px)' }}>
                 <Grid item xs={3}>
                     <Outline renter={renter}/>
                 </Grid>
