@@ -8,7 +8,7 @@ const useGetPetsByRenterID = (renter_id) =>{
     useEffect(() => {
       const fetchPets = async () => {
         const { data, error } = await supabase
-        .from("RENTER")
+        .from("PET")
         .select("*")
         .eq("renter_id", renter_id);
   
@@ -20,7 +20,7 @@ const useGetPetsByRenterID = (renter_id) =>{
       };
   
       fetchPets();
-    }, []);
+    }, [renter_id]);
       return pets;
     };
 

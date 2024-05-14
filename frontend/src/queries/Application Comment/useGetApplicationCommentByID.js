@@ -21,7 +21,7 @@ const useGetApplicationCommentByID = (property_id, renter_id) =>{
       };
   
       fetchApplicationComments();
-    }, []);
+    }, [property_id, renter_id]);
       return application_comments;
     };
 
