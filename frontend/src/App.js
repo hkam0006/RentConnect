@@ -11,7 +11,7 @@ import PropertyDetailsTenant from './components/property_page/tenant/PropertyDet
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import PropertySearch from './components/property_search/PropertyGrid';
 import RentalProfile from './components/rental_profile/RentalProfile';
-import RenterApplication from './components/application_details/RenterApplication';
+import RenterApplication from './components/renter_application/RenterApplication';
 import ReceivedApplication from './components/applications/manager/RecievedApplication';
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='Application' element={<Application />} />
-            <Route path='/ApplicationDetails/:applicationId' element={<ApplicationDetails />} />
+            <Route path='/ApplicationDetails/:companyId/:propertyId/:renterId' element={<ApplicationDetails />} />
             <Route path='/property' element={<Properties />} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
             <Route path='/contacts' element={<Contacts />}/>
@@ -42,10 +42,10 @@ function Home() {
   return (
     <div>
       <Link to="/Application">
-        <button>Go to Applications Page"</button>
+        <button>Go to Applications Page</button>
       </Link>
-      <Link to="/ApplicationDetails/testID">
-        <button>Go to ApplicationDetails with ID "testID"</button>
+      <Link to="/ApplicationDetails/1b9500a6-ac39-4c6a-971f-766f85b41d78/cf96fd08-1903-4a93-95a9-51c675f9ff41/66de5be5-e19c-4495-9442-a089eff74af2">
+        <button>Go to ApplicationDetails</button>
       </Link>
       <Link to="/property">
         <button>Go to Properties</button>
