@@ -320,8 +320,9 @@ export default function RenterApplication() {
     }
 
     return (
+        <div>
+            <NavigationMenu>
         <React.Fragment>
-            <NavigationMenu />
             <Grid
                 container
                 spacing={2}
@@ -421,5 +422,7 @@ export default function RenterApplication() {
                 </Dialog>
             </Grid>
         </React.Fragment>
+        </NavigationMenu>
+        </div>
     );
 }

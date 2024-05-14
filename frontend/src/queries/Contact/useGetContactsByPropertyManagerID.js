@@ -21,7 +21,7 @@ const useGetContactsByPropertyManagerID = (property_manager_id) =>{
   
       fetchContacts();
     }, []);
-      return property;
+      return contacts;
     };
 
 export default useGetContactsByPropertyManagerID;

@@ -15,6 +15,7 @@ import useGetPreviousTenanciesByRenterID from '../../queries/Previous Tenancy/us
 import useGetRenterEmploymentsByRenterID from '../../queries/Renter Employment/useGetRenterEmploymentsByRenterID'
 import useGetPetsByRenterID from '../../queries/Pet/useGetPetsByRenterID'
 import useGetRenterCommentsByRenterID from '../../queries/Renter Comment/useGetRenterCommentsByRenterID'
+import NavigationMenu from '../navigation_menu/NavigationMenus'
 
 function ApplicationDetails() {
     const { companyId, propertyId, renterId } = useParams()

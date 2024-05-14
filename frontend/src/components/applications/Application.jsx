@@ -71,7 +71,7 @@ const Application = () => {
 
   return (
     <div>
-      <NavigationMenu/>
+      <NavigationMenu>
       <Grid
         container
         spacing={2}
@@ -139,6 +139,7 @@ const Application = () => {
           </Grid>
         ))}
       </Grid>
+      </NavigationMenu>
     </div>
   );
 };
