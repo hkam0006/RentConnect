@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Stack, Typography, Box, Paper, Grid, Divider, Card, CardContent, CardMedia, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
@@ -20,6 +20,7 @@ import ListingImage from './listing.jpg'
 import ListingImageAppt from './listing2.jpg'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
+import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 
 export default function PropertyDetails() {
 
@@ -72,8 +73,7 @@ export default function PropertyDetails() {
         }
     });
 
-    // property ID to query database.
-    const { propertyId } = useParams()
+
 
     // For editting modal
     const [open, setOpen] = useState(false);
@@ -83,25 +83,57 @@ export default function PropertyDetails() {
 
     // Edit modal submit functionality
     const handleSubmit = () => {
-        console.log("Form data submitted: ", data);
-        // Foer editting, handle database changes here
+
+        // For editting, handle database changes here
         setProperty({ ...property, ...data });
         handleClose();
     };
 
+    const initialData = {
+        property_street_number: '',
+        property_street_name: '',
+        property_street_type: '',
+        property_type: '',
+        property_rent: '',
+        property_description: '',
+        property_amenities: ''
+      };
+
+
+    // property ID to query database.
+    const { propertyId } = useParams()
+    const { fetchProperty } = useGetPropertyByPropertyID(propertyId)
+    const [prop, setProp] = useState()
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+
+    useEffect (() => {
+        (async () => {
+            const { data, error } = await fetchProperty()
+
+            setProp(data[0]);
+            setError(error);
+            setLoading(false);
+        })();
+    }, []);
+
+    if (!prop) {
+        return <Typography>No property found.</Typography>
+    }
 
     return <>
         {open && (
             <EditPropertyModal
                 open={open}
                 handleClose={handleClose}
-                data={data}
+                data={prop}
                 setData={setData}
                 handleSubmit={handleSubmit}
             />
         )}
         <NavigationMenu>
-            <Container>
+            <Container style={{ padding: '80px' }}>
                 <Card>
                     <CardContent>
                         <Grid container justifyContent='flex-end'>
@@ -114,22 +146,28 @@ export default function PropertyDetails() {
                         <Grid container spacing={2} sx={{ height: '400px' }}>
                             <Grid item xs={6}>
                                 <Typography variant="h4" gutterBottom>
-                                    {property.name}
+                                    {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
+                                </Typography>
+                                <Typography variant="h5" gutterBottom> 
+                                    {prop.property_suburb + ', ' + prop.property_state}
                                 </Typography>
                                 <Box>
                                     <Typography variant="h6">
-                                        {property.type}
+                                        {prop.property_type}
                                     </Typography>
                                     <Typography sx={{ mt: 8 }} variant="h6">
-                                        <BedIcon /> {property.bedrooms} <BathtubIcon /> {property.bathrooms} <DriveEtaIcon /> {property.carSpots} <SquareFootIcon /> {property.squareMetres}m²
+                                        <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
                                     </Typography>
                                     <Typography sx={{ mt: 5 }} variant="h5">
-                                        ${property.price} per week
+                                        ${'' + prop.property_rent} per week
+                                    </Typography>
+                                    <Typography sx={{ mt: 2 }}>
+                                        Available from: {prop.property_lease_start}
                                     </Typography>
                                 </Box>
                             </Grid>
                             <Grid item xs={6} id="photos">
-                                <ImageCarousel images={property.listingImages} />
+                                <ImageCarousel images={prop.property_pictures} />
                             </Grid>
                         </Grid>
                         <Divider sx={{ mt: 2, mb: 2 }} />
@@ -139,7 +177,7 @@ export default function PropertyDetails() {
                                     Description
                                 </Typography>
                                 <Typography>
-                                    {property.description}
+                                    {prop.property_description}
                                 </Typography>
                             </Grid>
                             <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
@@ -148,9 +186,7 @@ export default function PropertyDetails() {
                                     Amenities
                                 </Typography>
                                 <Typography>
-                                    <AmenitiesList
-                                        amenities={property.amenities}
-                                    />
+                                    {prop.property_amenities}
                                 </Typography>
                             </Grid>
                         </Grid>
