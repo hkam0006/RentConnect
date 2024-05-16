@@ -38,11 +38,6 @@ export default function NavigationMenu({ children }) {
                         <a href='/' style={{ textDecoration: "none", color: "inherit" }} >
                             RentConnect
                         </a>
-                        <span style={{ fontSize: "90%" }}>
-                            <a href="/property" style={{ textDecoration: 'none', color: 'inherit', padding: '20px' }}>
-                                Property
-                            </a>
-                        </span>
                     </Typography>
 
                     {auth && (

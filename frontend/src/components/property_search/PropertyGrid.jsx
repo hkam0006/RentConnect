@@ -8,6 +8,7 @@ import BedIcon from '@mui/icons-material/Bed';
 import { supabase } from '../../supabase';
 import { Bookmark, FilterList, Search, SquareFoot } from '@mui/icons-material';
 import AppLoader from '../property_page/AppLoader';
+import NavigationMenu from '../navigation_menu/NavigationMenus';
 
 
 const NoPropertiesFound = () => {
@@ -40,7 +41,9 @@ export default function PropertySearch() {
   }
 
   return (
+    <NavigationMenu>
     <Box sx={{ padding: 2, marginTop: "64px" }}>
+
       <Stack direction={'row'} spacing={2}>
         <TextField
           placeholder='Search properties...' fullWidth
@@ -141,6 +144,8 @@ export default function PropertySearch() {
           </Card>
         </Grid>)}
       </Grid> : <NoPropertiesFound />}
+      
     </Box>
+    </NavigationMenu>
   )
 }

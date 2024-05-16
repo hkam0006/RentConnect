@@ -113,6 +113,7 @@ export default function PropertyDetailsTenant() {
             />
         )}
         <Container>
+            <NavigationMenu>
             <Card>
                 <CardContent>
                     <Grid container justifyContent='flex-end'>
@@ -205,6 +206,7 @@ export default function PropertyDetailsTenant() {
                     </Grid>
                 </CardContent>
             </Card>
+            </NavigationMenu>
         </Container>
     </>
 }

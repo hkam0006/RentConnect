@@ -22,6 +22,8 @@ import HelpIcon from "@mui/icons-material/Help";
 import Dashboard from '../dashboard_page/Dashboard';
 import Properties from "../property_page/Properties";
 import Application from "../applications/Application";
+import SearchIcon from '@mui/icons-material/Search';
+
 const drawerWidth = 200;
 
 export default function SideDrawer() {
@@ -42,17 +44,10 @@ export default function SideDrawer() {
         <Box sx={{ overflow: "auto" }}>
           <List>
             {[
-              { text: "Dashboard", icon: <HomeIcon />, link: "/dashboard",  },
-              { text: "Messages", icon: <ChatIcon />, link: "/messages" },
-              { text: "Inspections", icon: <InspectionIcon />, link: "/inspections" },
-              { text: "Inspection Runs", icon: <InspectionRunsIcon />, link: "/inspection_runs" },
-              { text: "Applications", icon: <ApplicationsIcon />, link: "/Application" },
-              { text: "Properties", icon: <PropertiesIcon />, link: "/property" },
-              { text: "References", icon: <ReferencesIcon />, link: "/references" },
+              { text: "Properties", icon: <PropertiesIcon />, link: "/tenantProperty" },
+              { text: "Applications", icon: <ApplicationsIcon />, link: "/renterapplication" },
+              { text: "Search Property", icon: <SearchIcon />, link: "/search" },
               { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
-              { text: "Keys", icon: <KeysIcon />, link: "/keys" },
-              { text: "Add Property", icon: <AddPropertyIcon />, link: "/add_property" },
-              { text: "Help", icon: <HelpIcon />, link: "/help" },
             ].map((item) => (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton component={Link} to={item.link} sx={{ paddingRight: "8px" }}>
