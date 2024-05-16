@@ -689,10 +689,9 @@ export default function RenterApplication() {
         );
     }
 
-    /*
+
     function EmploymentHistoryValidation() {
-        if (applicant.)
-    } */
+    }
 
     function SupportingDocuments() {
         return (
