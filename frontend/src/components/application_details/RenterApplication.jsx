@@ -105,7 +105,7 @@ export default function RenterApplication() {
     function dataValidation() {
         switch (stepperValue) {
             case 0: return personalInformationValidation()
-            //case 1: return <IDDocuments />
+            case 1: return IDDocumentsValidation()
             //case 2: return <EmploymentHistory />
             //case 3: return <SupportingDocuments />
             default: return false;
@@ -156,12 +156,12 @@ export default function RenterApplication() {
     });
 
     const [applicant, setApplicant] = React.useState({
-        first_name: "",
-        last_name: "",
+        first_name: "John",
+        last_name: "Smith",
         date_of_birth: "17/04/2002",
-        mobile: "",
-        email: "",
-        license_number: "",
+        mobile: "0485767462",
+        email: "john.smith@example.com",
+        license_number: "dsfgdsfg",
         license_expiry: "04/01/2034",
         industry: "",
         occupation: "",
@@ -172,20 +172,17 @@ export default function RenterApplication() {
         annual_income: 80000,
     });
 
-    const [personalInformation, setPersonalInformation] = React.useState({
-        first_name: "John",
-        last_name: "Smith",
-        date_of_birth: dayjs('2002-04-17'),
-        mobile: "0499999999",
-        email: "john.smith@example.com",
-    });
-
     const [personalInformationErrors, setPersonalInformationErrors] = React.useState({
         first_name: false,
         last_name: false,
         date_of_birth: false,
         mobile: false,
         email: false,
+    });
+
+    const [IDDocumentErrors, setIDDocumentErrors] = React.useState({
+        license_number: false,
+        license_expiry: false,
     });
 
     // stepper string values
@@ -196,6 +193,15 @@ export default function RenterApplication() {
         'Supporting Documents',
     ];
 
+    function handleApplicantDataChange(newData, callback) {
+        setApplicant(newData);
+
+        if (callback && typeof callback === 'function') {
+            callback();
+        }
+    }
+
+    // functions for personal information section
     function PersonalInformation({formData, onFormChange, formErrors}) {
         const handleChange = (e) => {
             const { name, value } = e.target;
@@ -267,44 +273,36 @@ export default function RenterApplication() {
         );
     }
 
-    function handlePersonalInformationChange(newData, callback) {
-        setPersonalInformation(newData);
-
-        if (callback && typeof callback === 'function') {
-            callback();
-        }
-    }
-
     function personalInformationValidation() {
-        if (personalInformation.first_name.trim() === "") {
+        if (applicant.first_name.trim() === "") {
             personalInformationErrors.first_name = true;
             return false;
         } else {
             personalInformationErrors.first_name = false;
         }
 
-        if (personalInformation.last_name.trim() === "") {
+        if (applicant.last_name.trim() === "") {
             personalInformationErrors.last_name = true;
             return false;
         } else {
             personalInformationErrors.last_name = false;
         }
 
-        if (!(dayjs(personalInformation.date_of_birth,'DD/MM/YYYY').isBefore(dayjs()))) {
+        if (!(dayjs(applicant.date_of_birth,'DD/MM/YYYY').isBefore(dayjs()))) {
             personalInformationErrors.date_of_birth = true;
             return false;
         } else {
             personalInformationErrors.date_of_birth = false;
         }
 
-        if (!(/^04\d{8}$/.test(personalInformation.mobile))) { // all numbers, starts with 04 and 10 characters long
+        if (!(/^04\d{8}$/.test(applicant.mobile))) { // all numbers, starts with 04 and 10 characters long
             personalInformationErrors.mobile = true;
             return false;
         } else {
             personalInformationErrors.mobile = false;
         }
 
-        if (personalInformation.email.trim() === "") {
+        if (applicant.email.trim() === "") {
             personalInformationErrors.email = true;
             return false;
         } else {
@@ -313,8 +311,17 @@ export default function RenterApplication() {
         }
     }
 
+
+
     // card for providing ID documents
-    function IDDocuments() {
+    function IDDocuments({formData, onFormChange, formErrors}) {
+        const handleChange = (e) => {
+            const { name, value } = e.target;
+            // Update form data
+            onFormChange({ ...formData, [name]: value }, IDDocumentsValidation());
+            // run test
+        };
+
         return (
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
@@ -322,17 +329,45 @@ export default function RenterApplication() {
                         <Grid item xs={12}><Typography variant={"h5"}>Thanks! Now moving onto your identification...</Typography></Grid>
                         <Grid item xs={12}><Typography variant={"body"}>Note: RentConnect currently only supports Australian Drivers License.</Typography></Grid>
                         <Grid item xs={6}>
-                            <TextField required id="outlined-required" label="License Number" defaultValue="" />
+                            <TextField required
+                                       name="license_number"
+                                       id="outlined-required" label="License Number"
+                                       onBlur={handleChange}
+                                       defaultValue={formData.license_number}
+                                       error={formErrors.license_number}
+                            />
                         </Grid>
                         <Grid item xs={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateField required label="Date of Expiry" />
+                                <DateField required
+                                           name="license_expiry" label="Date of Expiry"
+                                           defaultValue={dayjs(formData.license_expiry,'DD/MM/YYYY')}
+                                           onBlur={handleChange}
+                                           error={formErrors.license_expiry}
+                                />
                             </LocalizationProvider>
                         </Grid>
                     </Grid>
                 </CardContent>
             </Card>
         );
+    }
+
+    function IDDocumentsValidation() {
+        if (!(/^\d+$/.test(applicant.license_number))) { // all numbers
+            IDDocumentErrors.license_number = true;
+            return false
+        } else {
+            IDDocumentErrors.license_number = false;
+        }
+
+        if (dayjs(applicant.license_expiry,'DD/MM/YYYY').isBefore(dayjs())) {
+            IDDocumentErrors.license_expiry = true;
+            return false;
+        } else {
+            IDDocumentErrors.license_expiry = false;
+            return true;
+        }
     }
 
     // card for providing employment history
@@ -585,8 +620,8 @@ export default function RenterApplication() {
 
     function ApplicationForm() {
         switch (stepperValue) {
-            case 0: return <PersonalInformation formData={personalInformation} onFormChange={handlePersonalInformationChange} formErrors={personalInformationErrors} />
-            case 1: return <IDDocuments />
+            case 0: return <PersonalInformation formData={applicant} onFormChange={handleApplicantDataChange} formErrors={personalInformationErrors} />
+            case 1: return <IDDocuments formData={applicant} onFormChange={handleApplicantDataChange} formErrors={IDDocumentErrors} />
             case 2: return <EmploymentHistory />
             case 3: return <SupportingDocuments />
             default: return <PersonalInformation />
