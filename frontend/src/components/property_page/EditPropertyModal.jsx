@@ -3,8 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } 
 
 function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
   
-  const handleInputChange = e => {
-    const { name, value } = e.target;
+  const handleInputChange = ({ target: { name, value } }) => {
     setData({
       ...data,
       [name]: value
@@ -18,42 +17,72 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
         <DialogContent>
           <TextField
             margin="dense"
-            name="name"
-            label="Street"
+            name="street_number"
+            label="Street Number"
             type="text"
             fullWidth
             variant="standard"
-            value={data.street}
+            value={data.property_street_number}
             onChange={handleInputChange}
           />
           <TextField
             margin="dense"
-            name="type"
-            label="Type"
+            name="street_name"
+            label="Street Name"
             type="text"
             fullWidth
             variant="standard"
-            value={data.type}
+            value={data.property_street_name}
             onChange={handleInputChange}
           />
           <TextField
             margin="dense"
-            name="price"
-            label="Price"
+            name="street_type"
+            label="Street Type"
             type="text"
             fullWidth
             variant="standard"
-            value={data.price}
+            value={data.property_street_type}
             onChange={handleInputChange}
           />
           <TextField
             margin="dense"
-            name="description"
+            name="prop_type"
+            label="Property Type"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={data.property_type}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="prop_rent"
+            label="Rent"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={data.property_rent}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="prop_desc"
             label="Description"
             type="text"
             fullWidth
             variant="standard"
-            value={data.description}
+            value={data.property_description}
+            onChange={handleInputChange}
+          />
+          <TextField
+            margin="dense"
+            name="prop_amenities"
+            label="Amenities"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={data.property_amenities}
             onChange={handleInputChange}
           />
           {/* Add more fields as needed */}

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Stack, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
@@ -16,6 +16,8 @@ import ImageCarousel from '../ImageCarousel';
 import ListingImage from '../listing.jpg'
 import ListingImageAppt from '../listing2.jpg'
 import NavigationMenu from '../../navigation_menu/NavigationMenus';
+import { useParams } from 'react-router-dom';
+import useGetPropertyByPropertyID from '../../../queries/Property/useGetPropertyByPropertyID';
 
 export default function PropertyDetailsTenant() {
 
@@ -76,6 +78,29 @@ export default function PropertyDetailsTenant() {
         handleInspectionRequestClose();
     };
 
+    // property ID to query database.
+    const TEST_PROPERTY_ID = 'cf96fd08-1903-4a93-95a9-51c675f9ff41'
+    const { fetchProperty } = useGetPropertyByPropertyID(TEST_PROPERTY_ID)
+    const [prop, setProp] = useState()
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+
+    useEffect (() => {
+        (async () => {
+            const { data, error } = await fetchProperty()
+
+            console.log(data)
+            setProp(data[0]);
+            setError(error);
+            setLoading(false);
+        })();
+    }, []);
+
+    if (!prop) {
+        return <Typography>No property found.</Typography>
+    }
+
 
     return <>
         {inspectionRequestOpen && (
@@ -112,31 +137,31 @@ export default function PropertyDetailsTenant() {
                         </Stack>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2} sx={{maxHeight: '510px'}}>
+                    <Grid container spacing={2} sx={{maxHeight: '100%'}}>
                         <Grid item xs={4}>
                             <Typography variant="h4" gutterBottom>
-                                {property.street}
+                                {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
                             </Typography>
                             <Typography variant="h5" gutterBottom> 
-                                {property.suburb}
+                                {prop.property_suburb + ', ' + prop.property_state}
                             </Typography>
                             <Box>
                                 <Typography variant="h7">
-                                    {property.type}
+                                    {prop.property_type}
                                 </Typography>
                                 <Typography sx={{ mt: 13, fontWeight: 'bold' }} variant="h5">
-                                    ${property.price} per week
+                                    ${'' + prop.property_rent} per week
                                 </Typography>
                                 <Typography sx={{ mt: 13 }} variant="h6">
-                                    <BedIcon /> {property.bedrooms} <BathtubIcon /> {property.bathrooms} <DriveEtaIcon /> {property.carSpots} <SquareFootIcon /> {property.squareMetres}m²
+                                    <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
                                 </Typography> 
                                 <Typography sx={{ mt: 2 }}>
-                                    Available from: {property.available}
+                                    Available from: {prop.property_lease_start}
                                 </Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={8} id="photos">
-                            <ImageCarousel images={property.listingImages} />
+                            <ImageCarousel images={prop.property_pictures} />
                         </Grid>
                     </Grid>
                     <Divider sx={{ mt: 2, mb: 2 }}/>
@@ -146,16 +171,14 @@ export default function PropertyDetailsTenant() {
                                 Description
                             </Typography>
                             <Typography>
-                                {property.description}
+                                {prop.property_description}
                             </Typography>
                             <Divider sx={{ mt: 2, mb: 2 }}/>
                             <Typography variant="h5" gutterBottom>
                                 Amenities
                             </Typography>
                             <Typography>
-                                <AmenitiesList
-                                    amenities={property.amenities}
-                                />
+                                {prop.property_amenities}
                             </Typography>
                             <Divider sx={{ mt: 2, mb: 2 }}/>
                             <Box>

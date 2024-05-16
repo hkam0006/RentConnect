@@ -22,7 +22,7 @@ const useGetApplicationsByID = (company_id, property_id, renter_id) =>{
       };
   
       fetchApplications();
-    }, []);
+    }, [company_id, property_id, renter_id]);
       return applications;
     };
 
