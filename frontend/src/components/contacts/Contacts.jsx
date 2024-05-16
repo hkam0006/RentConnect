@@ -13,6 +13,8 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import Button from '@mui/material/Button';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
+import useGetContactsByPropertyManagerID from '../../queries/Contact/useGetContactsByPropertyManagerID';
+import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID';
 
 function createData(name, phonenumber, email, lastcontact) {
   return {
@@ -22,6 +24,8 @@ function createData(name, phonenumber, email, lastcontact) {
     lastcontact
   };
 }
+
+
 
 const rows = [
   createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
@@ -189,11 +193,27 @@ function Contacts() {
     [order, orderBy, page, rowsPerPage],
   );
 
+  const propertyManagerID = "fc8e3cf4-cbbc-4557-b303-7aa028c616eb";
+
+  const contact = useGetContactsByPropertyManagerID(propertyManagerID);
+  
+  
+  const [contactRows, setContactRows] = React.useState([]);
+  const [renterRows, setRenterRows] = React.useState([]);
+  React.useEffect(() => {
+   setContactRows(contact);
+  }, [contact]);
+  const renter = useGetRenterByRenterID(contactRows.length > 0? contactRows[0].renter_id : '');
+  React.useEffect(() => {
+    setRenterRows(renter);
+   }, [renter]);
+  
   return (
     <NavigationMenu>
     <Box sx={{ width: '100%', flexDirection: 'column'}}>
+        <br /><br /><br />
         <Box>
-            <h1>Contacts</h1>
+            <h1>ID: {renterRows.length > 0? renterRows[0].renter_first_name : ''}</h1>
         </Box>
       <Paper sx={{ width: '95%', mb: 2 , marginLeft: "2.5%"}}>
         <TableContainer>
