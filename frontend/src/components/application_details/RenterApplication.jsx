@@ -311,8 +311,6 @@ export default function RenterApplication() {
         }
     }
 
-
-
     // card for providing ID documents
     function IDDocuments({formData, onFormChange, formErrors}) {
         const handleChange = (e) => {
@@ -371,11 +369,67 @@ export default function RenterApplication() {
     }
 
     // card for providing employment history
-    function EmploymentHistory() {
+    function EmploymentHistory({formData, onFormChange, formErrors}) {
         const [occupationIndustry, setOccupationIndustry] = useState("");
+        const [employmentYears, setEmploymentYears] = useState(0);
+        const [employmentMonths, setEmploymentMonths] = useState(0);
+        const [incomeFrequency, setIncomeFrequency] = useState("");
+
+        const handleChange = (e) => {
+            const { name, value } = e.target;
+            // Update form data
+            onFormChange({ ...formData, [name]: value }, IDDocumentsValidation());
+            // run test
+        };
+
+        const handleEmploymentTimeChange = (e) => {
+            const { name, value } = e.target;
+
+            if (!(/^\d+$/.test(value))) { // not a valid number
+                formErrors.employment_time = true;
+                return;
+            }
+
+            if (name === "employment_year") {
+                setEmploymentYears(value);
+            } else {
+                setEmploymentMonths(value)
+            }
+
+            const employmentTime = employmentYears + (1 / 12 * employmentMonths);
+            onFormChange({ ...formData, ["employment_time"]: employmentTime }, EmploymentHistoryValidation());
+        }
+
+        const handleIncomeFrequencyChange = (e) => {
+            setIncomeFrequency(e.target.value);
+        }
+
+        const handleIncomeValueChange = (e) => {
+            const incomePerFrequency = e.target.value;
+
+            let income = 0;
+            let incomePerFrequencyInt;
+
+            if (!(/^\d+$/.test(incomeFrequency))) { // not a valid number
+                formErrors.income = true;
+                return;
+            }
+
+            incomePerFrequencyInt = parseInt
+            if (incomeFrequency === "monthly") {
+                income = incomePerFrequency * 12;
+            } else if (incomeFrequency === "fortnightly") {
+                income = incomePerFrequency * 26;
+            } else {
+                income = incomePerFrequency * 52;
+            }
+
+            onFormChange({ ...formData, ["income"]: income }, EmploymentHistoryValidation());
+        }
 
         function occupationIndustryChange(e) {
             setOccupationIndustry(e.target.value);
+            handleChange(e)
         }
 
         function getOccupationList() {
@@ -489,10 +543,11 @@ export default function RenterApplication() {
 
                 return (
                     <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Occupation"
-                        //onChange={handleChange}
+                        labelId="demo-simple-select-label" id="demo-simple-select"
+                        name={"occupation"} label="Occupation"
+                        defaultValue={formData.occupation}
+                        onChange={handleChange}
+                        error={formErrors.occupation}
                     >
                         {occupationList.map((option) => (
                             <MenuItem value={option.value}>{option.label}</MenuItem>
@@ -514,9 +569,9 @@ export default function RenterApplication() {
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">Industry</InputLabel>
                                         <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            //value={occupationIndustry}
+                                            labelId="demo-simple-select-label" id="demo-simple-select"
+                                            name={"industry"}
+                                            defaultValue={formData.industry}
                                             label="Industry"
                                             onChange={occupationIndustryChange}
                                         >
@@ -546,13 +601,31 @@ export default function RenterApplication() {
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required id="outlined-required" label="Employer Name" defaultValue="" />
+                                    <TextField fullWidth required
+                                               id="outlined-required" label="Employer Name"
+                                               name={"employer_name"}
+                                               defaultValue={formData.employer_name}
+                                               onBlur={handleChange}
+                                               error={formErrors.employer_name}
+                                    />
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required id="outlined-required" label="Employer Number" defaultValue="" />
+                                    <TextField fullWidth required
+                                               id="outlined-required" label="Employer Number"
+                                               name={"employer_contact"}
+                                               defaultValue={formData.employer_contact}
+                                               onBlur={handleChange}
+                                               error={formErrors.employer_contact}
+                                    />
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required id="outlined-required" label="Employer Email" defaultValue="" />
+                                    <TextField fullWidth required
+                                               id="outlined-required" label="Employer Email"
+                                               name={"employer_email"}
+                                               defaultValue={formData.employer_email}
+                                               onBlur={handleChange}
+                                               error={formErrors.employer_email}
+                                    />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -563,11 +636,20 @@ export default function RenterApplication() {
                                     <Grid container spacing={2} style={{paddingTop: "5px"}}>
                                         <Grid item xs={6}>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <TextField fullWidth required id="outlined-required" label="Years" defaultValue="" />
+                                                <TextField fullWidth required
+                                                           id="outlined-required" label="Years"
+                                                           name={"employment_years"}
+                                                           onBlur={handleEmploymentTimeChange}
+                                                           error={formErrors.employment_time}
+                                                />
                                             </LocalizationProvider>                                </Grid>
                                         <Grid item xs={6}>
                                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                <DateField required label="Months" />
+                                                <DateField required
+                                                           label="Months" name={"employment_months"}
+                                                           onBlur={handleEmploymentTimeChange}
+                                                           error={formErrors.employment_time}
+                                                />
                                             </LocalizationProvider>                                </Grid>
                                     </Grid>
                                 </Grid>
@@ -580,17 +662,22 @@ export default function RenterApplication() {
                                                 <Select
                                                         labelId="demo-simple-select-label"
                                                         id="demo-simple-select"
-                                                    //value={age}
                                                         label="Frequency of Income"
-                                                    //onChange={handleChange}
+                                                        onChange={handleIncomeFrequencyChange}
+                                                        error={formErrors.income}
                                                 >
-                                                    <MenuItem value={10}>Monthly</MenuItem>
-                                                    <MenuItem value={20}>Fortnightly</MenuItem>
-                                                    <MenuItem value={20}>Weekly</MenuItem>
+                                                    <MenuItem value={"monthly"}>Monthly</MenuItem>
+                                                    <MenuItem value={"fortnightly"}>Fortnightly</MenuItem>
+                                                    <MenuItem value={"weekly"}>Weekly</MenuItem>
                                                 </Select>
-                                            </FormControl>                            </Grid>
+                                            </FormControl>
+                                        </Grid>
                                         <Grid item xs={6}>
-                                            <TextField fullWidth required id="outlined-required" label="Income" defaultValue="" />
+                                            <TextField fullWidth required
+                                                       id="outlined-required" label="Income"
+                                                       onChange={handleIncomeValueChange}
+                                                       error={formErrors.income}
+                                            />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -601,6 +688,11 @@ export default function RenterApplication() {
             </Card>
         );
     }
+
+    /*
+    function EmploymentHistoryValidation() {
+        if (applicant.)
+    } */
 
     function SupportingDocuments() {
         return (
@@ -622,7 +714,7 @@ export default function RenterApplication() {
         switch (stepperValue) {
             case 0: return <PersonalInformation formData={applicant} onFormChange={handleApplicantDataChange} formErrors={personalInformationErrors} />
             case 1: return <IDDocuments formData={applicant} onFormChange={handleApplicantDataChange} formErrors={IDDocumentErrors} />
-            case 2: return <EmploymentHistory />
+            case 2: return <EmploymentHistory formData={applicant} onFormChange={handleApplicantDataChange} formErrors={IDDocumentErrors}/>
             case 3: return <SupportingDocuments />
             default: return <PersonalInformation />
         }
