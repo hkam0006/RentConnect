@@ -29,6 +29,12 @@ function createData(name, phonenumber, email, lastcontact) {
 
 const rows = [
   createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
+  createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21'),
+  createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
+  createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21'),
+  createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
+  createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21'),
+  createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
   createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21')
 ];
 
@@ -208,13 +214,16 @@ function Contacts() {
     setRenterRows(renter);
    }, [renter]);
   
+   /*
+   <Box>
+            <h1>{renterRows.length > 0? renterRows[0].renter_first_name : ''}</h1>
+    </Box>
+   */
   return (
     <NavigationMenu>
     <Box sx={{ width: '100%', flexDirection: 'column'}}>
-        <br /><br /><br />
-        <Box>
-            <h1>ID: {renterRows.length > 0? renterRows[0].renter_first_name : ''}</h1>
-        </Box>
+        
+      <br/><br/><br/><br/>
       <Paper sx={{ width: '95%', mb: 2 , marginLeft: "2.5%"}}>
         <TableContainer>
           <Table
