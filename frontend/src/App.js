@@ -13,6 +13,7 @@ import PropertySearch from './components/property_search/PropertyGrid';
 import RentalProfile from './components/rental_profile/RentalProfile';
 import RenterApplication from './components/renter_application/RenterApplication';
 import ReceivedApplication from './components/applications/manager/RecievedApplication';
+import LogIn from './components/login_page/Login';
 
 function App() {
     return (
@@ -32,6 +33,7 @@ function App() {
             <Route path='/search' element={<PropertySearch />} />
             <Route path='/renterapplication' element={<RenterApplication />} />
             <Route path='/MyApplication' element={<ReceivedApplication />} />
+            <Route path='/LogIn' element={<LogIn/>} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -70,6 +72,9 @@ function Home() {
         </Link>
         <Link to="/MyApplication">
             <button>Go to My Application</button>
+        </Link>
+        <Link to="/LogIn">
+            <button>Go to Log In</button>
         </Link>
     </div>
 
