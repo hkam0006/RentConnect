@@ -1,5 +1,5 @@
 import { ReactComponent as Logo } from "../../logo.svg";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,6 +11,7 @@ import Menu from "@mui/material/Menu";
 import SideDrawer from "./SideDrawer";
 import { Link, useNavigate } from 'react-router-dom';
 import logo from "./RENTCONNECT-2.png"
+import { supabase } from "../../supabase";
 
 const drawerWidth = 200;
 
@@ -25,6 +26,19 @@ export default function NavigationMenu({ children }) {
     const handleAccountClose = () => {
         setAccountAnchorEl(null);
     };
+
+    const [user, setUser] = useState({});
+    useEffect(() => {
+        async function getUserData() {
+            await supabase.auth.getUser().then((value) =>{
+                console.log(value);
+                if (value.data?.user) {
+                    setUser(value.data.user);
+                }
+            })
+        }
+        getUserData();
+    }, []);
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -46,17 +60,20 @@ export default function NavigationMenu({ children }) {
                     </Typography>
 
                     {auth && (
-                        <div>
-                            <IconButton
-                                size="large"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleIcon}
-                                color="inherit"
-                            >
-                                <AccountCircle />
-                            </IconButton>
+                        <Box>
+                            <Box sx={{justifyContent: 'flex-end', display: 'flex', alignItems: 'center'}}>
+                                <Typography sx={{fontSize: '130%'}}>{user.email}</Typography>
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleIcon}
+                                    color="inherit"
+                                >
+                                    <AccountCircle />
+                                </IconButton>
+                            </Box>
                             <Menu
                                 id="menu-appbar"
                                 anchorEl={accountAnchorEl}
@@ -75,7 +92,7 @@ export default function NavigationMenu({ children }) {
                                 <MenuItem onClick={handleAccountClose}>Profile</MenuItem>
                                 <MenuItem onClick={handleAccountClose}>My account</MenuItem>
                             </Menu>
-                        </div>
+                        </Box>
                     )}
                 </Toolbar>
             </AppBar>
