@@ -145,7 +145,7 @@ EnhancedTableHead.propTypes = {
 
 function Contacts() {
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [orderBy, setOrderBy] = React.useState('calories'); //Calories needs to be changed to be the appropriate value
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
