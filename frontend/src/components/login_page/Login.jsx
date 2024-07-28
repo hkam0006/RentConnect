@@ -17,7 +17,7 @@ function LogIn(){
     const handlePasswordChange = f => {
         setPassword(f.target.value);
     }
-    var errorText = false;
+    const [errorText, setErrorText] = useState(false);
     const navigate = useNavigate();
   return (
     <Box sx={{ml: '35%', mt: '10%', backgroundColor: 'white', width: '30%', mb: '10%', borderRadius: 2}}>
@@ -42,11 +42,14 @@ function LogIn(){
                             navigate('/dashboard');
                         }
                         else{
-                            errorText = true;
+                            setErrorText(true);
+                            setPassword('');
                         }
                     })
                     .catch(error => {
-                        errorText = true;
+                        setErrorText(true);
+                        setPassword('');
+                        console.log(error);
                     })
                 }}>Sign In</Button>
         </Box>
