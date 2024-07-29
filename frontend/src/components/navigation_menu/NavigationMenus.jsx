@@ -31,7 +31,6 @@ export default function NavigationMenu({ children }) {
     useEffect(() => {
         async function getUserData() {
             await supabase.auth.getUser().then((value) =>{
-                console.log(value);
                 if (value.data?.user) {
                     setUser(value.data.user);
                 }

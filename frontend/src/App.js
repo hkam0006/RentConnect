@@ -15,6 +15,7 @@ import RenterApplication from './components/renter_application/RenterApplication
 import ReceivedApplication from './components/applications/manager/RecievedApplication';
 import LogIn from './components/login_page/Login';
 import Inspection from './components/inspection_page/Inspection';
+import Messaging from './components/messaging/Messaging'
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
             <Route path='/MyApplication' element={<ReceivedApplication />} />
             <Route path='/LogIn' element={<LogIn/>} />
             <Route path='/Inspection' element={<Inspection/>} />
+            <Route path='/messages' element={<Messaging/>} />
           </Routes>
         </Router>
     </ThemeProvider>
