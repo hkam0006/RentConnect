@@ -26,72 +26,70 @@ const drawerWidth = 200;
 
 export default function SideDrawer() {
   return (
-    <Box sx={{ display: "flex" }}>
-      <Drawer
-        variant="permanent"
-        sx={{
+    <Drawer
+      variant="permanent"
+      anchor='left'
+      sx={{
+        flexShrink: 0,
+        [`& .MuiDrawer-paper`]: {
           width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {[
-              { text: "Dashboard", icon: <HomeIcon />, link: "/dashboard" },
-              { text: "Messages", icon: <ChatIcon />, link: "/messages" },
-              {
-                text: "Inspection",
-                icon: <InspectionIcon />,
-                link: "/inspection",
-              },
-              {
-                text: "Inspection Runs",
-                icon: <InspectionRunsIcon />,
-                link: "/inspection_runs",
-              },
-              {
-                text: "Applications",
-                icon: <ApplicationsIcon />,
-                link: "/Application",
-              },
-              {
-                text: "Properties",
-                icon: <PropertiesIcon />,
-                link: "/property",
-              },
-              {
-                text: "References",
-                icon: <ReferencesIcon />,
-                link: "/references",
-              },
-              { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
-              { text: "Keys", icon: <KeysIcon />, link: "/keys" },
-              {
-                text: "Add Property",
-                icon: <AddPropertyIcon />,
-                link: "/add_property",
-              },
-              { text: "Help", icon: <HelpIcon />, link: "/help" },
-            ].map((item) => (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  to={item.link}
-                  sx={{ paddingRight: "8px" }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-    </Box>
+          boxSizing: "border-box",
+        },
+      }}
+    >
+      <Toolbar />
+      <Box sx={{ overflow: "auto" }}>
+        <List>
+          {[
+            { text: "Dashboard", icon: <HomeIcon />, link: "/dashboard" },
+            { text: "Messages", icon: <ChatIcon />, link: "/messages" },
+            {
+              text: "Inspection",
+              icon: <InspectionIcon />,
+              link: "/inspection",
+            },
+            {
+              text: "Inspection Runs",
+              icon: <InspectionRunsIcon />,
+              link: "/inspection_runs",
+            },
+            {
+              text: "Applications",
+              icon: <ApplicationsIcon />,
+              link: "/Application",
+            },
+            {
+              text: "Properties",
+              icon: <PropertiesIcon />,
+              link: "/property",
+            },
+            {
+              text: "References",
+              icon: <ReferencesIcon />,
+              link: "/references",
+            },
+            { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
+            { text: "Keys", icon: <KeysIcon />, link: "/keys" },
+            {
+              text: "Add Property",
+              icon: <AddPropertyIcon />,
+              link: "/add_property",
+            },
+            { text: "Help", icon: <HelpIcon />, link: "/help" },
+          ].map((item) => (
+            <ListItem key={item.text} disablePadding>
+              <ListItemButton
+                component={Link}
+                to={item.link}
+                sx={{ paddingRight: "8px" }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    </Drawer >
   );
 }
