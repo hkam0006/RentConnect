@@ -51,7 +51,7 @@ export default function SideDrawer() {
             {
               text: "Inspection Runs",
               icon: <InspectionRunsIcon />,
-              link: "/inspection_runs",
+              link: "/InspectionRun",
             },
             {
               text: "Applications",
