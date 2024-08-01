@@ -1,63 +1,160 @@
-import React from 'react'
+import { supabase } from "../../supabase";
+import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
 import { Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Typography, TextField, Stack, Button, Chip } from '@mui/material'
+import useGetKeyByCompanyID from '../../queries/Key/useGetKeyByCompanyID'
+import AddKeyModal from './AddKeyModal'
+import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID'
+import CheckoutModal from './CheckoutModal'
+
+const rowHeading = [
+  "Status",
+  "Key Set",
+  "Property Address",
+  "Property Manager",
+  "Issued",
+  "Due",
+  "Borrower",
+  ""
+]
+
+const chipColour = {
+  "On Loan": "info",
+  "Returned": "primary",
+  "Added": "success"
+}
+
+const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
 
 const Keys = () => {
+  const { fetchKeys } = useGetKeyByCompanyID(TEST_COMPANY_ID);
+  const { fetchProperties } = useGetPropertiesByCompanyID(TEST_COMPANY_ID);
+  const [keys, setKeys] = useState([]);
+  const [error, setError] = useState(null);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openCheckout, setOpenCheckout] = useState(null);
+  const [properties, setProperties] = useState([]);
+  const [propManagers, setPropManagers] = useState(["John Smith"]);
+
+  const handleClose = () => setOpenAdd(false);
+  const handleOpen = () => setOpenAdd(true);
+
+  const getFullAddress = (property_id) => {
+    let address = ""
+    properties.map((p) => {
+      if (p.property_id === property_id) {
+        address = `${p.property_street_number} ${p.property_street_name} ${p.property_street_type}, ${p.property_suburb}, ${p.property_state}`
+      }
+    })
+    return address;
+  }
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await fetchKeys();
+
+      setKeys(data)
+      setError(error)
+    })();
+
+    (async () => {
+      const { data, error } = await fetchProperties();
+
+      setProperties(data);
+      setError(error);
+    })()
+  }, [])
+
+  async function updateRow(keyId) {
+    const { data, error } = await supabase
+      .from('KEY')
+      .update([
+        {
+          key_status: "Returned",
+          key_issued: null,
+          key_due: null
+        },
+      ])
+      .eq("key_id", keyId)
+
+    if (error) {
+      console.error("Error updating row:", error)
+    }
+    else {
+      console.log('Row updated')
+    }
+  }
+
+  async function handleCheckIn(id) {
+    updateRow(id);
+  }
+
   return (
     <NavigationMenu>
+      {openAdd && <AddKeyModal OnClose={handleClose} properties={properties} propManagers={propManagers} />}
+      {!!openCheckout && <CheckoutModal onClose={() => setOpenCheckout(null)} checkoutKey={openCheckout} />}
       <Box sx={{ mt: "70px", padding: "20px", width: "100%" }}>
         <Stack direction='row' sx={{ justifyContent: "space-between", padding: "7px", alignItems: "center" }}>
           <Stack direction='row' spacing={2} sx={{ alignItems: "center" }}>
             <Typography variant='h4'>Keys</Typography>
             <TextField variant='standard' placeholder='Search property...' />
           </Stack>
-          <Button variant='contained' sx={{ borderRadius: "20px" }}>Add Key</Button>
+          <Button variant='contained' sx={{ borderRadius: "20px" }} onClick={handleOpen}>Add Key</Button>
         </Stack>
         <TableContainer sx={{ mt: 2 }}>
           <Table>
             <TableHead sx={{ backgroundColor: "#ebeaea" }}>
               <TableRow>
-                <TableCell><Typography variant='subtitle1' fontWeight={700}>Status</Typography></TableCell>
-                <TableCell align="left"><Typography variant='subtitle1' fontWeight={700}>Key Set</Typography></TableCell>
-                <TableCell align="left"><Typography variant='subtitle1' fontWeight={700} > Issued </Typography ></TableCell>
-                <TableCell align="left"><Typography variant='subtitle1' fontWeight={700}>Due</Typography></TableCell>
-                <TableCell align="left"><Typography variant='subtitle1' fontWeight={700}>Property Address</Typography></TableCell>
-                <TableCell align="left"><Typography variant='subtitle1' fontWeight={700}>Property Manager</Typography></TableCell>
-                <TableCell align="left"><Typography variant='subtitle1' fontWeight={700}>Borrower</Typography></TableCell>
-                <TableCell align="left"></TableCell>
+                {rowHeading.map((title, index) => {
+                  const alignment = title == "" ? "right" : "left"
+                  return (
+                    <TableCell align={alignment} key={index}>
+                      <Typography variant='subtitle1' fontWeight={700}>{title}</Typography>
+                    </TableCell>
+                  )
+                })}
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell><Chip variant='filled' label='On Loan' color='info' /></TableCell>
-                <TableCell>SY001</TableCell>
-                <TableCell>31 March 24</TableCell>
-                <TableCell>7 April 24</TableCell>
-                <TableCell>7 Park St, South Yarra</TableCell>
-                <TableCell>John Doe</TableCell>
-                <TableCell>Jane Doe</TableCell>
-                <TableCell align='right'><Button variant='outlined' style={{ borderWidth: "3px", borderRadius: "20px" }}>Check In</Button></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell><Chip variant='filled' label='Returned' color='primary' /></TableCell>
-                <TableCell>SY001</TableCell>
-                <TableCell>31 March 24</TableCell>
-                <TableCell>7 April 24</TableCell>
-                <TableCell>7 Park St, South Yarra</TableCell>
-                <TableCell>John Doe</TableCell>
-                <TableCell>Jane Doe</TableCell>
-                <TableCell align='right'><Button variant='contained' style={{ borderWidth: "3px", borderRadius: "20px" }}>Check Out</Button></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell><Chip variant='filled' label='Added' color='info' /></TableCell>
-                <TableCell>SY001</TableCell>
-                <TableCell>31 March 24</TableCell>
-                <TableCell>7 April 24</TableCell>
-                <TableCell>7 Park St, South Yarra</TableCell>
-                <TableCell>John Doe</TableCell>
-                <TableCell>Jane Doe</TableCell>
-                <TableCell align='right'><Button variant='outlined' style={{ borderWidth: "3px", borderRadius: "20px" }}>Check In</Button></TableCell>
-              </TableRow>
+              {keys.map((key, index) => {
+                const buttonTitle = key.key_status === "On Loan" ? "Check In" : "Check Out";
+                const buttonVariant = key.key_status === "On Loan" ? "outlined" : "contained";
+                const propertyAddress = getFullAddress(key.property_id)
+                return (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Chip variant='filled' label={key.key_status} color={chipColour[key.key_status]} />
+                    </TableCell>
+                    <TableCell>{key.key_set}</TableCell>
+                    <TableCell>{propertyAddress}</TableCell>
+                    <TableCell>{"John Smith"}</TableCell>
+                    <TableCell>{key.key_status === "On Loan" ? key.key_issued : "N/A"}</TableCell>
+                    <TableCell>{key.key_status === "On Loan" ? key.key_due : "N/A"}</TableCell>
+                    <TableCell>{key.key_status === "On Loan" ? "Jane Doe" : "N/A"}</TableCell>
+                    <TableCell align='right'>
+                      {
+                        buttonTitle === "Check Out" ? (
+                          <Button
+                            variant={buttonVariant}
+                            style={{ borderWidth: "3px", borderRadius: "20px" }}
+                            onClick={() => setOpenCheckout({ key_id: key.key_id, prop_add: propertyAddress, key_set: key.key_set })}
+                          >
+                            {buttonTitle}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant={buttonVariant}
+                            style={{ borderWidth: "3px", borderRadius: "20px" }}
+                            onClick={() => handleCheckIn(key.key_id)}
+                          >
+                            {buttonTitle}
+                          </Button>
+                        )
+                      }
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </TableContainer>
