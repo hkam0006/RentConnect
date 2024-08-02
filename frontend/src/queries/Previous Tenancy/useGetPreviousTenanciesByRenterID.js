@@ -20,7 +20,7 @@ const useGetPreviousTenanciesByRenterID = (renter_id) =>{
       };
   
       fetchPreviousTenancies();
-    }, []);
+    }, [renter_id]);
       return previous_tenancies;
     };
 
