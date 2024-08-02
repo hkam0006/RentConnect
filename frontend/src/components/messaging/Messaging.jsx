@@ -5,7 +5,7 @@ import { supabase } from "../../supabase"
 import ChatHistory from './ChatHistory'
 import MessageHistory from './MessageHistory'
 
-import useAddMessageByChatID from '../../mutators/Message/useAddMessageByChatID'
+import useAddMessage from '../../mutators/Message/useAddMessage'
 import useUpdateChatByChatID from '../../mutators/Message/useUpdateChatByChatID'
 import useSubscribeChatByUserID from '../../subscribers/Message/useSubscribeChatByUserID'
 import useSubscribeMessageByChatID from '../../subscribers/Message/useSubscribeMessageByChatID'
@@ -54,7 +54,7 @@ function Messaging() {
         }
     }
 
-    const addMessage = useAddMessageByChatID()
+    const addMessage = useAddMessage()
     const updateChat = useUpdateChatByChatID()
     function HandleMessagesPush() {
         if (message.trim() !== '') {
@@ -85,7 +85,6 @@ function Messaging() {
     useSubscribeChatByUserID(userID, handleChatChange)
 
     const handleMessageChange = (payload) => {
-        console.log(payload)
         if (payload.eventType === 'INSERT') {
             setFetchedMessages(prevData => {
                 const updatedChat = payload.new
@@ -103,7 +102,7 @@ function Messaging() {
         }
     }
     useSubscribeMessageByChatID(chatID, handleMessageChange)
-    console.log(chatHistoryData)
+    
     return (
         <Box sx={{ padding: 2 }}>
             <NavigationMenu />

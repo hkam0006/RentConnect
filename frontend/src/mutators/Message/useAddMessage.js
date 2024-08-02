@@ -1,6 +1,6 @@
 import { supabase } from "../../supabase";
 
-const useAddMessageByChatID = () => {
+const useAddMessage = () => {
   const addMessage = async (chatID, senderID, date, content) => {
     try {
         const { data, error } = await supabase
@@ -15,4 +15,4 @@ const useAddMessageByChatID = () => {
   return addMessage;
 }
 
-export default useAddMessageByChatID;
+export default useAddMessage
