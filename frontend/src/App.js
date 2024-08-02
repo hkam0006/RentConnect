@@ -16,6 +16,8 @@ import ReceivedApplication from './components/applications/manager/RecievedAppli
 import LogIn from './components/login_page/Login';
 import Inspection from './components/inspection_page/Inspection';
 import Messaging from './components/messaging/Messaging'
+import Keys from './components/keys/Keys';
+import InspectionRun from './components/inspection_run/InspectionRun'
 
 function App() {
     return (
@@ -38,6 +40,8 @@ function App() {
             <Route path='/LogIn' element={<LogIn/>} />
             <Route path='/Inspection' element={<Inspection/>} />
             <Route path='/messages' element={<Messaging/>} />
+            <Route path='/keys' element={<Keys/>} />
+            <Route path='/InspectionRun' element={<InspectionRun/>} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -82,6 +86,9 @@ function Home() {
         </Link>
         <Link to="/Inspection">
             <button>Go to Inspection</button>
+        </Link>
+        <Link to="/InspectionRun">
+            <button>Go to Inspection Runs</button>
         </Link>
     </div>
 
