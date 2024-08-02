@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Grid, Box } from '@mui/material'
+import { supabase } from "../../supabase"
 
 import Outline from './Outline'
 import Content from './Content'
@@ -10,12 +11,15 @@ import useGetApplicationsByID from '../../queries/Application/useGetApplications
 import useGetApplicationCommentByID from '../../queries/Application Comment/useGetApplicationCommentByID'
 import useGetApplicationSupportingDocumentsByID from '../../queries/Application Supporting Document/useGetApplicationSupportingDocumentsByID'
 
+import useUpdateApplicationStatusByID from '../../mutators/Application/useUpdateApplicationStatusByID'
+
 import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID'
 import useGetPreviousTenanciesByRenterID from '../../queries/Previous Tenancy/useGetPreviousTenanciesByRenterID'
 import useGetRenterEmploymentsByRenterID from '../../queries/Renter Employment/useGetRenterEmploymentsByRenterID'
 import useGetPetsByRenterID from '../../queries/Pet/useGetPetsByRenterID'
 import useGetRenterCommentsByRenterID from '../../queries/Renter Comment/useGetRenterCommentsByRenterID'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
+import useAddApplicationComment from '../../mutators/Application Comment/useAddApplicationComment'
 
 function ApplicationDetails() {
     const { companyId, propertyId, renterId } = useParams()
@@ -55,6 +59,18 @@ function ApplicationDetails() {
     const getRenterEmployment = useGetRenterEmploymentsByRenterID(renterId)
     const getRenterPet = useGetPetsByRenterID(renterId)
     const getRenterComment = useGetRenterCommentsByRenterID(renterId)
+
+    const [userID, setUserID] = useState(null)
+    useEffect(() => {
+        async function getUserID() {
+            await supabase.auth.getUser().then((value) =>{
+                if (value.data?.user) {
+                    setUserID(value.data.user.id)
+                }
+            })
+        }
+        getUserID()
+    }, [])
 
     function getAndSetApplicationComments() {
         let newApplicationCommentState = { ...initialApplicationCommentState }
@@ -96,6 +112,7 @@ function ApplicationDetails() {
         setFetchedData()
     }, [getApplication, getApplicationComment, getApplicationSupportingDocuments, getRenter, getRenterTenancy, getRenterEmployment, getRenterPet, getRenterComment])
     
+    const updateVerification = useUpdateApplicationStatusByID()
     const verificationType = {
         'Preferences': 'preferences_verified',
         'Address History': 'address_history_verified',
@@ -107,11 +124,11 @@ function ApplicationDetails() {
     function handleVerification(type, verificationStatus) {
         try {
             const type_verified = verificationType[type]
+            updateVerification(companyId, propertyId, renterId, type_verified, verificationStatus)
             setApplication((prevState) => ({
                 ...prevState,
                 [type_verified]: verificationStatus
             }))
-            console.log('Somehow the verification status of', type_verified, 'will be set to:', verificationStatus)
         } catch (error) {
             console.error('Error updating verification:', error)
         }
@@ -137,9 +154,12 @@ function ApplicationDetails() {
         }
     }
 
+    const addApplicationComment = useAddApplicationComment()
     function handleCommentsPush() {
         if (comment.trim() !== '') {
-            console.log('Pushing comment:', comment)
+            const currentDate = (new Date()).toISOString()
+            const type_verified = verificationType[commentType]
+            addApplicationComment(renterId, propertyId, companyId, comment, userID, currentDate, type_verified)
             getAndSetApplicationComments()
             setComment('')
         }
