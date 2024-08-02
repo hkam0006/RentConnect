@@ -1,7 +1,7 @@
 import React from 'react'
-import { Paper, Typography, Card, CardActionArea, CardContent } from '@mui/material'
+import { Typography, Card, CardActionArea, CardContent } from '@mui/material'
 
-function ChatBox({ data, handleSelectChat, index, selectedChatIndex }) {
+function ChatBox({ data, handleSelectChat, index, currentChatID, currentUserID }) {
     function timeAgo(dateString) {
         const lastMessageDate = new Date(dateString)
         const now = new Date()
@@ -35,10 +35,10 @@ function ChatBox({ data, handleSelectChat, index, selectedChatIndex }) {
     }
 
     return (
-        <Card sx={{ marginBottom: '10px', width:'100%', backgroundColor: index==selectedChatIndex ? '#DBCCE5' : '#ffffff' }}>
+        <Card sx={{ marginBottom: '10px', width:'100%', backgroundColor: data.chat_id === currentChatID ? '#DBCCE5' : '#ffffff' }}>
             <CardActionArea>
                 <CardContent onClick={() => handleSelectChat(index)}>
-                    <Typography variant='body1'>{data.name}</Typography>
+                    <Typography variant='body1'>{data.user1_id === currentUserID ? data.user2_id : data.user1_id }</Typography>
                     <Typography variant='body1' color='text.secondary'>{timeAgo(data.recent_message_date)}</Typography>
                     <Typography variant='body1' color='text.secondary'>{data.recent_message}</Typography>
                 </CardContent>

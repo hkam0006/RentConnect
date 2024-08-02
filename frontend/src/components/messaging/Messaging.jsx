@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Box } from '@mui/material'
-import { supabase } from "../../supabase";
+import { supabase } from "../../supabase"
 
 import ChatHistory from './ChatHistory'
 import MessageHistory from './MessageHistory'
 
+import useAddMessageByChatID from '../../mutators/Message/useAddMessageByChatID'
+import useUpdateChatByChatID from '../../mutators/Message/useUpdateChatByChatID'
+import useSubscribeChatByUserID from '../../subscribers/Message/useSubscribeChatByUserID'
 import useGetChatByUserID from '../../queries/Message/useGetChatByUserID'
-import useGetMessagesByChatID from '../../queries/Message/useGetMessagesByChatID';
+import useGetMessagesByChatID from '../../queries/Message/useGetMessagesByChatID'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
 
 function Messaging() {
     const [userID, setUserID] = useState(null)
     const [chatID, setChatID] = useState(null)
-    const [comment, setComment] = useState(null)
+    const [message, setMessage] = useState('')
+    const [chatHistoryData, setChatHistoryData] = useState(null)
     const [selectedChatIndex, setSelectedChatIndex] = useState(null)
-    const chatHistoryData = useGetChatByUserID(userID)
-    const fetchedMessages = useGetMessagesByChatID(chatID);
+    const chatHistory = useGetChatByUserID(userID)
+    
+    const fetchedMessages = useGetMessagesByChatID(chatID)
+    
+    useEffect(() => {
+        if (chatHistory) {
+            setChatHistoryData(chatHistory)
+        }
+    }, [chatHistory])
 
     useEffect(() => {
         async function getUserID() {
@@ -30,27 +41,52 @@ function Messaging() {
 
     function handleSelectChat(chatIndex) {
         if (selectedChatIndex !== chatIndex) {
-            setComment('')
+            setMessage('')
             setSelectedChatIndex(chatIndex)
             setChatID(chatHistoryData[chatIndex].chat_id)
         }
     }
 
-    function handleCommentsPush() {
-        console.log(comment)
-        setComment('')
+    const addMessage = useAddMessageByChatID()
+    const updateChat = useUpdateChatByChatID()
+    function HandleMessagesPush() {
+        if (message.trim() !== '') {
+            const currentDate = (new Date()).toISOString()
+            addMessage(chatID, userID, currentDate, message)
+            updateChat(chatID, currentDate, message)
+            setMessage('')
+        }
     }
+
+    const handleChatChange = (payload) => {
+        if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+            setChatHistoryData(prevData => {
+                const updatedChat = payload.new
+                const index = prevData.findIndex(chat => chat.id === updatedChat.id)
+                let updatedData
+                if (index !== -1) {
+                    updatedData = [...prevData]
+                    updatedData[index] = updatedChat
+                } else {
+                    updatedData = [...prevData, updatedChat]
+                }
+                updatedData.sort((a, b) => new Date(b.recent_message_date) - new Date(a.recent_message_date))
+                return updatedData
+            })
+        }
+    }    
+    useSubscribeChatByUserID(userID, handleChatChange)
     
     return (
         <Box sx={{ padding: 2 }}>
             <NavigationMenu />
             <Grid container sx={{ marginTop: '64px', marginLeft: '190px', width: 'calc(100% - 190px)' }}>
                 <Grid item xs={4}>
-                    <ChatHistory data={chatHistoryData} handleSelectChat={handleSelectChat} selectedChatIndex={selectedChatIndex}/>
+                    <ChatHistory data={chatHistoryData} handleSelectChat={handleSelectChat} currentChatID={chatID} currentUserID={userID} />
                 </Grid>
 
                 <Grid item xs={8}>
-                    <MessageHistory messages={fetchedMessages} userID={userID} comment={comment} setComment={setComment} handleCommentsPush={handleCommentsPush} selectedChat={selectedChatIndex !== null}/>
+                    <MessageHistory messages={fetchedMessages} userID={userID} message={message} setMessage={setMessage} HandleMessagesPush={HandleMessagesPush} selectedChat={chatID !== null} />
                 </Grid>
             </Grid>
         </Box>

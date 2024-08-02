@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
-import CommentBox from './CommentBox'
+import MessageBox from './MessageBox'
 
-function MessageHistory({ messages, userID, comment, setComment, handleCommentsPush, selectedChat }) {
+function MessageHistory({ messages, userID, message, setMessage, HandleMessagesPush, selectedChat }) {
     function formatTimestamp(timestamp) {
         const date = new Date(timestamp)
 
@@ -16,7 +16,7 @@ function MessageHistory({ messages, userID, comment, setComment, handleCommentsP
     
         return date.toLocaleString(undefined, options)
     }
-
+    
     return (
         <Box>
             <Box sx={{ 
@@ -62,7 +62,7 @@ function MessageHistory({ messages, userID, comment, setComment, handleCommentsP
             </Box>
             <Box sx={{ paddingRight: 4}}>
                 {selectedChat && (
-                    <CommentBox comment={comment} setComment={setComment} handleCommentsPush={handleCommentsPush} />
+                    <MessageBox message={message} setMessage={setMessage} HandleMessagesPush={HandleMessagesPush} />
                 )}
             </Box>
         </Box>
