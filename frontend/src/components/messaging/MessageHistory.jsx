@@ -40,7 +40,7 @@ function MessageHistory({ messages, userID, message, setMessage, HandleMessagesP
                     '-ms-overflow-style': 'none',
                     'scrollbar-width': 'none',
                 }}>
-                    {messages.map((message, index) => (
+                    {messages && messages.map((message, index) => (
                         <Box key={index} sx={{ 
                             display: 'flex', 
                             justifyContent: message.sender_id === userID ? 'flex-end' : 'flex-start'

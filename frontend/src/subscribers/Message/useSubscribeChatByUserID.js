@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { supabase } from "../../supabase";
+import { useEffect } from 'react'
+import { supabase } from "../../supabase"
 
 const useSubscribeChatByUserID = (userID, callback) => {
   useEffect(() => {
@@ -14,10 +14,10 @@ const useSubscribeChatByUserID = (userID, callback) => {
           filter: `user1_id=eq.${userID}`
         },
         (payload) => {
-          callback(payload);
+          callback(payload)
         }
       )
-      .subscribe();
+      .subscribe()
 
     const subscription2 = supabase
       .channel('chat-change-subscriber2')
@@ -30,18 +30,18 @@ const useSubscribeChatByUserID = (userID, callback) => {
           filter: `user2_id=eq.${userID}`
         },
         (payload) => {
-          callback(payload);
+          callback(payload)
         }
       )
-      .subscribe();
+      .subscribe()
 
     return () => {
-      supabase.removeChannel(subscription1);
-      supabase.removeChannel(subscription2);
-    };
-  }, [userID, callback]);
+      supabase.removeChannel(subscription1)
+      supabase.removeChannel(subscription2)
+    }
+  }, [userID, callback])
 
-  return null;
-};
+  return null
+}
 
-export default useSubscribeChatByUserID;
+export default useSubscribeChatByUserID

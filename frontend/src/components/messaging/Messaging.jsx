@@ -8,6 +8,7 @@ import MessageHistory from './MessageHistory'
 import useAddMessageByChatID from '../../mutators/Message/useAddMessageByChatID'
 import useUpdateChatByChatID from '../../mutators/Message/useUpdateChatByChatID'
 import useSubscribeChatByUserID from '../../subscribers/Message/useSubscribeChatByUserID'
+import useSubscribeMessageByChatID from '../../subscribers/Message/useSubscribeMessageByChatID'
 import useGetChatByUserID from '../../queries/Message/useGetChatByUserID'
 import useGetMessagesByChatID from '../../queries/Message/useGetMessagesByChatID'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
@@ -16,17 +17,24 @@ function Messaging() {
     const [userID, setUserID] = useState(null)
     const [chatID, setChatID] = useState(null)
     const [message, setMessage] = useState('')
-    const [chatHistoryData, setChatHistoryData] = useState(null)
-    const [selectedChatIndex, setSelectedChatIndex] = useState(null)
+    
     const chatHistory = useGetChatByUserID(userID)
-    
-    const fetchedMessages = useGetMessagesByChatID(chatID)
-    
+    const [chatHistoryData, setChatHistoryData] = useState(null)
+
+    const fetchMessages = useGetMessagesByChatID(chatID)
+    const [fetchedMessages, setFetchedMessages] = useState(null)
+
     useEffect(() => {
         if (chatHistory) {
             setChatHistoryData(chatHistory)
         }
     }, [chatHistory])
+
+    useEffect(() => {
+        if (fetchMessages) {
+            setFetchedMessages(fetchMessages)
+        }
+    }, [fetchMessages])
 
     useEffect(() => {
         async function getUserID() {
@@ -39,11 +47,10 @@ function Messaging() {
         getUserID()
     }, [])
 
-    function handleSelectChat(chatIndex) {
-        if (selectedChatIndex !== chatIndex) {
+    function handleSelectChat(newChatID) {
+        if (chatID !== newChatID) {
             setMessage('')
-            setSelectedChatIndex(chatIndex)
-            setChatID(chatHistoryData[chatIndex].chat_id)
+            setChatID(newChatID)
         }
     }
 
@@ -76,7 +83,27 @@ function Messaging() {
         }
     }    
     useSubscribeChatByUserID(userID, handleChatChange)
-    
+
+    const handleMessageChange = (payload) => {
+        console.log(payload)
+        if (payload.eventType === 'INSERT') {
+            setFetchedMessages(prevData => {
+                const updatedChat = payload.new
+                const index = prevData.findIndex(chat => chat.id === updatedChat.id)
+                let updatedData
+                if (index !== -1) {
+                    updatedData = [...prevData]
+                    updatedData[index] = updatedChat
+                } else {
+                    updatedData = [...prevData, updatedChat]
+                }
+                updatedData.sort((a, b) => new Date(b.date) - new Date(a.date))
+                return updatedData
+            })
+        }
+    }
+    useSubscribeMessageByChatID(chatID, handleMessageChange)
+    console.log(chatHistoryData)
     return (
         <Box sx={{ padding: 2 }}>
             <NavigationMenu />

@@ -37,7 +37,7 @@ function ChatBox({ data, handleSelectChat, index, currentChatID, currentUserID }
     return (
         <Card sx={{ marginBottom: '10px', width:'100%', backgroundColor: data.chat_id === currentChatID ? '#DBCCE5' : '#ffffff' }}>
             <CardActionArea>
-                <CardContent onClick={() => handleSelectChat(index)}>
+                <CardContent onClick={() => handleSelectChat(data.chat_id)}>
                     <Typography variant='body1'>{data.user1_id === currentUserID ? data.user2_id : data.user1_id }</Typography>
                     <Typography variant='body1' color='text.secondary'>{timeAgo(data.recent_message_date)}</Typography>
                     <Typography variant='body1' color='text.secondary'>{data.recent_message}</Typography>
