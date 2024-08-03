@@ -1,17 +1,17 @@
 import { useEffect } from 'react'
 import { supabase } from "../../supabase"
 
-const useSubscribeChatByUserID = (userID, callback) => {
+const useSubscribeMessageByUserID = (userID, callback) => {
   useEffect(() => {
     const subscription1 = supabase
-      .channel('chat-change-subscriber1')
+      .channel('message-change-subscriber1')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'CHAT',
-          filter: `user1_id=eq.${userID}`
+          table: 'MESSAGE',
+          filter: `sender_id=eq.${userID}`
         },
         (payload) => {
           callback(payload)
@@ -20,14 +20,14 @@ const useSubscribeChatByUserID = (userID, callback) => {
       .subscribe()
 
     const subscription2 = supabase
-      .channel('chat-change-subscriber2')
+      .channel('message-change-subscriber2')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'CHAT',
-          filter: `user2_id=eq.${userID}`
+          table: 'MESSAGE',
+          filter: `receiver_id=eq.${userID}`
         },
         (payload) => {
           callback(payload)
@@ -44,4 +44,4 @@ const useSubscribeChatByUserID = (userID, callback) => {
   return null
 }
 
-export default useSubscribeChatByUserID
+export default useSubscribeMessageByUserID

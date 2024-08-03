@@ -1,32 +1,40 @@
-import { supabase } from "../../supabase"
-import { useState, useEffect } from 'react'
+import { supabase } from "../../supabase";
+import { useState, useEffect } from "react";
 
 const useGetChatByUserID = (user_id) => {
-  const [chat, setChat] = useState([])
-  
+  const [sortedChats, setSortedChats] = useState([]);
+
   useEffect(() => {
-    const fetchChats = async () => {
+    const fetchMessages = async () => {
       if (user_id) {
         const { data, error } = await supabase
-          .from("CHAT")
+          .from("MESSAGE")
           .select("*")
-          .or(`user1_id.eq.${user_id},user2_id.eq.${user_id}`)
+          .or(`sender_id.eq.${user_id},receiver_id.eq.${user_id}`)
+          .order("date", { ascending: false })
+
         if (error) {
-          console.error("Error fetching chats:", error.message)
+          console.error("Error fetching messages:", error.message);
         } else {
-          setChat(data)
+          const chats = {};
+          data.forEach((message) => {
+            const chat_id = message.sender_id === user_id ? message.receiver_id : message.sender_id;
+
+            if (!chats[chat_id] || new Date(message.date) > new Date(chats[chat_id].date)) {
+              chats[chat_id] = message;
+            }
+          });
+
+          const chatPreview = Object.values(chats);
+          chatPreview.sort((a, b) => new Date(b.date) - new Date(a.date));
+          setSortedChats(chatPreview);
         }
       }
-    }
+    };
 
-    fetchChats()
-  }, [user_id])
-  
-  const sortedChats = chat.sort((a, b) => {
-    return new Date(b.recent_message_date) - new Date(a.recent_message_date)
-  })
+    fetchMessages();
+  }, [user_id]);
+  return sortedChats;
+};
 
-  return sortedChats
-}
-
-export default useGetChatByUserID
+export default useGetChatByUserID;
