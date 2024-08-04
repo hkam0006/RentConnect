@@ -6,6 +6,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import useUpdateKeyStatus from "../../mutators/Keys/useUpdateKeyStatus";
 
 const style = {
   position: 'absolute',
@@ -18,33 +19,15 @@ const style = {
   p: 4,
 };
 
-const CheckoutModal = ({ onClose, checkoutKey }) => {
+const CheckoutModal = ({ onClose, keyId }) => {
+  const {checkOutKey} = useUpdateKeyStatus();
   const [dueDate, setDueDate] = useState(dayjs().add(1, 'day'));
   const [issueDate, setIssueDate] = useState(dayjs());
   const [borrower, setBorrower] = useState("");
 
-  async function editRowInTable() {
-    const { data, error } = await supabase
-      .from('KEY')
-      .update([
-        {
-          key_status: "On Loan",
-          key_issued: issueDate,
-          key_due: dueDate
-        },
-      ])
-      .eq("key_id", checkoutKey.key_id)
-
-    if (error) {
-      console.error("Error updating row:", error)
-    }
-    else {
-      console.log('Row updated')
-    }
-  }
-
   const handleSubmit = async e => {
-    await editRowInTable();
+    const {data, error} = await checkOutKey(keyId.key_id, dueDate, issueDate);
+    console.log(error)
     onClose(e)
   }
 
@@ -58,7 +41,7 @@ const CheckoutModal = ({ onClose, checkoutKey }) => {
           </Stack>
           <Stack direction='column' mb={2}>
             <Typography> Manager: John Smith</Typography>
-            <Typography>Address: {checkoutKey.prop_add}</Typography>
+            <Typography>Address: {keyId.prop_add}</Typography>
           </Stack>
           <Typography variant='caption1' fontWeight={700}>Checkout Information</Typography>
           <Stack direction='column' spacing={2} mt={1}>

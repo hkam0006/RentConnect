@@ -1,4 +1,5 @@
 import { supabase } from "../../supabase";
+import Fuse from 'fuse.js'
 import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
 import { Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Typography, TextField, Stack, Button,Chip, Checkbox } from '@mui/material'
@@ -8,6 +9,7 @@ import useGetPropertiesByCompanyID from '../../queries/Property/useGetProperties
 import CheckoutModal from './CheckoutModal'
 import useSubscribeKeysByCompanyID from '../../subscribers/Keys/useSubscribeKeysByCompanyID'
 import useDeleteMultipleKeys from "../../mutators/Keys/useDeleteMultipleKeys";
+import useUpdateKeyStatus from "../../mutators/Keys/useUpdateKeyStatus"
 
 const rowHeading = [
   "",
@@ -33,6 +35,7 @@ const Keys = () => {
   const { fetchKeys } = useGetKeyByCompanyID(TEST_COMPANY_ID);
   const { fetchProperties } = useGetPropertiesByCompanyID(TEST_COMPANY_ID);
   const deleteKeys = useDeleteMultipleKeys();
+  const {checkInKey} = useUpdateKeyStatus();
   const [keys, setKeys] = useState([]);
   const [error, setError] = useState(null);
   const [openAdd, setOpenAdd] = useState(false);
@@ -40,9 +43,17 @@ const Keys = () => {
   const [properties, setProperties] = useState([]);
   const [propManagers, setPropManagers] = useState(["John Smith"]);
   const [selected, setSelected] = useState([]);
+  const [search, setSearch] = useState('')
 
   const handleClose = () => setOpenAdd(false);
   const handleOpen = () => setOpenAdd(true);
+
+  const options = {
+    includeScore: false,
+    keys: ['full_address']
+  }
+
+  const fuse = new Fuse(properties, options)
 
   const getFullAddress = (property_id) => {
     let address = ""
@@ -56,39 +67,20 @@ const Keys = () => {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await fetchKeys();
-
-      setKeys(data)
-      setError(error)
-    })();
-
-    (async () => {
       const { data, error } = await fetchProperties();
 
       setProperties(data);
       setError(error);
-    })()
+    })();
+
+    (async () => {
+      const { data, error } = await fetchKeys();
+
+      data.map((key) => key.full_address = getFullAddress(key.property_id))
+      setKeys(data)
+      setError(error)
+    })();
   }, [])
-
-  async function updateRow(keyId) {
-    const { data, error } = await supabase
-      .from('KEY')
-      .update([
-        {
-          key_status: "Returned",
-          key_issued: null,
-          key_due: null
-        },
-      ])
-      .eq("key_id", keyId)
-
-    if (error) {
-      console.error("Error updating row:", error)
-    }
-    else {
-      console.log('Row updated')
-    }
-  }
 
   const handleSelectRow = (event, id) => {
     const selectedIndex = selected.indexOf(id);
@@ -113,7 +105,7 @@ const Keys = () => {
   };
 
   async function handleCheckIn(id) {
-    updateRow(id);
+    checkInKey(id);
   }
 
   const handleDeleteMultipleRows = () => {
@@ -158,12 +150,12 @@ const Keys = () => {
   return (
     <NavigationMenu>
       {openAdd && <AddKeyModal OnClose={handleClose} properties={properties} propManagers={propManagers} />}
-      {!!openCheckout && <CheckoutModal onClose={() => setOpenCheckout(null)} checkoutKey={openCheckout} />}
+      {!!openCheckout && <CheckoutModal onClose={() => setOpenCheckout(null)} keyId={openCheckout} />}
       <Box sx={{ mt: "70px", padding: "20px", width: "100%" }}>
         <Stack direction='row' sx={{ justifyContent: "space-between", padding: "7px", alignItems: "center" }}>
           <Stack direction='row' spacing={2} sx={{ alignItems: "center" }}>
-            <Typography variant='h4'>Keys</Typography>
-            <TextField variant='standard' placeholder='Search property...' />
+            <Typography variant='h4' >Keys</Typography>
+            <TextField variant='standard' placeholder='Search property...' value={search} onChange={(e) => setSearch(e.target.value)}/>
           </Stack>
           <Stack direction='row' spacing={1}>
             <Button 
@@ -178,7 +170,7 @@ const Keys = () => {
           </Stack>
         </Stack>
         <TableContainer sx={{ mt: 2 }}>
-          <Table>
+          <Table sx={{minWidth: "600px"}}>
             <TableHead sx={{ backgroundColor: "#ebeaea" }}>
               <TableRow>
                 {rowHeading.map((title, index) => {
@@ -225,6 +217,7 @@ const Keys = () => {
                           <Button
                             variant={buttonVariant}
                             style={{ borderWidth: "3px" }}
+                            sx={{width: "100%"}}
                             onClick={() => setOpenCheckout({ key_id: key.key_id, prop_add: propertyAddress, key_set: key.key_set })}
                           >
                             {buttonTitle}
@@ -232,7 +225,8 @@ const Keys = () => {
                         ) : (
                           <Button
                             variant={buttonVariant}
-                            style={{ borderWidth: "3px", borderRadius: "20px" }}
+                            style={{ borderWidth: "3px" }}
+                            sx={{width: "100%"}}
                             onClick={() => handleCheckIn(key.key_id)}
                           >
                             {buttonTitle}
