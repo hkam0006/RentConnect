@@ -49,7 +49,6 @@ const AddKeyModal = ({ OnClose, properties, propManagers }) => {
           key_status: "Added",
           key_set: newKey.key_set,
           property_manager_id: newKey.property_manager_id,
-          key_id: crypto.randomUUID()
         },
       ])
 

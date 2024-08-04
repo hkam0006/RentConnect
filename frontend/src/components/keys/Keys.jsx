@@ -1,11 +1,12 @@
 import { supabase } from "../../supabase";
 import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
-import { Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Typography, TextField, Stack, Button, Chip } from '@mui/material'
+import { Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Typography, TextField, Stack, Button,Chip } from '@mui/material'
 import useGetKeyByCompanyID from '../../queries/Key/useGetKeyByCompanyID'
 import AddKeyModal from './AddKeyModal'
 import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID'
 import CheckoutModal from './CheckoutModal'
+import useSubscribeKeysByCompanyID from '../../subscribers/Keys/useSubscribeKeysByCompanyID'
 
 const rowHeading = [
   "Status",
@@ -65,6 +66,10 @@ const Keys = () => {
     })()
   }, [])
 
+  useEffect(() => {
+
+  }, [])
+
   async function updateRow(keyId) {
     const { data, error } = await supabase
       .from('KEY')
@@ -88,6 +93,38 @@ const Keys = () => {
   async function handleCheckIn(id) {
     updateRow(id);
   }
+
+  const handleRealtimeChanges = (payload) => {
+    const newKey = payload.new
+    const oldKey = payload.old
+    const eventType = payload.eventType
+    const updatedKeys = [...keys]
+    let keyIndex = -1
+    if (oldKey){
+      keyIndex = updatedKeys.findIndex((key) => (key.key_id === oldKey.key_id) && (key.company_id === oldKey.company_id) && (key.property_id === oldKey.property_id))
+    }
+    if (eventType === 'DELETE'){
+      if (keyIndex != -1){
+        updatedKeys.splice(keyIndex, 1)
+        setKeys(updatedKeys)
+      }
+    }
+    else if (eventType === 'UPDATE'){
+      if (keyIndex != -1){
+        updatedKeys[keyIndex] = newKey;
+        setKeys(updatedKeys)
+      }
+    }
+    else {
+      setKeys((prevKeys) => {
+        const updatedKeys = [...prevKeys]
+        updatedKeys.push(newKey)
+        return updatedKeys
+      })
+    }
+  }
+
+  useSubscribeKeysByCompanyID(TEST_COMPANY_ID, handleRealtimeChanges);
 
   return (
     <NavigationMenu>
