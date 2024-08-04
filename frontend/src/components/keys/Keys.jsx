@@ -1,14 +1,16 @@
 import { supabase } from "../../supabase";
 import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
-import { Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Typography, TextField, Stack, Button,Chip } from '@mui/material'
+import { Box, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Typography, TextField, Stack, Button,Chip, Checkbox } from '@mui/material'
 import useGetKeyByCompanyID from '../../queries/Key/useGetKeyByCompanyID'
 import AddKeyModal from './AddKeyModal'
 import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID'
 import CheckoutModal from './CheckoutModal'
 import useSubscribeKeysByCompanyID from '../../subscribers/Keys/useSubscribeKeysByCompanyID'
+import useDeleteMultipleKeys from "../../mutators/Keys/useDeleteMultipleKeys";
 
 const rowHeading = [
+  "",
   "Status",
   "Key Set",
   "Property Address",
@@ -30,12 +32,14 @@ const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
 const Keys = () => {
   const { fetchKeys } = useGetKeyByCompanyID(TEST_COMPANY_ID);
   const { fetchProperties } = useGetPropertiesByCompanyID(TEST_COMPANY_ID);
+  const deleteKeys = useDeleteMultipleKeys();
   const [keys, setKeys] = useState([]);
   const [error, setError] = useState(null);
   const [openAdd, setOpenAdd] = useState(false);
   const [openCheckout, setOpenCheckout] = useState(null);
   const [properties, setProperties] = useState([]);
   const [propManagers, setPropManagers] = useState(["John Smith"]);
+  const [selected, setSelected] = useState([]);
 
   const handleClose = () => setOpenAdd(false);
   const handleOpen = () => setOpenAdd(true);
@@ -66,10 +70,6 @@ const Keys = () => {
     })()
   }, [])
 
-  useEffect(() => {
-
-  }, [])
-
   async function updateRow(keyId) {
     const { data, error } = await supabase
       .from('KEY')
@@ -90,8 +90,35 @@ const Keys = () => {
     }
   }
 
+  const handleSelectRow = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } 
+    else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } 
+    else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } 
+    else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+    setSelected(newSelected);
+  };
+
   async function handleCheckIn(id) {
     updateRow(id);
+  }
+
+  const handleDeleteMultipleRows = () => {
+    deleteKeys(selected);
+    setSelected([])
   }
 
   const handleRealtimeChanges = (payload) => {
@@ -117,12 +144,14 @@ const Keys = () => {
     }
     else {
       setKeys((prevKeys) => {
-        const updatedKeys = [...prevKeys]
-        updatedKeys.push(newKey)
-        return updatedKeys
+        const oldKeyArr = [...prevKeys]
+        oldKeyArr.push(newKey)
+        return oldKeyArr
       })
     }
   }
+
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   useSubscribeKeysByCompanyID(TEST_COMPANY_ID, handleRealtimeChanges);
 
@@ -136,18 +165,29 @@ const Keys = () => {
             <Typography variant='h4'>Keys</Typography>
             <TextField variant='standard' placeholder='Search property...' />
           </Stack>
-          <Button variant='contained' sx={{ borderRadius: "20px" }} onClick={handleOpen}>Add Key</Button>
+          <Stack direction='row' spacing={1}>
+            <Button 
+              variant='contained' 
+              color="error" 
+              disabled={selected.length === 0} 
+              onClick={() => handleDeleteMultipleRows()}
+            >
+              Delete {selected.length} Key(s)
+            </Button>
+            <Button variant='contained'  onClick={handleOpen}>Add Key</Button>
+          </Stack>
         </Stack>
         <TableContainer sx={{ mt: 2 }}>
           <Table>
             <TableHead sx={{ backgroundColor: "#ebeaea" }}>
               <TableRow>
                 {rowHeading.map((title, index) => {
-                  const alignment = title == "" ? "right" : "left"
                   return (
-                    <TableCell align={alignment} key={index}>
+                    <>
+                    <TableCell align="left" key={index}>
                       <Typography variant='subtitle1' fontWeight={700}>{title}</Typography>
                     </TableCell>
+                    </>
                   )
                 })}
               </TableRow>
@@ -157,8 +197,19 @@ const Keys = () => {
                 const buttonTitle = key.key_status === "On Loan" ? "Check In" : "Check Out";
                 const buttonVariant = key.key_status === "On Loan" ? "outlined" : "contained";
                 const propertyAddress = getFullAddress(key.property_id)
+                const isKeySelected = isSelected(key.key_id)
                 return (
-                  <TableRow key={index}>
+                  <TableRow 
+                    hover
+                    key={key.key_id}  
+                    selected={isKeySelected}
+                  >
+                    <TableCell>
+                      <Checkbox 
+                        checked={isKeySelected}
+                        onClick={(e) => handleSelectRow(e, key.key_id)}
+                      />
+                    </TableCell>
                     <TableCell>
                       <Chip variant='filled' label={key.key_status} color={chipColour[key.key_status]} />
                     </TableCell>
@@ -168,12 +219,12 @@ const Keys = () => {
                     <TableCell>{key.key_status === "On Loan" ? key.key_issued : "N/A"}</TableCell>
                     <TableCell>{key.key_status === "On Loan" ? key.key_due : "N/A"}</TableCell>
                     <TableCell>{key.key_status === "On Loan" ? "Jane Doe" : "N/A"}</TableCell>
-                    <TableCell align='right'>
+                    <TableCell align='left'>
                       {
                         buttonTitle === "Check Out" ? (
                           <Button
                             variant={buttonVariant}
-                            style={{ borderWidth: "3px", borderRadius: "20px" }}
+                            style={{ borderWidth: "3px" }}
                             onClick={() => setOpenCheckout({ key_id: key.key_id, prop_add: propertyAddress, key_set: key.key_set })}
                           >
                             {buttonTitle}
