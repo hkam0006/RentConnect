@@ -1,4 +1,3 @@
-import { supabase } from "../../supabase";
 import Fuse from 'fuse.js'
 import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
@@ -10,6 +9,7 @@ import CheckoutModal from './CheckoutModal'
 import useSubscribeKeysByCompanyID from '../../subscribers/Keys/useSubscribeKeysByCompanyID'
 import useDeleteMultipleKeys from "../../mutators/Keys/useDeleteMultipleKeys";
 import useUpdateKeyStatus from "../../mutators/Keys/useUpdateKeyStatus"
+import AppLoader from '../property_page/AppLoader'
 
 const rowHeading = [
   "",
@@ -43,8 +43,9 @@ const Keys = () => {
   const [properties, setProperties] = useState([]);
   const [propManagers, setPropManagers] = useState(["John Smith"]);
   const [selected, setSelected] = useState([]);
-  const [search, setSearch] = useState('')
-
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  
   const handleClose = () => setOpenAdd(false);
   const handleOpen = () => setOpenAdd(true);
 
@@ -80,6 +81,8 @@ const Keys = () => {
       setKeys(data)
       setError(error)
     })();
+
+    setLoading(false)
   }, [])
 
   const handleSelectRow = (event, id) => {
@@ -146,6 +149,8 @@ const Keys = () => {
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
   useSubscribeKeysByCompanyID(TEST_COMPANY_ID, handleRealtimeChanges);
+
+  if (loading) return <AppLoader />
 
   return (
     <NavigationMenu>
@@ -239,7 +244,7 @@ const Keys = () => {
               })}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> 
       </Box>
     </NavigationMenu >
   )
