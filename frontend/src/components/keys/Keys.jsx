@@ -202,15 +202,15 @@ const Keys = () => {
                         onClick={(e) => handleSelectRow(e, key.key_id)}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={(e) => handleSelectRow(e, key.key_id)} sx={{cursor: "pointer"}}>
                       <Chip variant='filled' label={key.key_status} color={chipColour[key.key_status]} />
                     </TableCell>
-                    <TableCell>{key.key_set}</TableCell>
-                    <TableCell>{propertyAddress}</TableCell>
-                    <TableCell>{"John Smith"}</TableCell>
-                    <TableCell>{key.key_status === "On Loan" ? key.key_issued : "N/A"}</TableCell>
-                    <TableCell>{key.key_status === "On Loan" ? key.key_due : "N/A"}</TableCell>
-                    <TableCell>{key.key_status === "On Loan" ? "Jane Doe" : "N/A"}</TableCell>
+                    <TableCell onClick={(e) => handleSelectRow(e, key.key_id)} sx={{cursor: "pointer"}}>{key.key_set}</TableCell>
+                    <TableCell onClick={(e) => handleSelectRow(e, key.key_id)} sx={{cursor: "pointer"}}>{propertyAddress}</TableCell>
+                    <TableCell onClick={(e) => handleSelectRow(e, key.key_id)} sx={{cursor: "pointer"}}>{"John Smith"}</TableCell>
+                    <TableCell onClick={(e) => handleSelectRow(e, key.key_id)} sx={{cursor: "pointer"}}>{key.key_status === "On Loan" ? key.key_issued : "N/A"}</TableCell>
+                    <TableCell onClick={(e) => handleSelectRow(e, key.key_id)} sx={{cursor: "pointer"}}>{key.key_status === "On Loan" ? key.key_due : "N/A"}</TableCell>
+                    <TableCell onClick={(e) => handleSelectRow(e, key.key_id)} sx={{cursor: "pointer"}}>{key.key_status === "On Loan" ? "Jane Doe" : "N/A"}</TableCell>
                     <TableCell align='left'>
                       {
                         buttonTitle === "Check Out" ? (
