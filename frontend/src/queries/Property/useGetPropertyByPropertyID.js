@@ -1,6 +1,4 @@
 import { supabase } from "../../supabase";
-import { useState, useEffect } from 'react';
-
 
 const useGetPropertyByPropertyID = (property_id) =>{
     const fetchProperty = async () => {

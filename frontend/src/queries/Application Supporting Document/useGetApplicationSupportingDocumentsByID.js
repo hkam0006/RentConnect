@@ -21,7 +21,7 @@ const useGetApplicationSupportingDocumentsByID = (property_id, renter_id) =>{
       };
   
       fetchApplicationSupportingDocuments();
-    }, []);
+    }, [property_id, renter_id]);
       return application_supporting_documents;
     };
 

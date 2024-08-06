@@ -20,7 +20,7 @@ const useGetRenterCommentsByRenterID = (renter_id) =>{
       };
   
       fetchRenterComments();
-    }, []);
+    }, [renter_id]);
       return renter_comment;
     };
 

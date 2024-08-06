@@ -10,7 +10,6 @@ export default function Dashboard() {
     useEffect(() => {
         async function getUserData() {
             await supabase.auth.getUser().then((value) =>{
-                console.log(value);
                 if (value.data?.user) {
                     setUser(value.data.user);
                 }

@@ -20,7 +20,7 @@ const useGetContactsByPropertyManagerID = (property_manager_id) =>{
       };
   
       fetchContacts();
-    }, []);
+    }, [property_manager_id]);
       return contacts;
     };
 

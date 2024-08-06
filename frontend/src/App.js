@@ -13,9 +13,12 @@ import PropertySearch from './components/property_search/PropertyGrid';
 import RentalProfile from './components/rental_profile/RentalProfile';
 import RenterApplication from './components/renter_application/RenterApplication';
 import ReceivedApplication from './components/applications/manager/RecievedApplication';
-import LogIn from './components/login_page/Login';
+import LogIn from './components/login_page/LogIn';
 import Inspection from './components/inspection_page/Inspection';
 import Messaging from './components/messaging/Messaging'
+import Keys from './components/keys/Keys';
+import InspectionRun from './components/inspection_run/InspectionRun'
+import SignUp from './components/login_page/SignUp';
 
 function App() {
     return (
@@ -38,6 +41,9 @@ function App() {
             <Route path='/LogIn' element={<LogIn/>} />
             <Route path='/Inspection' element={<Inspection/>} />
             <Route path='/messages' element={<Messaging/>} />
+            <Route path='/keys' element={<Keys/>} />
+            <Route path='/InspectionRun' element={<InspectionRun/>} />
+            <Route path='/SignUp' element={<SignUp/>} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -82,6 +88,9 @@ function Home() {
         </Link>
         <Link to="/Inspection">
             <button>Go to Inspection</button>
+        </Link>
+        <Link to="/InspectionRun">
+            <button>Go to Inspection Runs</button>
         </Link>
     </div>
 

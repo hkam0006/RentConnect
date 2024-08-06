@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Paper, TextField, Button, Box } from '@mui/material';
 
-function CommentBox({ comment, setComment, handleCommentsPush }) {
+function MessageBox({ message, setMessage, HandleMessagesPush }) {
     return (
         <Paper sx={{ padding: 2, margin: 2, width: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <TextField
-                    className='commentBox'
-                    id='commentBox'
-                    label='Comment'
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
+                    className='messageBox'
+                    id='messageBox'
+                    label='message'
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     fullWidth
                     multiline
                     rows={1}
@@ -21,7 +21,7 @@ function CommentBox({ comment, setComment, handleCommentsPush }) {
                 <Button
                     variant='contained'
                     color='primary'
-                    onClick={handleCommentsPush}
+                    onClick={HandleMessagesPush}
                 >
                     Send
                 </Button>
@@ -30,4 +30,4 @@ function CommentBox({ comment, setComment, handleCommentsPush }) {
     );
 }
 
-export default CommentBox;
+export default MessageBox;

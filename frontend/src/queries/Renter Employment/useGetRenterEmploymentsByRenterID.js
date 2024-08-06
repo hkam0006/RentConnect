@@ -20,7 +20,7 @@ const useGetRenterEmploymentsByRenterID = (renter_id) =>{
       };
   
       fetchRenterEmployments();
-    }, []);
+    }, [renter_id]);
       return renter_employments;
     };
 
