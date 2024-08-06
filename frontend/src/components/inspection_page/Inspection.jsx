@@ -99,8 +99,8 @@ const Inspection = () => {
                         }
                         alt="Property"
                         style={{
-                          width: 300,
-                          height: 200,
+                          width: 230,
+                          height: 150,
                           objectFit: "cover",
                           borderRadius: 8,
                           marginRight: 16,
@@ -113,7 +113,7 @@ const Inspection = () => {
                         alignItems="flex-start"
                         gap={2}
                       >
-                        <Typography variant="h5">
+                        <Typography variant="h6">
                           {inspection.propertyData.property_street_number}{" "}
                           {inspection.propertyData.property_street_name},{" "}
                           {inspection.propertyData.property_suburb},{" "}
