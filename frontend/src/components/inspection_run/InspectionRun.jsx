@@ -28,6 +28,14 @@ const InspectionRun = () => {
           throw propertiesError;
         }
 
+        const { data: propertyManager, error: propertyManagerError } = await supabase
+          .from("PROPERTY MANAGER")
+          .select("*");
+
+        if (propertyManagerError) {
+          throw propertyManagerError;
+        }
+
         const { data: inspectionRuns, error: inspectionRunsError } =
           await supabase.from("INSPECTION RUN").select("*");
 
@@ -44,11 +52,17 @@ const InspectionRun = () => {
             (inspectionRun) =>
               inspectionRun.inspection_run_id === inspection.inspection_run_id
           );
+          const propertyManagerData = inspectionRun
+          ? propertyManager.find(
+              (manager) => manager.property_manager_id === inspectionRun.property_manager_id
+            )
+          : null;
 
           return {
             ...inspection,
             propertyData: property || {},
             inspectionRunData: inspectionRun || {},
+            propertyManagerData: propertyManagerData || {},
           };
         });
 
@@ -104,7 +118,7 @@ const InspectionRun = () => {
                 >
                   <TableCell>
                     <Typography variant='body' fontWeight={700}>
-                      {inspection.inspectionRunData.property_manager_id}
+                      {inspection.propertyManagerData.property_manager_first_name} {inspection.propertyManagerData.property_manager_last_name} 
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
@@ -138,47 +152,3 @@ const InspectionRun = () => {
 
 export default InspectionRun;
 
-
-//   <Grid container spacing={2} style={{ paddingTop: "20px" }}>
-//   {inspectionsData.map((inspection) => (
-//     <Grid item key={inspection.id} xs={12}>
-//       <Box display="flex" alignItems="flex-start">
-//         <img
-//           src={
-//             inspection.propertyData.property_pictures?.[0] ||
-//             "default_image_path.jpg"
-//           }
-//           alt="Property"
-//           style={{
-//             width: 300,
-//             height: 200,
-//             objectFit: "cover",
-//             borderRadius: 8,
-//             marginRight: 16,
-//           }}
-//         />
-//         <Box
-//           display="flex"
-//           flexDirection="column"
-//           justifyContent="flex-start"
-//           alignItems="flex-start"
-//           gap={2}
-//         >
-//           <Typography variant="h5">
-//             {inspection.propertyData.property_street_number}{" "}
-//             {inspection.propertyData.property_street_name},{" "}
-//             {inspection.propertyData.property_suburb},{" "}
-//             {inspection.propertyData.property_state}
-//           </Typography>
-//           <Typography variant="body1">
-//             Date: {inspection.inspection_date},{" "}
-//             {inspection.inspectionRunData.inspection_run_date}
-//           </Typography>
-//           <Typography variant="body1">
-//             Time: {inspection.inspection_start}
-//           </Typography>
-//         </Box>
-//       </Box>
-//     </Grid>
-//   ))}
-// </Grid>
