@@ -4,6 +4,10 @@ import { Typography, Button, Grid, Box } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Stack, Card, tableCellClasses } from "@mui/material"
 import { supabase } from "../../supabase";
 import { styled } from '@mui/material/styles';
+import MyMap from "./MyMap";
+
+const ACCESS_TOKEN = "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ"
+
 
 const InspectionRun = () => {
   const [activeSection, setActiveSection] = useState("inspection");
@@ -144,6 +148,9 @@ const InspectionRun = () => {
                 </TableRow>
               ))} </TableBody>
           </Table>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", height: "100vh" }}>
+          <MyMap></MyMap>
         </div>
       </NavigationMenu>
     </div>
