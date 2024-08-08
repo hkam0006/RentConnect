@@ -1,17 +1,17 @@
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Grid, Box } from "@mui/material";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Stack, Card, tableCellClasses } from "@mui/material"
+import { Typography, Grid } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, tableCellClasses } from "@mui/material";
 import { supabase } from "../../supabase";
 import { styled } from '@mui/material/styles';
-import MyMap from "./MyMap";
+import MapComponent from "./MapNav";
 
-const ACCESS_TOKEN = "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ"
-
+const ACCESS_TOKEN = "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ";
 
 const InspectionRun = () => {
   const [activeSection, setActiveSection] = useState("inspection");
   const [inspectionsData, setInspectionsData] = useState([]);
+  const [mapData, setMapData] = useState({ origin: '', destination: '' });
 
   useEffect(() => {
     const fetchInspectionsData = async () => {
@@ -78,6 +78,7 @@ const InspectionRun = () => {
 
     fetchInspectionsData();
   }, []);
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "white",
@@ -86,9 +87,37 @@ const InspectionRun = () => {
       fontSize: 12,
     },
   }));
+
   const fullAddress = (number, name, type, suburb, state) => {
-    return `${number} ${name} ${type}, ${suburb}, ${state}`
-  }
+    return `${number} ${name} ${type}, ${suburb}, ${state}`;
+  };
+
+  const handleShowRoute = (propertyManagerId) => {
+    const filteredInspections = inspectionsData.filter(
+      inspection => inspection.propertyManagerData.property_manager_id === propertyManagerId
+    );
+
+    if (filteredInspections.length >= 2) {
+      const origin = fullAddress(
+        filteredInspections[0].propertyData.property_street_number,
+        filteredInspections[0].propertyData.property_street_name,
+        filteredInspections[0].propertyData.property_type,
+        filteredInspections[0].propertyData.property_suburb,
+        filteredInspections[0].propertyData.property_state
+      );
+
+      const destination = fullAddress(
+        filteredInspections[1].propertyData.property_street_number,
+        filteredInspections[1].propertyData.property_street_name,
+        filteredInspections[1].propertyData.property_type,
+        filteredInspections[1].propertyData.property_suburb,
+        filteredInspections[1].propertyData.property_state
+      );
+
+      setMapData({ origin, destination });
+    }
+  };
+
   return (
     <div>
       <NavigationMenu>
@@ -97,21 +126,21 @@ const InspectionRun = () => {
           spacing={2}
           style={{ padding: "30px", paddingTop: "110px" }}
           justifyContent="flex-start"
-        >
-        </Grid>
+        />
         <div style={{ padding: "20px" }}>
           {activeSection === "inspection" && (
             <Typography variant="h5">
-              Inspections Runs: ({inspectionsData.length})
-            </Typography>)}
-          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Table of properties" >
+              Inspections Runs
+            </Typography>
+          )}
+          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Table of properties">
             <TableHead>
               <TableRow>
                 <StyledTableCell><Typography fontSize={"12px"} fontWeight={700}>Property Manager</Typography></StyledTableCell>
-                <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"} >Property Address</Typography></StyledTableCell>
-                <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"} >Inspection Time and Date</Typography></StyledTableCell>
+                <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Property Address</Typography></StyledTableCell>
+                <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Inspection Time and Date</Typography></StyledTableCell>
                 <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Duration</Typography></StyledTableCell>
-                <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}></Typography></StyledTableCell>
+                <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Show Route</Typography></StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -122,7 +151,7 @@ const InspectionRun = () => {
                 >
                   <TableCell>
                     <Typography variant='body' fontWeight={700}>
-                      {inspection.propertyManagerData.property_manager_first_name} {inspection.propertyManagerData.property_manager_last_name} 
+                      {inspection.propertyManagerData.property_manager_first_name} {inspection.propertyManagerData.property_manager_last_name}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
@@ -130,6 +159,7 @@ const InspectionRun = () => {
                       {fullAddress(
                         inspection.propertyData.property_street_number,
                         inspection.propertyData.property_street_name,
+                        inspection.propertyData.property_type,
                         inspection.propertyData.property_suburb,
                         inspection.propertyData.property_state
                       )}
@@ -141,16 +171,22 @@ const InspectionRun = () => {
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                  <Typography variant='body' fontWeight={700}>
-                    {inspection.inspection_duration}
+                    <Typography variant='body' fontWeight={700}>
+                      {inspection.inspection_duration}
                     </Typography>
                   </TableCell>
+                  <TableCell align="right">
+                    <button onClick={() => handleShowRoute(inspection.propertyManagerData.property_manager_id)}>
+                      Show Route
+                    </button>
+                  </TableCell>
                 </TableRow>
-              ))} </TableBody>
+              ))}
+            </TableBody>
           </Table>
         </div>
         <div style={{ display: "flex", justifyContent: "center", height: "100vh" }}>
-          <MyMap></MyMap>
+          <MapComponent origin={mapData.origin} destination={mapData.destination} />
         </div>
       </NavigationMenu>
     </div>
@@ -158,4 +194,3 @@ const InspectionRun = () => {
 };
 
 export default InspectionRun;
-

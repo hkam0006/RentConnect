@@ -5,6 +5,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.16",
     "@mui/x-date-pickers": "^7.4.0",
-    "fuse.js": "^7.0.0"
+    "fuse.js": "^7.0.0",
+    "mapbox-gl": "^3.5.2"
   }
 }
