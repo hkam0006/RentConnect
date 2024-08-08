@@ -8,6 +8,8 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
   const [status, setStatus] = useState([]);
   const [query, setQuery] = useState("");
 
+
+
   function handleManagerFilterChange(e) {
     const selectedPropManager = e.target.value;
     setPropManager(selectedPropManager);
@@ -37,15 +39,11 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
 
   function handleSearchChange(event) {
     const searchQuery = event.target.value;
-    console.log(propManager)
     setQuery(searchQuery)
     if (searchQuery.length === 0) {
       return filterProperties(filterByManager(unfilteredProperties, propManager));
     }
-    let arrayCopy = unfilteredProperties.filter((property) => property.address.toLowerCase().includes(searchQuery.toLowerCase()));
-    if (propManager.length > 0) {
-      arrayCopy = arrayCopy.filter((property) => property.propManager === propManager);
-    }
+    let arrayCopy = filterBySearch(unfilteredProperties, searchQuery.toLowerCase())
     filterProperties(arrayCopy)
   }
 
@@ -53,8 +51,13 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
     if (query.length === 0) {
       return arr;
     }
-    const arrayCopy = arr.filter((property) => property.address.toLowerCase().includes(query.toLowerCase()))
+    const arrayCopy = arr.filter((property) => matchesQuery(property, query))
     return arrayCopy;
+  }
+
+  const matchesQuery = (p, query) => {
+    console.log(p.property_state.toLowerCase().includes(query))
+    return p.property_state.toLowerCase().includes(query) || p.property_street_type.toLowerCase().includes(query) || p.property_street_name.toLowerCase().includes(query) || p.property_street_number.toString().includes(query) || p.property_suburb.toLowerCase().includes(query);
   }
 
   function filterByManager(arr, propManager) {
@@ -62,7 +65,7 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
       setPropManager('')
       return arr;
     }
-    const arrayCopy = arr.filter((property) => property.propManager === propManager);
+    const arrayCopy = arr.filter((property) => property.property_manager_id === propManager);
     return arrayCopy;
   }
 
@@ -82,8 +85,10 @@ export function PropertySearch({ filterProperties, unfilteredProperties, propMan
             onChange={handleManagerFilterChange}
           >
             <MenuItem value=""><Typography color='gray'><em>Filter Property Manager</em></Typography></MenuItem>
-            {propManagers.map((manager, index) => (
-              <MenuItem key={index} value={manager}>{manager}</MenuItem>
+            {propManagers.map((man) => (
+              <MenuItem key={man.property_manager_id} value={man.property_manager_id}>
+                {`${man.property_manager_first_name} ${man.property_manager_last_name}`}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 import { Typography, Container, Grid, Stack, Card, CardContent, MenuItem, Select, FormControl } from "@mui/material"
+import useGetCurrentRentalAgreementByCompanyID from '../../queries/Rental Agreement/useGetCurrentRentalAgreementByCompanyID';
+import useGetRentalAgreementByCompanyID from '../../queries/Rental Agreement/useGetRentalAgreementByCompanyID';
+import useGetApplicationsByCompanyID from '../../queries/Application/useGetApplicationsByCompanyID';
 
+const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
 
-export function PropertyStatCards({ totalApplications, avgDOM, totalLeased }) {
+export function PropertyStatCards() {
   const [leasedTimeframe, setLeasedTimeframe] = useState("All Time");
   const [totalApplicationsTimeFrame, setTotalApplicationsTimeFrame] = useState("All Time");
 
@@ -14,6 +18,8 @@ export function PropertyStatCards({ totalApplications, avgDOM, totalLeased }) {
     setTotalApplicationsTimeFrame(event.target.value);
   };
 
+  const totalLeased = useGetRentalAgreementByCompanyID(TEST_COMPANY_ID).length;
+  const totalApplications = useGetApplicationsByCompanyID(TEST_COMPANY_ID).length;
 
   return <>
     {/* Total Property Leased Card */}
@@ -87,7 +93,7 @@ export function PropertyStatCards({ totalApplications, avgDOM, totalLeased }) {
               </FormControl>
             </Stack>
             <Stack textAlign={"center"}>
-              <Typography variant='h3' fontWeight={700} color={"primary"}>{avgDOM}</Typography>
+              <Typography variant='h3' fontWeight={700} color={"primary"}>{0}</Typography>
             </Stack>
           </CardContent>
         </Card>

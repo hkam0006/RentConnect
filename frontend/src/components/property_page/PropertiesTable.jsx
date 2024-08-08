@@ -61,8 +61,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell width={{ width: "fit-content" }}>
-                {/* <Card sx={{ padding: 2, }} > */}
+              <TableCell>
                 <Typography variant='body' fontWeight={700}>
                   {fullAddress(
                     row.property_street_number,
@@ -72,7 +71,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
                     row.property_state
                   )}
                 </Typography>
-                <Stack direction='row' spacing={2} justifyContent="start" sx={{ width: "fit-content" }} >
+                <Stack direction='row' spacing={2} justifyContent="start" >
                   <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={row.property_pictures[0]} alt='Stock Listing Image' />
                   <Stack>
                     <Stack direction='row' spacing={2}>
@@ -89,7 +88,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
                         <Typography alignContent="center" fontWeight={700} variant='h6'>{row.property_car_spot_count}</Typography>
                       </Stack>
                     </Stack>
-                    <Typography>${row.price} {row.property_rent_frequency}</Typography>
+                    <Typography>${row.property_rent} {row.property_rent_frequency}</Typography>
                     <Typography>Type: {row.property_type}</Typography>
                     <Typography>Available: {row.property_lease_start}</Typography>
                     <Button variant='outlined' size='small' endIcon={<OpenInNewIcon />}>Apply Link</Button>
