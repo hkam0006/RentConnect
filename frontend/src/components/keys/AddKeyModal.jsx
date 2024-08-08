@@ -15,7 +15,7 @@ const AddKeyModal = ({ OnClose, properties, propManagers }) => {
   const [value, setValue] = useState(dayjs('2022-04-17'));
   const [newKey, setNewKey] = useState({
     property_id: null,
-    property_manager_id: TEST_PROPERTY_MANAGER_ID,
+    property_manager_id: null,
     key_set: null
   })
 
@@ -65,6 +65,8 @@ const AddKeyModal = ({ OnClose, properties, propManagers }) => {
     OnClose(e);
   }
 
+  console.log(newKey)
+
   return (
     <Modal
       aria-labelledby="add-key-modal-title"
@@ -92,11 +94,11 @@ const AddKeyModal = ({ OnClose, properties, propManagers }) => {
                 label="Property Manager"
                 id="property-manager-select"
                 onChange={handleChange}
-                name='property_id'
+                name='property_manager_id'
               >
                 {propManagers.map((p, index) => (
-                  <MenuItem key={index} value={p}>
-                    {p}
+                  <MenuItem key={index} value={p.property_manager_id}>
+                    {p.property_manager_first_name} {p.property_manager_last_name}
                   </MenuItem>
                 ))}
               </Select>

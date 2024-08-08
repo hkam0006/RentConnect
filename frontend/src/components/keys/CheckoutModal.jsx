@@ -19,17 +19,18 @@ const style = {
   p: 4,
 };
 
-const CheckoutModal = ({ onClose, keyId }) => {
+const CheckoutModal = ({ onClose, keyObject }) => {
   const {checkOutKey} = useUpdateKeyStatus();
   const [dueDate, setDueDate] = useState(dayjs().add(1, 'day'));
   const [issueDate, setIssueDate] = useState(dayjs());
   const [borrower, setBorrower] = useState("");
 
   const handleSubmit = async e => {
-    const {data, error} = await checkOutKey(keyId.key_id, dueDate, issueDate);
+    const {data, error} = await checkOutKey(keyObject.key_id, dueDate, issueDate, borrower);
     console.log(error)
     onClose(e)
   }
+
 
   return (
     <Modal open={true} onClose={onClose}>
@@ -40,8 +41,9 @@ const CheckoutModal = ({ onClose, keyId }) => {
             <Typography variant='caption1' fontWeight={700}>Key Information</Typography>
           </Stack>
           <Stack direction='column' mb={2}>
-            <Typography> Manager: John Smith</Typography>
-            <Typography>Address: {keyId.prop_add}</Typography>
+            <Typography> Manager: {keyObject.manager_name}</Typography>
+            <Typography>Address: {keyObject.prop_add}</Typography>
+            <Typography>Key Set: {keyObject.key_set}</Typography>
           </Stack>
           <Typography variant='caption1' fontWeight={700}>Checkout Information</Typography>
           <Stack direction='column' spacing={2} mt={1}>

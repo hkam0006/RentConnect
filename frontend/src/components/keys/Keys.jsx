@@ -1,4 +1,3 @@
-import Fuse from "fuse.js";
 import React, { useEffect, useState } from "react";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import {
@@ -24,6 +23,7 @@ import useSubscribeKeysByCompanyID from "../../subscribers/Keys/useSubscribeKeys
 import useDeleteMultipleKeys from "../../mutators/Keys/useDeleteMultipleKeys";
 import useUpdateKeyStatus from "../../mutators/Keys/useUpdateKeyStatus";
 import AppLoader from "../property_page/AppLoader";
+import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
 
 const rowHeading = [
   "",
@@ -43,11 +43,14 @@ const chipColour = {
   Added: "success",
 };
 
+const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+
 const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";
 
 const Keys = () => {
   const { fetchKeys } = useGetKeyByCompanyID(TEST_COMPANY_ID);
   const { fetchProperties } = useGetPropertiesByCompanyID(TEST_COMPANY_ID);
+  const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
   const deleteKeys = useDeleteMultipleKeys();
   const { checkInKey } = useUpdateKeyStatus();
   const [keys, setKeys] = useState([]);
@@ -55,29 +58,29 @@ const Keys = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const [openCheckout, setOpenCheckout] = useState(null);
   const [properties, setProperties] = useState([]);
-  const [propManagers, setPropManagers] = useState(["John Smith"]);
   const [selected, setSelected] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [filteredKeys, setFilteredKeys] = useState(keys);
 
   const handleClose = () => setOpenAdd(false);
   const handleOpen = () => setOpenAdd(true);
 
+  const propManagerMap = {}
+  for (let i = 0; i < propManagers.length; i++){
+    const curr = propManagers[i];
+    propManagerMap[curr.property_manager_id] = `${curr.property_manager_first_name} ${curr.property_manager_last_name}`
+  }
+
+  const fullAddressMap = {}
+  for (let i = 0; i < properties.length; i++){
+    const curr = properties[i];
+    fullAddressMap[curr.property_id] = `${curr.property_street_number} ${curr.property_street_name} ${curr.property_street_type}, ${curr.property_suburb}, ${curr.property_state}`;
+  }
+
   const options = {
     includeScore: false,
     keys: ["full_address"],
-  };
-
-  const fuse = new Fuse(properties, options);
-
-  const getFullAddress = (property_id) => {
-    let address = "";
-    properties.map((p) => {
-      if (p.property_id === property_id) {
-        address = `${p.property_street_number} ${p.property_street_name} ${p.property_street_type}, ${p.property_suburb}, ${p.property_state}`;
-      }
-    });
-    return address;
   };
 
   useEffect(() => {
@@ -91,7 +94,7 @@ const Keys = () => {
     (async () => {
       const { data, error } = await fetchKeys();
 
-      data.map((key) => (key.full_address = getFullAddress(key.property_id)));
+      data.map((key) => (key.full_address = fullAddressMap[key.property_id]));
       setKeys(data);
       setError(error);
     })();
@@ -127,7 +130,7 @@ const Keys = () => {
     setSelected([]);
   };
 
-  const handleRealtimeChanges = (payload) => {
+  const handleKeyChanges = (payload) => {
     const newKey = payload.new;
     const oldKey = payload.old;
     const eventType = payload.eventType;
@@ -160,9 +163,21 @@ const Keys = () => {
     }
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
+  const handleSearch = (e) => {
+    setSearch(e.target.value)
+    if (!search || !keys){
+      setFilteredKeys(keys);
+      return
+    }
+    else{
+      const newArr = [...keys]
+      const arr = newArr.filter((key) => key.full_address.includes(search))
+      setFilteredKeys(arr);
+    }
+  }
 
-  useSubscribeKeysByCompanyID(TEST_COMPANY_ID, handleRealtimeChanges);
+  const isSelected = (id) => selected.indexOf(id) !== -1;
+  useSubscribeKeysByCompanyID(TEST_COMPANY_ID, handleKeyChanges);
 
   if (loading) return <AppLoader />;
 
@@ -178,7 +193,7 @@ const Keys = () => {
       {!!openCheckout && (
         <CheckoutModal
           onClose={() => setOpenCheckout(null)}
-          keyId={openCheckout}
+          keyObject={openCheckout}
         />
       )}
       <Box sx={{ mt: "70px", padding: "20px", width: "100%" }}>
@@ -196,7 +211,7 @@ const Keys = () => {
               variant="standard"
               placeholder="Search property..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearch(e)}
             />
           </Stack>
           <Stack direction="row" spacing={1}>
@@ -219,13 +234,11 @@ const Keys = () => {
               <TableRow>
                 {rowHeading.map((title, index) => {
                   return (
-                    <>
-                      <TableCell align="left" key={index}>
-                        <Typography variant="subtitle1" fontWeight={700}>
-                          {title}
-                        </Typography>
-                      </TableCell>
-                    </>
+                    <TableCell align="left" key={index}>
+                      <Typography variant="subtitle1" fontWeight={700}>
+                        {title}
+                      </Typography>
+                    </TableCell>
                   );
                 })}
               </TableRow>
@@ -236,7 +249,7 @@ const Keys = () => {
                   key.key_status === "On Loan" ? "Check In" : "Check Out";
                 const buttonVariant =
                   key.key_status === "On Loan" ? "outlined" : "contained";
-                const propertyAddress = getFullAddress(key.property_id);
+                const propertyAddress = fullAddressMap[key.property_id];
                 const isKeySelected = isSelected(key.key_id);
                 return (
                   <TableRow hover key={key.key_id} selected={isKeySelected}>
@@ -272,25 +285,25 @@ const Keys = () => {
                       onClick={(e) => handleSelectRow(e, key.key_id)}
                       sx={{ cursor: "pointer" }}
                     >
-                      {"John Smith"}
+                      {propManagerMap[key.property_manager_id]}
                     </TableCell>
                     <TableCell
                       onClick={(e) => handleSelectRow(e, key.key_id)}
                       sx={{ cursor: "pointer" }}
                     >
-                      {key.key_status === "On Loan" ? key.key_issued : "N/A"}
+                      {key.key_status === "On Loan" ? new Date(key.key_issued).toLocaleDateString("en-us", dateOptions) : "N/A"}
                     </TableCell>
                     <TableCell
                       onClick={(e) => handleSelectRow(e, key.key_id)}
                       sx={{ cursor: "pointer" }}
                     >
-                      {key.key_status === "On Loan" ? key.key_due : "N/A"}
+                      {key.key_status === "On Loan" ? new Date(key.key_due).toLocaleDateString("en-us", dateOptions) : "N/A"}
                     </TableCell>
                     <TableCell
                       onClick={(e) => handleSelectRow(e, key.key_id)}
                       sx={{ cursor: "pointer" }}
                     >
-                      {key.key_status === "On Loan" ? "Jane Doe" : "N/A"}
+                      {key.key_status === "On Loan" ? key.borrower_name : "N/A"}
                     </TableCell>
                     <TableCell align="left">
                       {buttonTitle === "Check Out" ? (
@@ -303,6 +316,8 @@ const Keys = () => {
                               key_id: key.key_id,
                               prop_add: propertyAddress,
                               key_set: key.key_set,
+                              manager_name: propManagerMap[key.property_manager_id],
+                              key_set: key.key_set
                             })
                           }
                         >

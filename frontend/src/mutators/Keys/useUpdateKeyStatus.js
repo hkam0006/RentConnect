@@ -15,14 +15,15 @@ const useUpdateKeyStatus = (keyId) => {
     return {data, error}
   }
   
-  const checkOutKey = async (keyId, dueDate, issueDate) => {
+  const checkOutKey = async (keyId, dueDate, issueDate, borrower_name) => {
     const {data, error } = await supabase
       .from('KEY')
       .update([
         {
           key_status: "On Loan",
           key_issued: issueDate,
-          key_due: dueDate
+          key_due: dueDate,
+          borrower_name: borrower_name
         },
       ])
       .eq("key_id", keyId)
