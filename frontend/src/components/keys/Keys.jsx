@@ -149,14 +149,21 @@ const Keys = () => {
       if (keyIndex != -1) {
         updatedKeys.splice(keyIndex, 1);
         setKeys(updatedKeys);
+        setFilteredKeys(updatedKeys);
       }
     } else if (eventType === "UPDATE") {
       if (keyIndex != -1) {
         updatedKeys[keyIndex] = newKey;
         setKeys(updatedKeys);
+        setFilteredKeys(updatedKeys);
       }
     } else {
       setKeys((prevKeys) => {
+        const oldKeyArr = [...prevKeys];
+        oldKeyArr.push(newKey);
+        return oldKeyArr;
+      });
+      setFilteredKeys((prevKeys) => {
         const oldKeyArr = [...prevKeys];
         oldKeyArr.push(newKey);
         return oldKeyArr;
@@ -235,7 +242,7 @@ const Keys = () => {
           </Stack>
         </Stack>
         <TableContainer sx={{ mt: 2 }}>
-          <Table sx={{ minWidth: "600px" }}>
+          <Table sx={{ minWidth: 600 }}>
             <TableHead sx={{ backgroundColor: "#ebeaea" }}>
               <TableRow>
                 {rowHeading.map((title, index) => {

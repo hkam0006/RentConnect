@@ -2,10 +2,6 @@ import { supabase } from "../../supabase";
 import { Box, Button, Fade, FormControl, InputLabel, MenuItem, Modal, Select, Stack, TextField, Typography } from '@mui/material'
 import Backdrop from '@mui/material/Backdrop';
 import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import React, { useState } from 'react'
 
 const TEST_PROPERTY_MANAGER_ID = "fc8e3cf4-cbbc-4557-b303-7aa028c616eb";
@@ -64,8 +60,6 @@ const AddKeyModal = ({ OnClose, properties, propManagers }) => {
     await addRowToTable();
     OnClose(e);
   }
-
-  console.log(newKey)
 
   return (
     <Modal
