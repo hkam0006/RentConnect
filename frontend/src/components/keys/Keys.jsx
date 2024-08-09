@@ -61,7 +61,7 @@ const Keys = () => {
   const [selected, setSelected] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-  const [filteredKeys, setFilteredKeys] = useState(keys);
+  const [filteredKeys, setFilteredKeys] = useState([]);
 
   const handleClose = () => setOpenAdd(false);
   const handleOpen = () => setOpenAdd(true);
@@ -96,6 +96,7 @@ const Keys = () => {
 
       data.map((key) => (key.full_address = fullAddressMap[key.property_id]));
       setKeys(data);
+      setFilteredKeys(data);
       setError(error);
     })();
 
@@ -164,16 +165,21 @@ const Keys = () => {
   };
 
   const handleSearch = (e) => {
-    setSearch(e.target.value)
-    if (!search || !keys){
+    const searchQuery = e.target.value
+    setSearch(searchQuery)
+    setFilteredKeys(keys)
+    if (searchQuery.length === 0 ){
       setFilteredKeys(keys);
-      return
     }
     else{
       const newArr = [...keys]
-      const arr = newArr.filter((key) => key.full_address.includes(search))
+      const arr = newArr.filter((key) => matchSearchQuery(key, searchQuery.toLowerCase()))
       setFilteredKeys(arr);
     }
+  }
+  
+  const matchSearchQuery = (key, search) => {
+    return fullAddressMap[key.property_id].toLowerCase().includes(search) || key.key_set.toLowerCase().includes(search) ;
   }
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
@@ -244,7 +250,7 @@ const Keys = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {keys.map((key, index) => {
+              {filteredKeys.map((key, index) => {
                 const buttonTitle =
                   key.key_status === "On Loan" ? "Check In" : "Check Out";
                 const buttonVariant =
