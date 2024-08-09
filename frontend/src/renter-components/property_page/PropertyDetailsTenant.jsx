@@ -10,14 +10,14 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 import DeckIcon from '@mui/icons-material/Deck';
 import { UpcomingViewingsTable } from './UpcomingViewingsTable';
 import InspectionRequestModal from './InspectionRequestModal';
-import ImageCarousel from '../ImageCarousel';
+import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
 
 // Demo Images
-import ListingImage from '../listing.jpg'
-import ListingImageAppt from '../listing2.jpg'
-import NavigationMenu from '../../navigation_menu/NavigationMenus';
+import ListingImage from '../../manager-components/property_page/listing.jpg'
+import ListingImageAppt from '../../manager-components/property_page/listing2.jpg'
+import NavigationMenu from '../../manager-components/navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
-import useGetPropertyByPropertyID from '../../../queries/Property/useGetPropertyByPropertyID';
+import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 
 export default function PropertyDetailsTenant() {
 

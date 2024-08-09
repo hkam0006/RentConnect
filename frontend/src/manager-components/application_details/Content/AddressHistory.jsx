@@ -69,7 +69,7 @@ export default AddressHistory
 
 <Grid container alignItems='center' paddingBottom={2}>
     <Grid xs={8}>
-        <Typography variant='body1'><Typography variant='body1'>Would you rent the tenant again?</Typography></Typography>
+        <Typography variant='body1'><Typography variant='body1'>Would you rent the property_page again?</Typography></Typography>
     </Grid>
     <Grid item xs={4} container justifyContent='flex-end'>
         {applicantData.addressHistory.Recommended ? (
@@ -95,7 +95,7 @@ export default AddressHistory
 
 <Grid container alignItems='center' paddingBottom={2}>
     <Grid xs={8}>
-        <Typography variant='body1'><Typography variant='body1'>Did the tenant pay rent on time?</Typography></Typography>
+        <Typography variant='body1'><Typography variant='body1'>Did the property_page pay rent on time?</Typography></Typography>
     </Grid>
     <Grid item xs={4} container justifyContent='flex-end'>
         {applicantData.addressHistory.OnTimePayments ? (
@@ -160,7 +160,7 @@ export default AddressHistory
 
 <Grid container alignItems='center' paddingBottom={2}>
     <Grid xs={8}>
-        <Typography variant='body1'><Typography variant='body1'>Did the tenant leave the property in a reasonable condition?</Typography></Typography>
+        <Typography variant='body1'><Typography variant='body1'>Did the property_page leave the property in a reasonable condition?</Typography></Typography>
     </Grid>
     <Grid item xs={4} container justifyContent='flex-end'>
         {applicantData.addressHistory.ReasonablePropertyCondition ? (
@@ -173,7 +173,7 @@ export default AddressHistory
 
 <Grid container alignItems='center' paddingBottom={2}>
     <Grid xs={8}>
-        <Typography variant='body1'><Typography variant='body1'>Did you expect the tenant to terminate the tenancy?</Typography></Typography>
+        <Typography variant='body1'><Typography variant='body1'>Did you expect the property_page to terminate the tenancy?</Typography></Typography>
     </Grid>
     <Grid item xs={4} container justifyContent='flex-end'>
         {applicantData.addressHistory.ExpectedTermination ? (

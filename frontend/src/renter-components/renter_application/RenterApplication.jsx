@@ -17,7 +17,7 @@ import {Card, CardContent, CardMedia, Grid, IconButton, TextField, Typography} f
 import Paper from "@mui/material/Paper";
 import {styled} from "@mui/material/styles";
 import CardHeader from "@mui/material/CardHeader";
-import defaultImageUrl from "../dashboard_page/house_default.jpg";
+import defaultImageUrl from "../../manager-components/dashboard_page/house_default.jpg";
 import {useEffect, useReducer, useState} from "react";
 import BedIcon from "@mui/icons-material/Bed";
 import BathtubIcon from "@mui/icons-material/Bathtub";

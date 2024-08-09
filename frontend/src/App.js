@@ -1,24 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import ApplicationDetails from './components/application_details/ApplicationDetails';
+import ApplicationDetails from './manager-components/application_details/ApplicationDetails';
 import theme from './theme';
-import Properties from './components/property_page/Properties';
-import PropertyDetails  from './components/property_page/PropertyDetails';
-import Contacts from './components/contacts/Contacts';
-import Application from './components/applications/Application';
-import Dashboard from './components/dashboard_page/Dashboard';
-import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant';
+import Properties from './manager-components/property_page/Properties';
+import PropertyDetails  from './manager-components/property_page/PropertyDetails';
+import Contacts from './manager-components/contacts/Contacts';
+import Application from './manager-components/applications/Application';
+import Dashboard from './manager-components/dashboard_page/Dashboard';
+import PropertyDetailsTenant from './renter-components/property_page/PropertyDetailsTenant';
 import {CssBaseline, ThemeProvider} from "@mui/material";
-import PropertySearch from './components/property_search/PropertyGrid';
-import RentalProfile from './components/rental_profile/RentalProfile';
-import RenterApplication from './components/renter_application/RenterApplication';
-import ReceivedApplication from './components/applications/manager/RecievedApplication';
-import LogIn from './components/login_page/LogIn';
-import Inspection from './components/inspection_page/Inspection';
-import Messaging from './components/messaging/Messaging'
-import Keys from './components/keys/Keys';
-import InspectionRun from './components/inspection_run/InspectionRun'
-import SignUp from './components/login_page/SignUp';
+import PropertySearch from './manager-components/property_search/PropertyGrid';
+import RentalProfile from './manager-components/rental_profile/RentalProfile';
+import RenterApplication from './renter-components/renter_application/RenterApplication';
+import ReceivedApplication from './manager-components/applications/manager/RecievedApplication';
+import LogIn from './manager-components/login_page/Login';
+import Inspection from './manager-components/inspection_page/Inspection';
+import Messaging from './manager-components/messaging/Messaging'
+import Keys from './manager-components/keys/Keys';
+import InspectionRun from './manager-components/inspection_run/InspectionRun'
+import SignUp from './manager-components/login_page/SignUp';
+import RenterHome from './renter-components/renter_home/RenterHome';
 
 function App() {
     return (
@@ -44,6 +45,7 @@ function App() {
             <Route path='/keys' element={<Keys/>} />
             <Route path='/InspectionRun' element={<InspectionRun/>} />
             <Route path='/SignUp' element={<SignUp/>} />
+            <Route path='/RenterHome' element={<RenterHome/>} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -91,6 +93,9 @@ function Home() {
         </Link>
         <Link to="/InspectionRun">
             <button>Go to Inspection Runs</button>
+        </Link>
+        <Link to="/RenterHome">
+            <button>Go to Renter Homepage</button>
         </Link>
     </div>
 
