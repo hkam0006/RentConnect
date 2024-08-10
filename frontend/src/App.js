@@ -18,7 +18,7 @@ import Inspection from './components/inspection_page/Inspection';
 import Messaging from './components/messaging/Messaging'
 import Keys from './components/keys/Keys';
 import InspectionRun from './components/inspection_run/InspectionRun'
-import SignUpR from './components/login_page/SignUpR';
+import SignUpR from './components/signup_page/SignUpR';
 
 function App() {
     return (
