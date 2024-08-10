@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Lock from '@mui/icons-material/Lock';
-import { Button} from '@mui/material';
+import { Button, Typography} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "../../supabase";
 import { useState} from 'react';
@@ -24,23 +24,55 @@ function SignUp(){
     const [errorTextFlag, setErrorTextFlag] = useState(false);
     const [errorText, setErrorText] = useState(false);
     const navigate = useNavigate();
+
+    const [fname, setFname] = useState('');
+    const handleFnameChange = f => {
+        setFname(f.target.value);
+    }
+
+    const [lname, setLname] = useState('');
+    const handleLnameChange = f => {
+        setLname(f.target.value);
+    }
+
+    const [phoneNum, setPhoneNum] = useState('');
+    const handlePhoneNumChange = f => {
+        if (!Number.isNaN(Number(f.target.value))){
+            setPhoneNum(f.target.value);
+        }
+    }
+    // <Typography sx={{height: '15%', fontSize: '130%', mr: '2%'}}>Email:</Typography>
   return (
-    <Box sx={{ml: '35%', mt: '10%', backgroundColor: 'white', width: '30%', mb: '10%', borderRadius: 2}}>
+    <Box sx={{ml: '30%', mt: '5%', backgroundColor: 'white', width: '40%', borderRadius: 2}}>
         <br/>
-        <Box sx={{fontSize: '220%', fontWeight: 'bold', ml: '7%'}}>Sign Up</Box>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-            <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-            <TextField id='Email' value={email} onChange={handleEmailChange} label='Email' variant='standard' sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+        <Box sx={{fontSize: '220%', fontWeight: 'bold', textAlign: 'center'}}>Sign Up</Box>
+        <br/>
+        <Typography sx={{color: 'primary.main', ml: "4%", width: '90%'}}>Account Details</Typography>
+        <Box sx={{border: 1, borderRadius: 2, borderColor: 'primary.main', ml: "4%", width: '90%'}}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                <TextField id='FName' value={fname} onChange={handleFnameChange} label='First Name' variant='standard' sx={{width: '96%', ml: '2%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end'}}>
+                <TextField id='LName' value={lname} onChange={handleLnameChange} label='Last Name' variant='standard'  sx={{width: '96%', ml: '2%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: '4%'}}>
+                <TextField id='P' value={phoneNum} onChange={handlePhoneNumChange} label='Phone Number' variant='standard'  sx={{width: '96%', ml: '2%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
         </Box>
         <br/>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-            <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-            <TextField id='Password' value={password} onChange={handlePasswordChange} label='Password' variant='standard' type='password' error={errorTextFlag} helperText={errorTextFlag?errorText:''} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
-        </Box>
-        <br/>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-            <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-            <TextField id='PasswordConf' value={passwordConf} onChange={handlePasswordConfChange} label='Confirm Password' variant='standard' type='password' error={errorTextFlag} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+        <Typography sx={{color: 'primary.main', ml: "4%", width: '90%'}}>Log In Details</Typography>
+        <Box sx={{border: 1, borderRadius: 2, borderColor: 'primary.main', ml: "4%", width: '90%'}}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                <TextField id='Email' value={email} onChange={handleEmailChange} label='Email' variant='standard' sx={{width: '96%', ml: '2%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end'}}>
+                
+                <TextField id='Password' value={password} onChange={handlePasswordChange} label='Password' variant='standard' type='password' error={errorTextFlag} helperText={errorTextFlag?errorText:''} sx={{width: '96%', ml: '2%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end', mb: '4%'}}>
+                
+                <TextField id='PasswordConf' value={passwordConf} onChange={handlePasswordConfChange} label='Confirm Password' variant='standard' type='password' error={errorTextFlag} sx={{width: '96%', ml: '2%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
         </Box>
         <br/>
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
