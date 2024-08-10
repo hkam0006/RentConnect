@@ -1,5 +1,5 @@
-import React from 'react';
-import { Paper, TextField, Button, Box } from '@mui/material';
+import React from 'react'
+import { Paper, TextField, Button, Box } from '@mui/material'
 
 function MessageBox({ message, setMessage, HandleMessagesPush }) {
     return (
@@ -27,7 +27,7 @@ function MessageBox({ message, setMessage, HandleMessagesPush }) {
                 </Button>
             </Box>
         </Paper>
-    );
+    )
 }
 
-export default MessageBox;
+export default MessageBox
