@@ -18,8 +18,9 @@ const useGetRenterByRenterID = (renter_id) =>{
             setRenter(data)
         }
       }
-  
-      fetchRenter()
+      if (renter_id) {
+        fetchRenter()
+      }
     }, [renter_id])
       return renter
     }

@@ -18,8 +18,9 @@ const useGetPropertyManagerByPropertyManagerID = (property_manager_id) =>{
           setPropertyManager(data)
         }
       }
-  
-      fetchPropertyManager()
+      if (property_manager_id) {
+        fetchPropertyManager()
+      }
     }, [property_manager_id])
       return property_manager
     }

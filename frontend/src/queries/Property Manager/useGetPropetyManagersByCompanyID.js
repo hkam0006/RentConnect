@@ -18,8 +18,9 @@ const useGetPropetyManagersByCompanyID = (company_id) =>{
           setPropertyManagers(data)
         }
       }
-  
-      fetchPropertyManagers()
+      if (company_id) {
+        fetchPropertyManagers()
+      }
     }, [])
       return property_managers
     }
