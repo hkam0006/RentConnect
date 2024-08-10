@@ -19,6 +19,7 @@ import Messaging from './components/messaging/Messaging'
 import Keys from './components/keys/Keys';
 import InspectionRun from './components/inspection_run/InspectionRun'
 import SignUpR from './components/signup_page/SignUpR';
+import SignUpPM from './components/signup_page/SignUpPM';
 
 function App() {
     return (
@@ -45,6 +46,7 @@ function App() {
             <Route path='/keys' element={<Keys/>} />
             <Route path='/InspectionRun' element={<InspectionRun/>} />
             <Route path='/SignUpR' element={<SignUpR/>} />
+            <Route path='/SignUpPM' element={<SignUpPM/>} />
           </Routes>
         </Router>
     </ThemeProvider>

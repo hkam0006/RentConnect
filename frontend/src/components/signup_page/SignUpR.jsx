@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from "../../supabase";
 import { useState} from 'react';
 
-function SignUp(){
+function SignUpR(){
     const [email, setEmail] = useState('');
     const handleEmailChange = f => {
         setEmail(f.target.value);
@@ -116,4 +116,4 @@ function SignUp(){
   );
 }
 
-export default SignUp;
+export default SignUpR;
