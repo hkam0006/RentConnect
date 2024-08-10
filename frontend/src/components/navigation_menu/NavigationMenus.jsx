@@ -1,4 +1,3 @@
-import { ReactComponent as Logo } from "../../logo.svg";
 import React, { useEffect, useState } from 'react';
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -9,14 +8,13 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SideDrawer from "./SideDrawer";
-import { Link, useNavigate } from 'react-router-dom';
 import logo from "./RENTCONNECT-2.png"
 import { supabase } from "../../supabase";
+import {useNavigate } from 'react-router-dom';
 
 const drawerWidth = 200;
 
 export default function NavigationMenu({ children }) {
-    const [auth, setAuth] = useState(true);
     const [accountAnchorEl, setAccountAnchorEl] = useState(null); // State variable for account circle icon
 
     const handleIcon = (event) => {
@@ -26,6 +24,24 @@ export default function NavigationMenu({ children }) {
     const handleAccountClose = () => {
         setAccountAnchorEl(null);
     };
+
+    const navigate = useNavigate();
+
+    const handleLogOut = () => {
+        supabase.auth.signOut().then(data=> {
+            if (!data.error){
+                navigate('/');
+            }
+            else{
+                console.log('Failed to log out:')
+                console.log(data.error)
+            }
+        })
+        .catch(error => {
+            console.log('Failed to log out:')
+            console.log(error)
+        })
+    }
 
     const [user, setUser] = useState({});
     useEffect(() => {
@@ -58,7 +74,7 @@ export default function NavigationMenu({ children }) {
                         </span>
                     </Typography>
 
-                    {auth && (
+                    {user && (
                         <Box>
                             <Box sx={{justifyContent: 'flex-end', display: 'flex', alignItems: 'center'}}>
                                 <Typography sx={{fontSize: '130%'}}>{user.email}</Typography>
@@ -88,8 +104,8 @@ export default function NavigationMenu({ children }) {
                                 open={Boolean(accountAnchorEl)}
                                 onClose={handleAccountClose}
                             >
-                                <MenuItem onClick={handleAccountClose}>Profile</MenuItem>
-                                <MenuItem onClick={handleAccountClose}>My account</MenuItem>
+                                <MenuItem onClick={handleAccountClose}>My Account</MenuItem>
+                                <MenuItem onClick={() => {handleLogOut()}}>Log Out</MenuItem>
                             </Menu>
                         </Box>
                     )}

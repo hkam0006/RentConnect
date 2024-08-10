@@ -13,12 +13,12 @@ import PropertySearch from './components/property_search/PropertyGrid';
 import RentalProfile from './components/rental_profile/RentalProfile';
 import RenterApplication from './components/renter_application/RenterApplication';
 import ReceivedApplication from './components/applications/manager/RecievedApplication';
-import LogIn from './components/login_page/LogIn';
+import LogInPM from './components/login_page/LogInPM';
 import Inspection from './components/inspection_page/Inspection';
 import Messaging from './components/messaging/Messaging'
 import Keys from './components/keys/Keys';
 import InspectionRun from './components/inspection_run/InspectionRun'
-import SignUp from './components/login_page/SignUp';
+import SignUpR from './components/login_page/SignUpR';
 
 function App() {
     return (
@@ -38,13 +38,13 @@ function App() {
             <Route path='/search' element={<PropertySearch />} />
             <Route path='/renterapplication' element={<RenterApplication />} />
             <Route path='/MyApplication' element={<ReceivedApplication />} />
-            <Route path='/LogIn' element={<LogIn/>} />
+            <Route path='/LogInPM' element={<LogInPM/>} />
             <Route path='/Inspection' element={<Inspection/>} />
             <Route path='/messages' element={<Messaging/>} />
             <Route path='/messages/:directMessageUserID' element={<Messaging/>} />
             <Route path='/keys' element={<Keys/>} />
             <Route path='/InspectionRun' element={<InspectionRun/>} />
-            <Route path='/SignUp' element={<SignUp/>} />
+            <Route path='/SignUpR' element={<SignUpR/>} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -84,8 +84,8 @@ function Home() {
         <Link to="/MyApplication">
             <button>Go to My Application</button>
         </Link>
-        <Link to="/LogIn">
-            <button>Go to Log In</button>
+        <Link to="/LogInPM">
+            <button>Go to PM Log In</button>
         </Link>
         <Link to="/Inspection">
             <button>Go to Inspection</button>

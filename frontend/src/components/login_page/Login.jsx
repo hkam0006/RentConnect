@@ -19,6 +19,26 @@ function LogIn(){
     }
     const [errorText, setErrorText] = useState(false);
     const navigate = useNavigate();
+
+    const attemptLogIn = () => {
+        supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+          }).then(data=> {
+            if (!data.error){
+                navigate('/dashboard');
+            }
+            else{
+                setErrorText(true);
+                setPassword('');
+            }
+        })
+        .catch(error => {
+            setErrorText(true);
+            setPassword('');
+            console.log(error);
+        })
+    }
   return (
     <Box sx={{ml: '35%', mt: '10%', backgroundColor: 'white', width: '30%', mb: '10%', borderRadius: 2}}>
         <br/>
@@ -33,30 +53,12 @@ function LogIn(){
         </Box>
         <br/>
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
-            <Button variant="contained" onClick={() => {
-                    supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password,
-                      }).then(data=> {
-                        if (!data.error){
-                            navigate('/dashboard');
-                        }
-                        else{
-                            setErrorText(true);
-                            setPassword('');
-                        }
-                    })
-                    .catch(error => {
-                        setErrorText(true);
-                        setPassword('');
-                        console.log(error);
-                    })
-                }}>Sign In</Button>
+            <Button variant="contained" onClick={attemptLogIn}>Sign In</Button>
         </Box>
         <br/>
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
             <Box sx={{mr:'2%'}}>Don't have an account?</Box>
-            <Link to="/SignUp">Sign Up</Link>
+            <Link to="/SignUpR">Sign Up</Link>
         
         </Box>
         <br/>
