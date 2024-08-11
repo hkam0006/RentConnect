@@ -18,8 +18,8 @@ import Inspection from './components/inspection_page/Inspection';
 import Messaging from './components/messaging/Messaging'
 import Keys from './components/keys/Keys';
 import InspectionRun from './components/inspection_run/InspectionRun'
-import SignUpR from './components/signup_page/SignUpR';
-import SignUpPM from './components/signup_page/SignUpPM';
+import SignUp from './components/signup_page/SignUp';
+import AccountSetUpPM from './components/signup_page/AccountSetUpPM';
 
 function App() {
     return (
@@ -45,8 +45,8 @@ function App() {
             <Route path='/messages/:directMessageUserID' element={<Messaging/>} />
             <Route path='/keys' element={<Keys/>} />
             <Route path='/InspectionRun' element={<InspectionRun/>} />
-            <Route path='/SignUpR' element={<SignUpR/>} />
-            <Route path='/SignUpPM' element={<SignUpPM/>} />
+            <Route path='/SignUp' element={<SignUp/>} />
+            <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
           </Routes>
         </Router>
     </ThemeProvider>
