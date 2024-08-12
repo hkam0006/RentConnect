@@ -13,7 +13,7 @@ import PropertySearch from './components/property_search/PropertyGrid';
 import RentalProfile from './components/rental_profile/RentalProfile';
 import RenterApplication from './components/renter_application/RenterApplication';
 import ReceivedApplication from './components/applications/manager/RecievedApplication';
-import LogInPM from './components/login_page/LogInPM';
+import LogIn from './components/login_page/LogIn';
 import Inspection from './components/inspection_page/Inspection';
 import Messaging from './components/messaging/Messaging'
 import Keys from './components/keys/Keys';
@@ -39,7 +39,7 @@ function App() {
             <Route path='/search' element={<PropertySearch />} />
             <Route path='/renterapplication' element={<RenterApplication />} />
             <Route path='/MyApplication' element={<ReceivedApplication />} />
-            <Route path='/LogInPM' element={<LogInPM/>} />
+            <Route path='/LogIn' element={<LogIn/>} />
             <Route path='/Inspection' element={<Inspection/>} />
             <Route path='/messages' element={<Messaging/>} />
             <Route path='/messages/:directMessageUserID' element={<Messaging/>} />
@@ -86,8 +86,8 @@ function Home() {
         <Link to="/MyApplication">
             <button>Go to My Application</button>
         </Link>
-        <Link to="/LogInPM">
-            <button>Go to PM Log In</button>
+        <Link to="/LogIn">
+            <button>Go to Log In</button>
         </Link>
         <Link to="/Inspection">
             <button>Go to Inspection</button>
