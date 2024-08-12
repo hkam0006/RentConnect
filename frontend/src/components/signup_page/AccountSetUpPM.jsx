@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Autocomplete, Button, FormControlLabel, hexToRgb, Switch, Typography} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from "../../supabase";
 import { useState} from 'react';
 import useGetKeyByCompanyNames from '../../queries/Company/useGetCompanyNames';
 

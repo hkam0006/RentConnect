@@ -7,6 +7,7 @@ import { Button} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from "../../supabase";
 import { useState} from 'react';
+import useGetAccountTypeByUUID from '../../queries/Account Setup/useGetAccountTypeByUUID';
 
 function LogIn(){
     const [email, setEmail] = useState('');
@@ -20,13 +21,29 @@ function LogIn(){
     const [errorText, setErrorText] = useState(false);
     const navigate = useNavigate();
 
+
+    const fetchAccountSetup = useGetAccountTypeByUUID();
     const attemptLogIn = () => {
         supabase.auth.signInWithPassword({
             email: email,
             password: password,
-          }).then(data=> {
+          }).then( async data=> {
             if (!data.error){
-                navigate('/dashboard');
+                var account_type = await fetchAccountSetup(data.data.user.id)
+                if (account_type.data[0]){
+                    switch(account_type.data[0].account_type){
+                        case 'Property Manager':
+                            navigate('/AccountSetUpPM');
+                        case 'Renter':
+                            navigate('/AccountSetUpR');
+                        default:
+                            console.log('invalid account type found');
+                            return;
+                    }
+                }
+                else{
+                    navigate('/dashboard');
+                }
             }
             else{
                 setErrorText(true);
@@ -58,7 +75,7 @@ function LogIn(){
         <br/>
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
             <Box sx={{mr:'2%'}}>Don't have an account?</Box>
-            <Link to="/SignUpR">Sign Up</Link>
+            <Link to="/SignUp">Sign Up</Link>
         
         </Box>
         <br/>
