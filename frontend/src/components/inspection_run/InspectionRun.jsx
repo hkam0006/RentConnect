@@ -54,13 +54,14 @@ const InspectionRun = () => {
 
           const inspectionRun = inspectionRuns.find(
             (inspectionRun) =>
-              inspectionRun.inspection_run_id === inspection.inspection_run_id
+              inspectionRun.Inspection_run_id === inspection.Inspection_run_id
           );
           const propertyManagerData = inspectionRun
           ? propertyManager.find(
               (manager) => manager.property_manager_id === inspectionRun.property_manager_id
             )
           : null;
+          console.log(inspectionRun)
 
           return {
             ...inspection,
