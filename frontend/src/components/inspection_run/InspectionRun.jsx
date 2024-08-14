@@ -186,9 +186,8 @@ const InspectionRun = () => {
             </TableBody>
           </Table>
         </div>
-        <div style={{ display: "flex", justifyContent: "center", height: "100vh" }}>
-          <MapComponent origin={mapData.origin} destination={mapData.destination} />
-        </div>
+        <MapComponent origin={mapData.origin} destination={mapData.destination} />
+
       </NavigationMenu>
     </div>
   );

@@ -17,7 +17,11 @@ const MapComponent = ({ origin, destination }) => {
     });
 
     const directions = new MapboxDirections({
-      accessToken: ACCESS_TOKEN
+      accessToken: ACCESS_TOKEN,
+      controls: {
+        inputs: true,
+        instructions: false, // Disable the default instructions panel
+      }
     });
 
     map.addControl(directions, 'top-left');
@@ -30,11 +34,29 @@ const MapComponent = ({ origin, destination }) => {
       directions.setDestination(destination);
     }
 
+    // Add custom directions instructions
+    directions.on('route', (e) => {
+      const route = e.route[0];
+      const instructionsContainer = document.getElementById('directions-instructions');
+      instructionsContainer.innerHTML = ''; // Clear previous instructions
+
+      route.legs[0].steps.forEach((step) => {
+        const stepDiv = document.createElement('div');
+        stepDiv.innerHTML = step.maneuver.instruction;
+        instructionsContainer.appendChild(stepDiv);
+      });
+    });
+
     // Cleanup on unmount
     return () => map.remove();
   }, [origin, destination]);
 
-  return <div id="map" style={{ width: 600, height: 400 }} />;
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',flexDirection: 'column' }}>
+      <div id="map" style={{ width: '60%', height: '400px'}} />
+      <div id="directions-instructions" style={{ width: '40%', height: '400px', overflowY: 'auto', padding: '10px' }} />
+    </div>
+  );
 };
 
 export default MapComponent;
