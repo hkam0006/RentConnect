@@ -114,7 +114,6 @@ const InspectionRun = () => {
         filteredInspections[1].propertyData.property_suburb,
         filteredInspections[1].propertyData.property_state
       );
-
       setMapData({ origin, destination });
     }
   };
