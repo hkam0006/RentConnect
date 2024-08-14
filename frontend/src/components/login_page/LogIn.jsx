@@ -34,8 +34,10 @@ function LogIn(){
                     switch(account_type.data[0].account_type){
                         case 'Property Manager':
                             navigate('/AccountSetUpPM');
+                            break;
                         case 'Renter':
                             navigate('/AccountSetUpR');
+                            break;
                         default:
                             console.log('invalid account type found');
                             return;
