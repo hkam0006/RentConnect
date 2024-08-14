@@ -1,31 +1,61 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Autocomplete, Button, FormControlLabel, hexToRgb, Switch, Typography} from '@mui/material';
+import { Autocomplete, Button, FormControlLabel, Switch, Typography} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState} from 'react';
 import useGetKeyByCompanyNames from '../../queries/Company/useGetCompanyNames';
+import useDeleteAccountSetUp from '../../mutators/Account SetUp/useDeleteAccountSetUp';
+import useAddCompany from '../../mutators/Company/useAddCompany';
+import useGetCompanyByName from '../../queries/Company/useGetCompanyByName';
+import useAddPropertyManager from '../../mutators/Property Manager/useAddPropertyManager';
+import { supabase } from '../../supabase';
 
 
 
 function AccountSetUpPM(){
     const navigate = useNavigate();
 
+    const [user, setUser] = useState({});
+    React.useEffect(() => {
+        async function getUserData() {
+            await supabase.auth.getUser().then((value) =>{
+                if (value.data?.user) {
+                    setUser(value.data.user);
+                }
+            })
+        }
+        getUserData();
+    }, []);
+
     const [fname, setFname] = useState('');
+    const [fnameErrorFlag, setFnameErrorFlag] = useState(false);
     const handleFnameChange = f => {
         setFname(f.target.value);
+        setFnameErrorFlag(false);
     }
 
     const [lname, setLname] = useState('');
+    const [lnameErrorFlag, setLnameErrorFlag] = useState(false);
     const handleLnameChange = f => {
         setLname(f.target.value);
+        setLnameErrorFlag(false);
     }
 
     const [phoneNum, setPhoneNum] = useState('');
+    const [phoneNumErrorFlag, setPhoneNumErrorFlag] = useState(false);
     const handlePhoneNumChange = f => {
         if (!Number.isNaN(Number(f.target.value))){
             setPhoneNum(f.target.value);
+            setPhoneNumErrorFlag(false);
         }
+    }
+
+    const [companyIndex, setCompanyIndex] = useState(-1);
+    const [companyNameErrorFlag, setCompanyIndexErrorFlag] = useState(false);
+    const handleCompanyNameChange = f => {
+        setCompanyIndex(f.target.value);
+        setCompanyIndexErrorFlag(false);
     }
 
     const { fetchCompanies } = useGetKeyByCompanyNames();
@@ -47,19 +77,48 @@ function AccountSetUpPM(){
     }
 
     const [newCompanyName, setNewCompanyName] = useState('');
+    const [newCompanyNameErrorFlag, setNewCompanyNameErrorFlag] = useState(false);
     const handleNewCompanyNameChange = f => {
         setNewCompanyName(f.target.value);
+        setNewCompanyNameErrorFlag(false);
     }
 
-    const [companyName, setCompanyName] = useState('');
-    const handleCompanyNameChange = f => {
-        setCompanyName(f.target.value);
-    }
+    const { deleteAccountSetUp } = useDeleteAccountSetUp();
+    const { addCompany } = useAddCompany();
+    const { fetchCompany } = useGetCompanyByName();
+    const { addPropertyManager } = useAddPropertyManager();
 
-    const [companyNameErrorTextFlag, setCompanyNameErrorTextFlag] = useState(false);
-
-    const handleAccountCreation = () => {
-        
+    const handleAccountCreation = async () => {
+        var temp = user;
+        if (fname == ''){
+            setFnameErrorFlag(true);
+        }
+        if (lname == ''){
+            setLnameErrorFlag(true);
+        }
+        if (phoneNum == ''){
+            setPhoneNumErrorFlag(true);
+        }
+        if (!newCompanyFlag && companyIndex == -1){
+            setCompanyIndexErrorFlag(true);
+        }
+        if (newCompanyFlag && newCompanyName == ''){
+            setNewCompanyNameErrorFlag(true);
+        }
+        if (!(fnameErrorFlag || lnameErrorFlag || phoneNumErrorFlag || companyNameErrorFlag || newCompanyNameErrorFlag)){
+            await deleteAccountSetUp(user.id);
+            var company_id = ''
+            if (newCompanyFlag){
+                await addCompany(user.id, newCompanyName);
+                company_id = await fetchCompany(newCompanyName);
+            }
+            else{
+                company_id = await fetchCompany(companies[companyIndex]);
+            }
+            company_id = company_id.data[0].company_id
+            await addPropertyManager(user.id, fname, lname, phoneNum, user.email, company_id);
+            navigate('/dashboard');
+        }
     }
 
   return (
@@ -75,6 +134,7 @@ function AccountSetUpPM(){
                     onChange={handleFnameChange} 
                     label='First Name' 
                     variant='standard' 
+                    error={fnameErrorFlag}
                     sx={{width: '96%', ml: '2%'}} 
                     inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
                     InputLabelProps={{sx: {fontSize: '130%'}}}/>
@@ -86,6 +146,7 @@ function AccountSetUpPM(){
                     onChange={handleLnameChange} 
                     label='Last Name' 
                     variant='standard'  
+                    error={lnameErrorFlag}
                     sx={{width: '96%', ml: '2%'}} 
                     inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
                     InputLabelProps={{sx: {fontSize: '130%'}}}/>
@@ -97,6 +158,7 @@ function AccountSetUpPM(){
                     onChange={handlePhoneNumChange} 
                     label='Phone Number'
                     variant='standard'  
+                    error={phoneNumErrorFlag}
                     sx={{width: '96%', ml: '2%'}} 
                     inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
                     InputLabelProps={{sx: {fontSize: '130%'}}}/>
@@ -114,6 +176,7 @@ function AccountSetUpPM(){
             <Autocomplete 
                 disablePortal 
                 id="company" 
+                onChange={handleCompanyNameChange}
                 options={companies} 
                 sx={{width: '96%', ml: '2%', mt: '1%', mb: '3%'}} 
                 renderInput={(params) => 
@@ -121,9 +184,9 @@ function AccountSetUpPM(){
                         {...params} 
                         label="Company Name" 
                         variant='standard' 
+                        error={companyNameErrorFlag}
                         InputLabelProps={{sx: {fontSize: '130%'}}} 
-                        value={companyName} 
-                        onChange={handleCompanyNameChange}/>}/>
+                        value={companyIndex} />}/>
             : 
             <TextField 
                 id='NewCompanyName' 
@@ -131,6 +194,7 @@ function AccountSetUpPM(){
                 onChange={handleNewCompanyNameChange} 
                 label='Company Name' 
                 variant='standard' 
+                error={newCompanyNameErrorFlag}
                 sx={{width: '96%', ml: '2%', mb: '3%', mt: '1%'}} 
                 inputProps={{sx: {height:'0%', fontSize: '130%'}}} 
                 InputLabelProps={{sx: {fontSize: '130%'}}}/>
