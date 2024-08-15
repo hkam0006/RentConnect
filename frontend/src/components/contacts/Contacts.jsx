@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from "../../supabase";
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
@@ -13,30 +16,7 @@ import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
 import Button from '@mui/material/Button';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
-import useGetContactsByPropertyManagerID from '../../queries/Contact/useGetContactsByPropertyManagerID';
-import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID';
-
-function createData(name, phonenumber, email, lastcontact) {
-  return {
-    name, 
-    phonenumber, 
-    email, 
-    lastcontact
-  };
-}
-
-
-
-const rows = [
-  createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
-  createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21'),
-  createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
-  createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21'),
-  createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
-  createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21'),
-  createData('John Doe', '0412 345 678', 'JDoe@gmail.com', '2021-10-01'),
-  createData('Jane Doe', '0498 765 432', 'JaneD@hotmail.com', '2021-01-21')
-];
+import useGetContactsByID from '../../queries/Contact/useGetContactsByID';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -100,7 +80,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { order, orderBy, numSelected, rowCount, onRequestSort } =
+  const { order, orderBy, onRequestSort } =
     props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -149,6 +129,27 @@ function Contacts() {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [userID, setUserID] = useState(null)
+  const [contacts, setContacts] = useState([])
+  const fetchContacts = useGetContactsByID(userID)
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setContacts(fetchContacts)
+  }, [fetchContacts])
+  
+  useEffect(() => {
+    async function getUserID() {
+        const { data, error } = await supabase.auth.getUser()
+        if (error) {
+            console.error("Error fetching user:", error.message)
+        } else if (data?.user) {
+            setUserID(data.user.id)
+        }
+    }
+    getUserID()
+}, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -186,39 +187,15 @@ function Contacts() {
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
   const visibleRows = React.useMemo(
     () =>
-      stableSort(rows, getComparator(order, orderBy)).slice(
+      stableSort(contacts, getComparator(order, orderBy)).slice(
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
-    [order, orderBy, page, rowsPerPage],
+    [contacts, order, orderBy, page, rowsPerPage],
   );
-
-  const propertyManagerID = "fc8e3cf4-cbbc-4557-b303-7aa028c616eb";
-
-  const contact = useGetContactsByPropertyManagerID(propertyManagerID);
   
-  
-  const [contactRows, setContactRows] = React.useState([]);
-  const [renterRows, setRenterRows] = React.useState([]);
-  React.useEffect(() => {
-   setContactRows(contact);
-  }, [contact]);
-  const renter = useGetRenterByRenterID(contactRows.length > 0? contactRows[0].renter_id : '');
-  React.useEffect(() => {
-    setRenterRows(renter);
-   }, [renter]);
-  
-   /*
-   <Box>
-            <h1>{renterRows.length > 0? renterRows[0].renter_first_name : ''}</h1>
-    </Box>
-   */
   return (
     <NavigationMenu>
     <Box sx={{ width: '100%', flexDirection: 'column'}}>
@@ -235,11 +212,11 @@ function Contacts() {
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={contacts.length}
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
+                const isItemSelected = isSelected(contacts.id);
                 const labelId = `enhanced-table-${index}`;
 
                 return (
@@ -259,10 +236,16 @@ function Contacts() {
                     >
                       {row.name}
                     </TableCell>
-                    <TableCell align="left">{row.phonenumber}</TableCell>
+                    <TableCell align="left">{row.phone_number}</TableCell>
                     <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">{row.lastcontact}</TableCell>
-                    <TableCell align="right"><Button variant="contained" disableElevation>Message</Button></TableCell>
+                    <TableCell align="left">
+                      {new Date(row.last_contact).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </TableCell>
+                    <TableCell align="right"><Button variant="contained" disableElevation onClick={() => navigate(`/messages/${row.id}`)}>Message</Button></TableCell>
                   </TableRow>
                 );
               })}
@@ -272,7 +255,7 @@ function Contacts() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={contacts.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
