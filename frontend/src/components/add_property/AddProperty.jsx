@@ -75,12 +75,15 @@ const handlePhotosChange = (event) => {
       <Box
         component="form"
         sx={{
-          '& .MuiTextField-root': { m: 1, width: '100%' },
+          '& .MuiTextField-root, & .MuiFormControl-root': { m: 1, width: '100%' },
           maxWidth: '600px',
         }}
         noValidate
         autoComplete="off"
       >
+        <Typography variant="h6" gutterBottom>
+          Details
+        </Typography>
         <FormControl fullWidth gutterBottom>
           <InputLabel id="property-manager-select-label">Property Manager</InputLabel>
           <Select
@@ -235,9 +238,6 @@ const handlePhotosChange = (event) => {
         <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
           <Button variant="contained" color="primary" type="submit">
             Add Property
-          </Button>
-          <Button variant="outlined" color="secondary">
-            Cancel
           </Button>
         </Stack>
       </Box>
