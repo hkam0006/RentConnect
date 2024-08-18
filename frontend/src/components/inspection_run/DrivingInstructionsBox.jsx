@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Typography, Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 const DrivingInstructionsBox = ({ instructions }) => {
   return (

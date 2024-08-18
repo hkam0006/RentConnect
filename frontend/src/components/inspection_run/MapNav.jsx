@@ -94,13 +94,15 @@ const MapComponent = ({ origin, destination, waypoints }) => {
         const route = e.route[0];
         let instructionsText = "";
 
-        if (route.legs && route.legs.length > 0) {
-          route.legs[0].steps.forEach((step) => {
-            instructionsText += `${step.maneuver.instruction}<br/>`;
+        route.legs.forEach((leg, legIndex) => {
+          instructionsText += `<strong>Route ${legIndex + 1}:</strong><br/>`;
+          leg.steps.forEach((step, stepIndex) => {
+            instructionsText += `${stepIndex + 1}. ${step.maneuver.instruction}<br/>`;
           });
-        } else {
-          instructionsText = "No route legs found.";
-        }
+          if (legIndex < route.legs.length - 1) {
+            instructionsText += "<hr/>";
+          }
+        });
 
         setInstructions(instructionsText);
       } else {
