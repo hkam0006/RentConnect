@@ -20,6 +20,11 @@ import Keys from './manager-components/keys/Keys';
 import InspectionRun from './manager-components/inspection_run/InspectionRun'
 import SignUp from './manager-components/login_page/SignUp';
 import RenterHome from './renter-components/renter_home/RenterHome';
+import RenterRoute from './utils/RenterRoute';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout, setManager, setRenter } from './utils/UserSlice';
+import ManagerRoute from './utils/ManagerRoute';
+
 
 function App() {
     return (
@@ -46,6 +51,8 @@ function App() {
             <Route path='/InspectionRun' element={<InspectionRun/>} />
             <Route path='/SignUp' element={<SignUp/>} />
             <Route path='/RenterHome' element={<RenterHome/>} />
+            <Route path='/ProtectedRenterHome' element={<RenterRoute Component={RenterHome}/>} />
+            <Route path='/ProtectedManagerHome' element={<ManagerRoute Component={Dashboard}/>} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -53,6 +60,12 @@ function App() {
 }
 
 function Home() {
+  const isLoggedIn = useSelector(state => state.user.isLoggedIn)
+  const isRenter = useSelector(state => state.user.isRenter)
+  const isManager = useSelector(state => state.user.isManager)
+
+  const dispatch = useDispatch();
+  
   return (
     <div>
       <Link to="/Application">
@@ -96,6 +109,26 @@ function Home() {
         </Link>
         <Link to="/RenterHome">
             <button>Go to Renter Homepage</button>
+        </Link>
+        <br />
+        <br />
+        <h3>
+          Logged In: {isLoggedIn ? "true" : "false"} 
+          <button onClick={() => dispatch(login())}>Sign In</button>
+          <button onClick={() => dispatch(logout())}>Sign Out</button>
+        </h3>
+        <h3>
+          Is Renter: {isRenter ? "true" : "false"} 
+          <button onClick={() => dispatch(setRenter())}>Set Renter</button>
+        </h3>
+        <h3>Is Manager: {isManager ? "true" : "false"} 
+        <button onClick={() => dispatch(setManager())}>Set Manager</button>
+        </h3>
+        <Link to="/ProtectedRenterHome">
+            <button>Go to Protected Renter Home</button>
+        </Link>
+        <Link to="/ProtectedManagerHome">
+            <button>Go to Protected Manager Home</button>
         </Link>
     </div>
 
