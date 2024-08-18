@@ -3,6 +3,7 @@
     "@date-io/date-fns": "^3.0.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@mapbox/mapbox-sdk": "^0.16.0",
     "@mui/material": "^5.15.16",
     "@mui/x-date-pickers": "^7.4.0",
     "fuse.js": "^7.0.0",

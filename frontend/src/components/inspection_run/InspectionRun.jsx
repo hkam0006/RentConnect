@@ -11,7 +11,7 @@ const ACCESS_TOKEN = "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY
 const InspectionRun = () => {
   const [activeSection, setActiveSection] = useState("inspection");
   const [inspectionsData, setInspectionsData] = useState([]);
-  const [mapData, setMapData] = useState({ origin: '', destination: '' });
+  const [mapData, setMapData] = useState({ origin: '', destination: '', waypoints: [] });
 
   useEffect(() => {
     const fetchInspectionsData = async () => {
@@ -108,13 +108,21 @@ const InspectionRun = () => {
       );
 
       const destination = fullAddress(
-        filteredInspections[1].propertyData.property_street_number,
-        filteredInspections[1].propertyData.property_street_name,
-        filteredInspections[1].propertyData.property_type,
-        filteredInspections[1].propertyData.property_suburb,
-        filteredInspections[1].propertyData.property_state
+        filteredInspections[filteredInspections.length - 1].propertyData.property_street_number,
+        filteredInspections[filteredInspections.length - 1].propertyData.property_street_name,
+        filteredInspections[filteredInspections.length - 1].propertyData.property_type,
+        filteredInspections[filteredInspections.length - 1].propertyData.property_suburb,
+        filteredInspections[filteredInspections.length - 1].propertyData.property_state
       );
-      setMapData({ origin, destination });
+
+      const waypoints = filteredInspections.slice(1, -1).map(inspection => fullAddress(
+        inspection.propertyData.property_street_number,
+        inspection.propertyData.property_street_name,
+        inspection.propertyData.property_type,
+        inspection.propertyData.property_suburb,
+        inspection.propertyData.property_state
+      ));
+      setMapData({ origin, destination, waypoints });
     }
   };
 
@@ -185,7 +193,7 @@ const InspectionRun = () => {
             </TableBody>
           </Table>
         </div>
-        <MapComponent origin={mapData.origin} destination={mapData.destination} />
+        <MapComponent origin={mapData.origin} destination={mapData.destination} waypoints={mapData.waypoints} />
 
       </NavigationMenu>
     </div>
