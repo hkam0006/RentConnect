@@ -4,6 +4,7 @@ import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-direct
 import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
+import DrivingInstructionsBox from "./DrivingInstructionsBox";
 
 const ACCESS_TOKEN = "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ";
 
@@ -47,8 +48,8 @@ const getCoordinates = async (addresses) => {
 };
 
 const MapComponent = ({ origin, destination, waypoints }) => {
-  console.log(waypoints)
   const [coords, setCoords] = useState([]);
+  const [instructions, setInstructions] = useState("");
 
   useEffect(() => {
     const fetchCoordinates = async () => {
@@ -93,27 +94,24 @@ const MapComponent = ({ origin, destination, waypoints }) => {
     directions.on("route", (e) => {
       if (e.route && e.route.length > 0) {
         const route = e.route[0];
-        const instructionsContainer = document.getElementById("directions-instructions");
-        instructionsContainer.innerHTML = "";
+        let instructionsText = "";
 
         if (route.legs && route.legs.length > 0) {
           route.legs[0].steps.forEach((step) => {
-            const stepDiv = document.createElement("div");
-            stepDiv.innerHTML = step.maneuver.instruction;
-            instructionsContainer.appendChild(stepDiv);
+            instructionsText += `${step.maneuver.instruction}<br/>`;
           });
         } else {
-          instructionsContainer.innerHTML = "<p>No route legs found.</p>";
+          instructionsText = "No route legs found.";
         }
+
+        setInstructions(instructionsText);
       } else {
-        const instructionsContainer = document.getElementById("directions-instructions");
-        instructionsContainer.innerHTML = "<p>No route found.</p>";
+        setInstructions("No route found.");
       }
     });
 
     directions.on("error", (e) => {
-      const instructionsContainer = document.getElementById("directions-instructions");
-      instructionsContainer.innerHTML = `<p>Directions error: ${e.error}</p>`;
+      setInstructions(`Directions error: ${e.error}`);
     });
 
     return () => map.remove();
@@ -124,20 +122,22 @@ const MapComponent = ({ origin, destination, waypoints }) => {
       style={{
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
+        alignItems: "flex-start",
+        flexDirection: "row",
+        gap: "20px",
       }}
     >
-      <div id="map" style={{ width: "60%", height: "400px" }} />
       <div
-        id="directions-instructions"
+        id="map"
         style={{
-          width: "40%",
+          width: "60%",
           height: "400px",
-          overflowY: "auto",
-          padding: "10px",
+          border: "5px solid #4CAF50",
+          borderRadius: "10px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
       />
+      <DrivingInstructionsBox instructions={instructions} />
     </div>
   );
 };
