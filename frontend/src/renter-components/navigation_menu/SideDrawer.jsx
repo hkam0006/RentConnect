@@ -19,6 +19,7 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import KeysIcon from "@mui/icons-material/VpnKey";
 import AddPropertyIcon from "@mui/icons-material/Add";
 import HelpIcon from "@mui/icons-material/Help";
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 const drawerWidth = 200;
 
 export default function SideDrawer() {
@@ -40,6 +41,7 @@ export default function SideDrawer() {
           {[
             { text: "Dashboard", icon: <HomeIcon />, link: "/dashboard" },
             { text: "Messages", icon: <ChatIcon />, link: "/messages" },
+            { text: "Rental Profile", icon: <PermContactCalendarIcon />, link: "/RentalProfile" },
             {text: "Properties", icon: <PropertiesIcon />, link: "/property",},
             {
               text: "Inspections",
