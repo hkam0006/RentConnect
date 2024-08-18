@@ -61,8 +61,6 @@ const MapComponent = ({ origin, destination, waypoints }) => {
   }, [origin, destination, waypoints]);
 
   useEffect(() => {
-    if (coords.length === 0) return;
-
     const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/streets-v12",
