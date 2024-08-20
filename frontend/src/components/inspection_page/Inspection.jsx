@@ -14,20 +14,13 @@ const Inspection = () => {
   useEffect(() => {
     const fetchInspectionsData = async () => {
       try {
-        const [inspections, properties, renters, inspectionRuns] =
-          await Promise.all([
-            supabase.from("INSPECTION").select("*"),
-            supabase.from("PROPERTY").select("*"),
-            supabase.from("RENTER").select("*"),
-            supabase.from("INSPECTION RUN").select("*"),
-          ]);
+        const [inspections, properties, renters] = await Promise.all([
+          supabase.from("INSPECTION").select("*"),
+          supabase.from("PROPERTY").select("*"),
+          supabase.from("RENTER").select("*"),
+        ]);
 
-        if (
-          inspections.error ||
-          properties.error ||
-          renters.error ||
-          inspectionRuns.error
-        ) {
+        if (inspections.error || properties.error || renters.error) {
           throw new Error("Error fetching data from Supabase");
         }
 
@@ -40,15 +33,9 @@ const Inspection = () => {
             (renter) => renter.renter_id === inspection.renter_id
           );
 
-          const inspectionRun = inspectionRuns.data.find(
-            (inspectionRun) =>
-              inspectionRun.inspection_run_id === inspection.inspection_run_id
-          );
-
           return {
             ...inspection,
             propertyData: property || {},
-            inspectionRunData: inspectionRun || {},
             renterData: renter || {},
           };
         });
@@ -108,7 +95,12 @@ const Inspection = () => {
 
     if (activeSection === "history") {
       if (inspectionsData.length > 0) {
-        return <HistoryTable inspectionsData={inspectionsData} />;
+        return (
+          <HistoryTable
+            inspectionsData={inspectionsData}
+            setInspections={setInspectionsData}
+          />
+        );
       } else {
         return (
           <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
