@@ -1,25 +1,27 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const DrivingInstructionsBox = ({ instructions }) => {
   return (
-    <Box
+    <Accordion defaultExpanded>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography variant="h6" gutterBottom>
+          Driving Instructions
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails
       sx={{
-        width: "35%",
-        height: "400px",
-        overflowY: "auto",
-        padding: "10px",
-        border: "2px solid #4CAF50",
-        borderRadius: "10px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        backgroundColor: "#fff",
-      }}
-    >
-      <Typography variant="h6" gutterBottom>
-        Driving Instructions
-      </Typography>
-      <div dangerouslySetInnerHTML={{ __html: instructions }} />
-    </Box>
+          maxHeight: '300px', // Set the height limit
+          overflowY: 'auto', // Enable vertical scrolling
+        }}>
+        <div dangerouslySetInnerHTML={{ __html: instructions }} />
+      </AccordionDetails>
+    </Accordion>
   );
 };
 

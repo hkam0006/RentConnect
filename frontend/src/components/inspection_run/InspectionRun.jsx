@@ -140,6 +140,9 @@ const InspectionRun = () => {
         )
       );
       setMapData({ origin, destination, waypoints });
+      console.log(destination)
+      console.log(origin)
+      console.log(waypoints)
     }
   };
 
