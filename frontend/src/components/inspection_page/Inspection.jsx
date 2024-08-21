@@ -8,58 +8,112 @@ import HistoryTable from "./HistoryTable";
 const Inspection = () => {
   const [activeSection, setActiveSection] = useState("inspection");
   const [inspectionsData, setInspectionsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchInspectionsData = async () => {
       try {
-        const { data: inspections, error: inspectionsError } = await supabase
-          .from("INSPECTION")
-          .select("*");
+        const [inspections, properties, renters] = await Promise.all([
+          supabase.from("INSPECTION").select("*"),
+          supabase.from("PROPERTY").select("*"),
+          supabase.from("RENTER").select("*"),
+        ]);
 
-        if (inspectionsError) {
-          throw inspectionsError;
+        if (inspections.error || properties.error || renters.error) {
+          throw new Error("Error fetching data from Supabase");
         }
 
-        const { data: properties, error: propertiesError } = await supabase
-          .from("PROPERTY")
-          .select("*");
-
-        if (propertiesError) {
-          throw propertiesError;
-        }
-
-        const { data: inspectionRuns, error: inspectionRunsError } =
-          await supabase.from("INSPECTION RUN").select("*");
-
-        if (inspectionRunsError) {
-          throw inspectionRunsError;
-        }
-
-        const mergedInspectionsData = inspections.map((inspection) => {
-          const property = properties.find(
+        const mergedInspectionsData = inspections.data.map((inspection) => {
+          const property = properties.data.find(
             (property) => property.property_id === inspection.property_id
           );
 
-          const inspectionRun = inspectionRuns.find(
-            (inspectionRun) =>
-              inspectionRun.inspection_run_id === inspection.inspection_run_id
+          const renter = renters.data.find(
+            (renter) => renter.renter_id === inspection.renter_id
           );
 
           return {
             ...inspection,
             propertyData: property || {},
-            inspectionRunData: inspectionRun || {},
+            renterData: renter || {},
           };
         });
 
         setInspectionsData(mergedInspectionsData);
+        console.log("Inspection data loaded:", mergedInspectionsData);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching inspection data:", error);
+        setError("Failed to load inspection data. Please try again.");
+        setLoading(false);
       }
     };
 
     fetchInspectionsData();
   }, []);
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+          <Stack textAlign="center">
+            <Typography variant="h6">Loading inspections...</Typography>
+          </Stack>
+        </Paper>
+      );
+    }
+
+    if (error) {
+      return (
+        <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+          <Stack textAlign="center">
+            <Typography variant="h6">{error}</Typography>
+          </Stack>
+        </Paper>
+      );
+    }
+
+    if (activeSection === "inspection") {
+      if (pendingInspections.length > 0) {
+        return (
+          <InspectionTable
+            inspectionsData={inspectionsData}
+            setInspections={setInspectionsData}
+          />
+        );
+      } else {
+        return (
+          <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+            <Stack textAlign="center">
+              <Typography variant="h6">No inspections available.</Typography>
+            </Stack>
+          </Paper>
+        );
+      }
+    }
+
+    if (activeSection === "history") {
+      if (inspectionsData.length > 0) {
+        return (
+          <HistoryTable
+            inspectionsData={inspectionsData}
+            setInspections={setInspectionsData}
+          />
+        );
+      } else {
+        return (
+          <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+            <Stack textAlign="center">
+              <Typography variant="h6">
+                No inspection history available.
+              </Typography>
+            </Stack>
+          </Paper>
+        );
+      }
+    }
+  };
 
   const pendingInspections = inspectionsData.filter(
     (inspection) => inspection.inspection_type === "pending"
@@ -89,33 +143,7 @@ const Inspection = () => {
           History
         </Button>
       </Grid>
-      <div style={{ padding: "20px" }}>
-        {activeSection === "inspection" && pendingInspections.length > 0 && (
-          <InspectionTable
-            inspectionsData={inspectionsData}
-            setInspections={setInspectionsData}
-          />
-        )}
-        {activeSection === "inspection" && pendingInspections.length === 0 && (
-          <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
-            <Stack textAlign="center">
-              <Typography variant="h6">No inspections available.</Typography>
-            </Stack>
-          </Paper>
-        )}
-        {activeSection === "history" && inspectionsData.length > 0 && (
-          <HistoryTable inspectionsData={inspectionsData} />
-        )}
-        {activeSection === "history" && inspectionsData.length === 0 && (
-          <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
-            <Stack textAlign="center">
-              <Typography variant="h6">
-                No inspection history available.
-              </Typography>
-            </Stack>
-          </Paper>
-        )}
-      </div>
+      <div style={{ padding: "20px" }}>{renderContent()}</div>
     </NavigationMenu>
   );
 };
