@@ -48,7 +48,6 @@ export default function Properties() {
   useEffect(() => {
     (async () => {
       const { data, error } = await fetchProperties()
-
       setProperties(data);
       setError(error);
       setUnfiltered(data);
@@ -57,8 +56,6 @@ export default function Properties() {
   }, [])
 
   if (loading) return <AppLoader />
-
-
 
   return (
     <div>
