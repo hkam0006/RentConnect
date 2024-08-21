@@ -8,8 +8,8 @@ const useGetPropertiesByCompanyID = (company_id) =>{
       .from("PROPERTY")
       .select("*")
       .eq("company_id", company_id)
-    
-      return {data, error}
+
+    return {data, error}
   }
 
   return {fetchProperties};

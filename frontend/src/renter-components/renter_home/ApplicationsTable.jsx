@@ -15,9 +15,12 @@ import BedIcon from "@mui/icons-material/Bed";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {styled} from "@mui/material/styles";
 import {useNavigate} from "react-router-dom";
+import useGetPropertyByPropertyID from "../../queries/Property/useGetPropertyByPropertyID";
+import useGetPropertiesByPropertyIDs from "../../queries/Property/useGetPropertiesByPropertyIDs";
+import AppLoader from "../../manager-components/property_page/AppLoader";
 
 const fullAddress = (number, name, type, suburb, state) => {
     return `${number} ${name} ${type}, ${suburb}, ${state}`
@@ -46,7 +49,7 @@ function ApplicationStatusChip(appStatus) {
     }
 }
 
-export default function ApplicationsTable() {
+export default function ApplicationsTable(applications) {
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: "white",
@@ -58,6 +61,28 @@ export default function ApplicationsTable() {
 
     const navigate = useNavigate();
 
+    // get all property IDs for all applications
+    let propertyIDs = [];
+    for (let i = 0; i < applications.applications.length; i++) {
+        propertyIDs.push(applications.applications[i].property_id);
+    }
+
+    // get all relevant properties from DB and store in properties array
+    const [properties, setProperties] = React.useState([]);
+    const { fetchProperties } = useGetPropertiesByPropertyIDs(propertyIDs)
+    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        (async () => {
+            const {data, error} = await fetchProperties()
+            setProperties(data)
+            setError(error)
+            setLoading(false)
+        })();
+    }, [])
+
+    if (loading) return <AppLoader />
+
     return (
         <Table stickyHeader sx={{minWidth: 650}} aria-label="Table of properties">
             <TableHead>
@@ -68,7 +93,7 @@ export default function ApplicationsTable() {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {defaultRows.map((row, index) => (
+                {applications.applications.map((row, index) => (
                     <TableRow
                         key={index}
                         sx={{'&:last-child td, &:last-child th': {border: 0}}}
@@ -76,52 +101,49 @@ export default function ApplicationsTable() {
                         <TableCell width={{width: "fit-content"}}>
                             {/* <Card sx={{ padding: 2, }} > */}
                             <Typography variant='body' fontWeight={700}>
-                                {/*
                                 {fullAddress(
-                                    row.property_street_number,
-                                    row.property_street_name,
-                                    row.property_street_type,
-                                    row.property_suburb,
-                                    row.property_state
-                                )
-                                */}
-                                {row.address}
+                                    properties[index].property_street_number,
+                                    properties[index].property_street_name,
+                                    properties[index].property_street_type,
+                                    properties[index].property_suburb,
+                                    properties[index].property_state
+                                )}
                             </Typography>
                             <Stack direction='row' spacing={2} justifyContent="start" sx={{width: "fit-content"}}>
                                 <ImgElement sx={{height: '150px', width: '264px', borderRadius: 3}}
-                                            src={row.listingImage} alt='Stock Listing Image'/>
+                                            src={properties[index].property_pictures[0]} alt='Stock Listing Image'/>
                                 <Stack>
                                     <Stack direction='row' spacing={2}>
                                         <Stack direction='row' spacing={0.5} alignItems={"center"}>
                                             <BedIcon/>
                                             <Typography alignContent="center" fontWeight={700}
-                                                        variant='h6'>{/*{row.property_bedroom_count}*/}{row.bedrooms}</Typography>
+                                                        variant='h6'>{properties[index].property_bedroom_count}</Typography>
                                         </Stack>
                                         <Stack direction='row' spacing={0.5} alignItems={"center"}>
                                             <BathtubIcon/>
                                             <Typography alignContent="center" fontWeight={700}
-                                                        variant='h6'>{/*{row.property_bathroom_count}*/}{row.bathrooms}</Typography>
+                                                        variant='h6'>{properties[index].property_bathroom_count}</Typography>
                                         </Stack>
                                         <Stack direction='row' spacing={0.5} alignItems={"center"}>
                                             <DirectionsCarIcon/>
                                             <Typography alignContent="center" fontWeight={700}
-                                                        variant='h6'>{/*{row.property_car_spot_count}*/}{row.car_spaces}</Typography>
+                                                        variant='h6'>{properties[index].property_car_spot_count}</Typography>
                                         </Stack>
                                     </Stack>
-                                    <Typography>${row.price} {row.property_rent_frequency}</Typography>
-                                    <Typography>Type: {/*{row.property_type}*/}{row.price}</Typography>
-                                    <Typography>Available: {/*{row.property_lease_start}*/}{row.available}</Typography>
+                                    <Typography>${properties[index].price} {properties[index].property_rent_frequency}</Typography>
+                                    <Typography>Type: {properties[index].property_type}</Typography>
+                                    <Typography>Available: {properties[index].property_lease_start}</Typography>
                                 </Stack>
                             </Stack>
                             {/* </Card> */}
                         </TableCell>
                         <TableCell align="right">
-                            <ApplicationStatusChip appStatus={row.applicationStatus}/>
+                            <ApplicationStatusChip appStatus={row.application_status}/>
                         </TableCell>
                         <TableCell align="right">
                             <Stack spacing={1}>
                                 <Button variant='contained'
-                                        onClick={() => navigate(`/property/${row.property_id}`)}>View</Button>
+                                        onClick={() => navigate(`/property/${properties[index].property_id}`)}>View</Button>
                             </Stack>
                         </TableCell>
                     </TableRow>
