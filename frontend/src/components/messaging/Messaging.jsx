@@ -14,40 +14,66 @@ import useGetPropertyManagerNameByPropertyManagerIDs from "../../queries/Propert
 import useGetRenterNameByRenterIDs from "../../queries/Renter/useGetRenterNameByRenterIDs"
 import NavigationMenu from '../navigation_menu/NavigationMenus'
 
+import Fuse from "fuse.js"
+
+const fuseOptions = {
+    keys: ["name"],
+    includeScore: true,
+    threshold: 0.4
+}
+
 function Messaging() {
     const { directMessageUserID } = useParams()
 
     const [userID, setUserID] = useState(null)
     const [otherID, setOtherID] = useState(null)
     const [message, setMessage] = useState('')
-    const chatHistory = useGetChatByUserID(userID)
-    const fetchMessages = useGetMessagesByID(userID, otherID)
     const [chatHistoryData, setChatHistoryData] = useState([])
     const [fetchedMessages, setFetchedMessages] = useState([])
     const [uuidList, setUuidList] = useState([])
     const [uuidToName, setUuidToName] = useState({})
+    const [searchedName, setSearchedName] = useState("")
+
+    const chatHistory = useGetChatByUserID(userID)
+    const fetchMessages = useGetMessagesByID(userID, otherID)
     const fetchPropertyManagerNames = useGetPropertyManagerNameByPropertyManagerIDs(uuidList, uuidToName)
     const fetchRenterNames = useGetRenterNameByRenterIDs(uuidList, uuidToName)
+
     const memoizedPropertyManagerNames = useMemo(() => fetchPropertyManagerNames, [fetchPropertyManagerNames])
     const memoizedRenterNames = useMemo(() => fetchRenterNames, [fetchRenterNames])
-    
+
+    const mergedData = useMemo(() => {
+        const propertyManagerEntries = Object.entries(memoizedPropertyManagerNames).map(([uuid, name]) => ({ uuid, name }))
+        const renterEntries = Object.entries(memoizedRenterNames).map(([uuid, name]) => ({ uuid, name }))
+        return [...propertyManagerEntries, ...renterEntries]
+    }, [memoizedPropertyManagerNames, memoizedRenterNames])
+
+    const fuse = useMemo(() => new Fuse(mergedData, fuseOptions), [mergedData])
+
+    const handleNameSearch = useCallback((name) => {
+        setSearchedName(name)
+        if (name.trim() !== "") {
+            const searchResults = fuse.search(name)
+            const uniqueUUIDs = new Set(searchResults.map(result => result.item.uuid))
+            setChatHistoryData(chatHistory.filter(({ sender_id, receiver_id }) => uniqueUUIDs.has(sender_id) || uniqueUUIDs.has(receiver_id)))
+        } else {
+            setChatHistoryData(chatHistory)
+        }
+    }, [fuse, chatHistory])
+
     const addNewChat = useCallback(() => {
         if (!userID || !directMessageUserID) return
 
-        const exists = chatHistoryData.some(chat =>
-            chat.sender_id === directMessageUserID || chat.receiver_id === directMessageUserID
-        )
+        setChatHistoryData(prevData => {
+            const exists = prevData.some(chat => chat.sender_id === directMessageUserID || chat.receiver_id === directMessageUserID)
+            if (exists) return prevData
 
-        if (!exists) {
-            const newChatObject = {
-                sender_id: userID,
-                receiver_id: directMessageUserID
-            }
-            setChatHistoryData(prevData => [newChatObject, ...prevData])
-            setOtherID(directMessageUserID)
-            setUuidList(prevData => [directMessageUserID, ...prevData])
-        }
-    }, [chatHistoryData, directMessageUserID, userID])
+            const newChatObject = { sender_id: userID, receiver_id: directMessageUserID }
+            setUuidList(prev => [directMessageUserID, ...prev])
+            return [newChatObject, ...prevData]
+        })
+        setOtherID(directMessageUserID)
+    }, [userID, directMessageUserID])
 
     useEffect(() => {
         if (directMessageUserID && userID) {
@@ -147,10 +173,25 @@ function Messaging() {
             <NavigationMenu />
             <Grid container sx={{ marginTop: '64px', marginLeft: '190px', width: 'calc(100% - 190px)' }}>
                 <Grid item xs={4}>
-                    <ChatHistory data={chatHistoryData} handleSelectChat={handleSelectChat} currentUserID={userID} otherUserID={otherID} uuidToName={uuidToName} />
+                    <ChatHistory
+                        data={chatHistoryData}
+                        handleSelectChat={handleSelectChat}
+                        currentUserID={userID}
+                        otherUserID={otherID}
+                        uuidToName={uuidToName}
+                        searchedName={searchedName}
+                        handleNameSearch={handleNameSearch}
+                    />
                 </Grid>
                 <Grid item xs={8}>
-                    <MessageHistory messages={fetchedMessages} userID={userID} message={message} setMessage={setMessage} HandleMessagesPush={HandleMessagesPush} selectedChat={otherID !== null} />
+                    <MessageHistory
+                        messages={fetchedMessages}
+                        userID={userID}
+                        message={message}
+                        setMessage={setMessage}
+                        HandleMessagesPush={HandleMessagesPush}
+                        selectedChat={otherID !== null}
+                    />
                 </Grid>
             </Grid>
         </Box>
