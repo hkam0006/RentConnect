@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Box, Grid, Container, Card, CardMedia, CardContent, Typography, Button, Skeleton, Paper, InputBase,Divider, IconButton, Chip, Menu, MenuItem, AppBar, Toolbar} from '@mui/material';
+import { Box, Grid, Container, Card, CardMedia, CardContent, Typography, Button, Skeleton, Paper, InputBase,Divider, IconButton, Chip, Menu, MenuItem, AppBar, Toolbar, Stack} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HouseIcon from '@mui/icons-material/House';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
@@ -97,7 +97,7 @@ const SearchPropertyFilter = ({onSearch, value, onChange, handleSubmit}) => {
         e.preventDefault();
         onSearch();
       }}
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "60%", margin: "auto", borderRadius: 3, minWidth: "300px", mt: 2 }}
+      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "80%", margin: "auto", borderRadius: 3, minWidth: "300px", mt: 2 }}
     >
       <Box sx={{ p: '10px', display: "flex", alignItems: "center" }}>
         <HouseIcon color='primary' aria-label="menu"/>
@@ -136,7 +136,6 @@ const SkeletonProperties = () => {
 }
 
 const ActualProperties = ({properties}) => {
-  properties.map((x) => console.log(x))
   return (
     <>
       {properties.map((p) => {
@@ -194,6 +193,7 @@ const Navbar = () => {
           <MenuItem onClick={handleMenuClose}>About</MenuItem>
           <MenuItem onClick={handleMenuClose}>Properties</MenuItem>
           <MenuItem onClick={handleMenuClose}>Contact</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Login</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>
@@ -247,7 +247,11 @@ const PublicPropertyPage = () => {
         />  
         <ChipContainer chips={chips} setChips={setChips}/>
         <Grid container spacing={2} mt={1}>
-          {loading || properties.length === 0 ? <SkeletonProperties /> : <ActualProperties properties={properties}/>}
+          {loading  ? <SkeletonProperties /> : <ActualProperties properties={properties}/>}
+          {properties.length === 0 && !loading && <Stack sx={{textAlign: "center", width: "100%", mt: 3}}>
+              <Typography variant='h6'>Can't find any properties that match your query</Typography>
+            </Stack>
+          }
         </Grid>
       </Container>
     </Box>
