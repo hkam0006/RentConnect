@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Box, Grid, Container, Card, CardMedia, CardContent, Typography, Button, Skeleton, Paper, InputBase,Divider, IconButton, Chip} from '@mui/material';
+import { Box, Grid, Container, Card, CardMedia, CardContent, Typography, Button, Skeleton, Paper, InputBase,Divider, IconButton, Chip, Menu, MenuItem, AppBar, Toolbar} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import HouseIcon from '@mui/icons-material/House';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import { supabase } from '../supabase';
-
-
 
 const fullAddress = (p) => {
   return `${p.property_street_number} ${p.property_street_name}, ${p.property_suburb}, ${p.property_state} ${p.property_postcode}`;
@@ -90,8 +89,6 @@ const ChipContainer = ({chips, setChips, onDeleteChip}) => {
   )
 }
 
-
-
 const SearchPropertyFilter = ({onSearch, value, onChange, handleSubmit}) => {
   return(
     <Paper
@@ -153,6 +150,56 @@ const ActualProperties = ({properties}) => {
   )
 }
 
+const Navbar = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate()
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Typography fontWeight={700} variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          RentConnect
+        </Typography>
+        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Button color="inherit" onClick={() => navigate("/Landing")} >Home</Button>
+          <Button color="inherit">About</Button>
+          <Button color="inherit">Properties</Button>
+          <Button color="inherit">Contact</Button>
+          <Button color="inherit" variant='outlined' size='small' onClick={() => navigate("/LogIn")}>Log In</Button>
+        </Box>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ display: { xs: 'block', md: 'none' } }}
+          onClick={handleMenuOpen}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          sx={{ display: { xs: 'block', md: 'none' } }}
+        >
+          <MenuItem onClick={handleMenuClose}>Home</MenuItem>
+          <MenuItem onClick={handleMenuClose}>About</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Properties</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Contact</MenuItem>
+        </Menu>
+      </Toolbar>
+    </AppBar>
+  );
+}
+
 const PublicPropertyPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -189,8 +236,9 @@ const PublicPropertyPage = () => {
 
   }, [chips])
 
-  return (
-    <Box sx={{height: "100vh", py: 1}}>
+  return (<>
+    <Box sx={{height: "100vh", pb: 1}}>
+      <Navbar />
       <Container>
         <SearchPropertyFilter 
           value={search} 
@@ -203,6 +251,7 @@ const PublicPropertyPage = () => {
         </Grid>
       </Container>
     </Box>
+    </>
   )
 }
 
