@@ -24,6 +24,7 @@ import RenterRoute from './utils/RenterRoute';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, logout, setManager, setRenter } from './utils/UserSlice';
 import ManagerRoute from './utils/ManagerRoute';
+import LandingPage from './public-components/LandingPage';
 
 
 function App() {
@@ -53,6 +54,8 @@ function App() {
             <Route path='/RenterHome' element={<RenterHome/>} />
             <Route path='/ProtectedRenterHome' element={<RenterRoute Component={RenterHome}/>} />
             <Route path='/ProtectedManagerHome' element={<ManagerRoute Component={Dashboard}/>} />
+            <Route path='/Landing' element={<LandingPage/>} />
+            <Route path='/'/>
           </Routes>
         </Router>
     </ThemeProvider>
