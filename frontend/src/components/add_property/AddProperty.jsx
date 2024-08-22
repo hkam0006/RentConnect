@@ -2,18 +2,10 @@ import React, { useEffect, useState } from "react";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import {
   Box,
-  Table,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Typography,
   TextField,
   Stack,
   Button,
-  Chip,
-  Checkbox,
   FormControl,
   InputLabel,
   Select,
@@ -22,6 +14,7 @@ import {
 import AppLoader from "../property_page/AppLoader";
 import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
 import ListingImage from '../property_page/listing.jpg'
+import useApp from '../../hooks/useApp'
 
 const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";
 
@@ -29,21 +22,32 @@ const AddProp = () => {
   const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
   const [loading, setLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
-  const [newRow, setNewRow] = useState({
-    address: "",
+  const { createProperty } = useApp();
+
+  const [newProp, setNewProp] = useState({
+    streetNumber: 0,
+    unitNumber: "",
+    streetName: "",
+    streetType: "",
+    suburb: "",
+    state: "",
     vacancy: 0,
     attendees: 0,
     applications: 0,
     listingImage: ListingImage,
-    type: "",
-    price: 0,
+    propertyType: "",
+    rent: 0,
     payFreq: "",
-    available: "",
+    leaseStartDate: "",
     propManager: "",
-    bedrooms: "0",
-    bathrooms: "0",
-    car_spaces: "0",
-    status: "Active"
+    bedrooms: 0,
+    bathrooms: 0,
+    carSpaces: 0,
+    footprint: 0,
+    description: "",
+    amenities: "",
+    status: "Active",
+    isAppliedFor: false
     })
 
     useEffect(() => {
@@ -52,10 +56,16 @@ const AddProp = () => {
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setNewRow(prevState => ({
+    setNewProp(prevState => ({
         ...prevState,
         [name]: value
     }))
+}
+
+async function confirmPressed(event) {
+  event.preventDefault();
+  console.log(newProp)
+  await createProperty("testID", newProp)
 }
 
 const handlePhotosChange = (event) => {
@@ -68,7 +78,7 @@ const handlePhotosChange = (event) => {
 
   return (
     <NavigationMenu>
-    <Box sx={{ mt: "70px", padding: "20px", width: "100%" }}>
+    <Box sx={{ mt: "70px", padding: "20px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
       <Typography variant="h4" gutterBottom>
         Add Property Listing
       </Typography>
@@ -90,7 +100,7 @@ const handlePhotosChange = (event) => {
               required
               label="Property Manager"
               id="property-manager-select"
-              value={newRow.propManager}
+              value={newProp.propManager}
               onChange={handleChange}
               name='propManager'
           >
@@ -108,7 +118,7 @@ const handlePhotosChange = (event) => {
                 required
                 label="Property Type"
                 id="property-type-select"
-                value={newRow.type}
+                value={newProp.type}
                 onChange={handleChange}
                 name='type'
             >
@@ -145,7 +155,7 @@ const handlePhotosChange = (event) => {
                             <InputLabel htmlFor="bedroom-select">Bedroom(s)</InputLabel>
                             <Select
                                 label="Bedroom(s)"
-                                value={newRow.bedrooms}
+                                value={newProp.bedrooms}
                                 onChange={handleChange}
                                 name='bedrooms'
                             >
@@ -162,7 +172,7 @@ const handlePhotosChange = (event) => {
                             <InputLabel htmlFor="bathroom-select">Bathroom(s)</InputLabel>
                             <Select
                                 label="Bathroom(s)"
-                                value={newRow.bathrooms}
+                                value={newProp.bathrooms}
                                 onChange={handleChange}
                                 name='bathrooms'
                             >
@@ -179,7 +189,7 @@ const handlePhotosChange = (event) => {
                             <InputLabel htmlFor="car-spaces-select">Car Spaces</InputLabel>
                             <Select
                                 label="Car Spaces"
-                                value={newRow.car_spaces}
+                                value={newProp.car_spaces}
                                 onChange={handleChange}
                                 name='car_spaces'
                             >
@@ -201,7 +211,7 @@ const handlePhotosChange = (event) => {
             required
             placeholder='DD/MM/YYYY'
             name='available'
-            value={newRow.available}
+            value={newProp.available}
             onChange={handleChange}
         />
         <TextField
@@ -213,7 +223,7 @@ const handlePhotosChange = (event) => {
             <InputLabel htmlFor="outlined-adornment-amount">Payment Frequency</InputLabel>
             <Select
                 label="Payment Frequency"
-                value={newRow.payFreq}
+                value={newProp.payFreq}
                 onChange={handleChange}
                 name='payFreq'
             >
@@ -236,7 +246,7 @@ const handlePhotosChange = (event) => {
             />
           </Box>
         <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-          <Button variant="contained" color="primary" type="submit">
+          <Button variant="contained" color="primary" type="submit" onClick={(e) => confirmPressed(e)}>
             Add Property
           </Button>
         </Stack>
