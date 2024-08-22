@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Button, Container, Stack,TextField,Typography,Paper,IconButton, Grid, AppBar, Toolbar } from '@mui/material'
 import { styled } from '@mui/system';
 import SearchIcon from '@mui/icons-material/Search';
@@ -8,19 +8,27 @@ import HouseIcon from '@mui/icons-material/House';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useNavigate } from 'react-router-dom';
 
-const SearchPropertyBar = () => {
+const SearchPropertyBar = ({onSearch, value, onChange}) => {
   return(
     <Paper
       component="form"
       onSubmit={(e) => {
         e.preventDefault();
+        onSearch();
       }}
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "60%", margin: "auto", mt: 2, borderRadius: 3, minWidth: "300px" }}
+      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: "60%", margin: "auto", borderRadius: 3, minWidth: "300px" }}
     >
       <Box sx={{ p: '10px', display: "flex", alignItems: "center" }}>
         <HouseIcon color='primary' aria-label="menu"/>
       </Box>
-      <InputBase  sx={{ ml: 1, flex: 1 }} placeholder="Search region, suburb or postcode" inputProps={{ 'aria-label': 'search google maps' }}/>
+      <InputBase  
+        sx={{ ml: 1, flex: 1 }} 
+        value={value}
+        autoFocus
+        placeholder="Search region, suburb or postcode" 
+        inputProps={{ 'aria-label': 'search suburb' }}
+        onChange={(e) => onChange(e.target.value)}
+      />
       <IconButton sx={{ p: '10px' }} aria-label="search">
         <SearchIcon />
       </IconButton>
@@ -33,6 +41,7 @@ const SearchPropertyBar = () => {
 }
 
 const LandingPage = () => {
+  const [search, setSearch] = useState("")
   const navigate = useNavigate()
   const HeroSection = styled(Box)({
     display: 'flex',
@@ -67,10 +76,14 @@ const LandingPage = () => {
             <Typography fontWeight={700} sx={{typography: {xs: "h4", md: "h3"}}} gutterBottom>
               Manage Rentals Effortlessly with RentConnect
             </Typography>
-            <Typography sx={{typography: { sm: "body1", md: "p"}}} component="p" gutterBottom>
+            <Typography sx={{typography: { sm: "body1", md: "p"}, mb: 2}} component="p" gutterBottom>
               Streamline your rental management with ease.
             </Typography>
-            <SearchPropertyBar />
+            <SearchPropertyBar
+              onSearch={() => navigate(`/LandingSearch?q=${search}`)}
+              value={search}
+              onChange={setSearch}
+            />
           </Container>
         </HeroSection>
     </div>

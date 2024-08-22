@@ -7,7 +7,7 @@ const useSearchProperty = (property_suburbs = NULL, property_state = NULL, min_p
   
     useEffect(() => {
       const fetchProperties = async () => {
-        if (property_suburb != NULL && property_state != NULL && property_type != NULL){
+        if (property_suburbs != NULL && property_state != NULL && property_type != NULL){
             const { data, error } = await supabase
             .from("PROPERTY")
             .select("*")
@@ -25,7 +25,7 @@ const useSearchProperty = (property_suburbs = NULL, property_state = NULL, min_p
             .eq("property_state", property_state)
             .eq("property_type", property_type);
         }
-        else if (property_suburb != NULL && property_state != NULL && property_type == NULL){
+        else if (property_suburbs != NULL && property_state != NULL && property_type == NULL){
             const { data, error } = await supabase
             .from("PROPERTY")
             .select("*")
@@ -42,7 +42,7 @@ const useSearchProperty = (property_suburbs = NULL, property_state = NULL, min_p
             .eq("property_suburb", property_suburb)
             .eq("property_state", property_state);
         }
-        else if (property_suburb != NULL && property_state == NULL && property_type != NULL){
+        else if (property_suburbs != NULL && property_state == NULL && property_type != NULL){
             const { data, error } = await supabase
             .from("PROPERTY")
             .select("*")
@@ -59,7 +59,7 @@ const useSearchProperty = (property_suburbs = NULL, property_state = NULL, min_p
             .eq("property_suburb", property_suburb)
             .eq("property_type", property_type);
         }
-        else if (property_suburb == NULL && property_state != NULL && property_type != NULL){
+        else if (property_suburbs == NULL && property_state != NULL && property_type != NULL){
             const { data, error } = await supabase
             .from("PROPERTY")
             .select("*")
@@ -76,7 +76,7 @@ const useSearchProperty = (property_suburbs = NULL, property_state = NULL, min_p
             .eq("property_state", property_state)
             .eq("property_type", property_type);
         }
-        else if (property_suburb != NULL && property_state == NULL && property_type == NULL){
+        else if (property_suburbs != NULL && property_state == NULL && property_type == NULL){
             const { data, error } = await supabase
             .from("PROPERTY")
             .select("*")
@@ -92,7 +92,7 @@ const useSearchProperty = (property_suburbs = NULL, property_state = NULL, min_p
             .lte("property_footprint", max_property_footprint)
             .eq("property_suburb", property_suburb);
         }
-        else if (property_suburb == NULL && property_state != NULL && property_type == NULL){
+        else if (property_suburbs == NULL && property_state != NULL && property_type == NULL){
             const { data, error } = await supabase
             .from("PROPERTY")
             .select("*")
@@ -108,7 +108,7 @@ const useSearchProperty = (property_suburbs = NULL, property_state = NULL, min_p
             .lte("property_footprint", max_property_footprint)
             .eq("property_state", property_state);
         }
-        else if (property_suburb == NULL && property_state == NULL && property_type != NULL){
+        else if (property_suburbs == NULL && property_state == NULL && property_type != NULL){
             const { data, error } = await supabase
             .from("PROPERTY")
             .select("*")

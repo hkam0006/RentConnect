@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, logout, setManager, setRenter } from './utils/UserSlice';
 import ManagerRoute from './utils/ManagerRoute';
 import LandingPage from './public-components/LandingPage';
+import PublicPropertyPage from './public-components/PublicPropertyPage';
 
 
 function App() {
@@ -55,7 +56,7 @@ function App() {
             <Route path='/ProtectedRenterHome' element={<RenterRoute Component={RenterHome}/>} />
             <Route path='/ProtectedManagerHome' element={<ManagerRoute Component={Dashboard}/>} />
             <Route path='/Landing' element={<LandingPage/>} />
-            <Route path='/'/>
+            <Route path='/LandingSearch' element={<PublicPropertyPage />}/>
           </Routes>
         </Router>
     </ThemeProvider>
