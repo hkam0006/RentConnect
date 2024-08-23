@@ -21,6 +21,7 @@ import InspectionRun from './components/inspection_run/InspectionRun'
 import SignUp from './components/signup_page/SignUp';
 import AccountSetUpPM from './components/signup_page/AccountSetUpPM';
 import AddProp from './components/add_property/AddProperty';
+import SavedProperties from './components/property_page/tenant/SaveProperties';
 
 function App() {
     return (
@@ -49,6 +50,7 @@ function App() {
             <Route path='/SignUp' element={<SignUp/>} />
             <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
             <Route path='add_property' element={<AddProp/>} />
+            <Route path='/SavedProperty' element={<SavedProperties/>} />
           </Routes>
         </Router>
     </ThemeProvider>
@@ -96,6 +98,9 @@ function Home() {
         </Link>
         <Link to="/InspectionRun">
             <button>Go to Inspection Runs</button>
+        </Link>
+        <Link to="/SavedProperty">
+            <button>Go to Saved Property</button>
         </Link>
     </div>
 
