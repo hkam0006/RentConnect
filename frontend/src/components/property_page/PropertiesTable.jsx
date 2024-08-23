@@ -103,6 +103,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
                 <Stack spacing={1}>
                   <Button variant='contained' onClick={() => navigate(`/property/${row.property_id}`)}>View</Button>
                   <Button variant='outlined'>More</Button>
+                  <Button variant='outlined'>Save</Button>
                 </Stack>
               </TableCell>
             </TableRow>
