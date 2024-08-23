@@ -86,8 +86,10 @@ function AccountSetUpPM(){
     const [companyPhoneNum, setCompanyPhoneNum] = useState('');
     const [companyPhoneNumErrorFlag, setCompanyPhoneNumErrorFlag] = useState(false);
     const handleCompanyPhoneNumChange = f => {
-        setCompanyPhoneNum(f.target.value);
-        setCompanyPhoneNumErrorFlag(false);
+        if (!Number.isNaN(Number(f.target.value))){
+            setCompanyPhoneNum(f.target.value);
+            setCompanyPhoneNumErrorFlag(false);
+        }
     }
 
     const [companyStreetAddress, setCompanyStreetAddress] = useState('');
@@ -118,29 +120,55 @@ function AccountSetUpPM(){
         setAbnErrorFlag(false);
     }
 
+    const [statesList, setStatesList] = useState(["ACT","NSW","NT","QLD","SA","TAS","VIC","WA"]);
     const { deleteAccountSetUp } = useDeleteAccountSetUp();
     const { addCompany } = useAddCompany();
     const { fetchCompany } = useGetCompanyByName();
     const { addPropertyManager } = useAddPropertyManager();
 
     const handleAccountCreation = async () => {
-        var temp = user;
+        var anyError = false;
         if (fname == ''){
             setFnameErrorFlag(true);
+            anyError = true;
         }
         if (lname == ''){
             setLnameErrorFlag(true);
+            anyError = true;
         }
         if (phoneNum == ''){
             setPhoneNumErrorFlag(true);
+            anyError = true;
         }
         if (!newCompanyFlag && companyIndex == -1){
             setCompanyIndexErrorFlag(true);
+            anyError = true;
         }
         if (newCompanyFlag && newCompanyName == ''){
             setNewCompanyNameErrorFlag(true);
+            anyError = true;
         }
-        if (!(fnameErrorFlag || lnameErrorFlag || phoneNumErrorFlag || companyNameErrorFlag || newCompanyNameErrorFlag)){
+        if (newCompanyFlag && companyPhoneNum == ''){
+            setCompanyPhoneNumErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && abn == ''){
+            setAbnErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && companyStreetAddress == ''){
+            setCompanyStreetAddressErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && companySuburb == ''){
+            setCompanySuburbErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && companyState == ''){
+            setCompanyStateErrorFlag(true);
+            anyError = true;
+        }
+        if (!anyError){
             await deleteAccountSetUp(user.id);
             var company_id = ''
             if (newCompanyFlag){
@@ -274,16 +302,20 @@ function AccountSetUpPM(){
                     sx={{width: '96%', ml: '2%'}} 
                     inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
                     InputLabelProps={{sx: {fontSize: '130%'}}}/>
-            <TextField 
-                    id='CompanyState' 
-                    value={companyState} 
-                    onChange={handleCompanyStateChange} 
-                    label='State'
-                    variant='standard'  
-                    error={companyStateErrorFlag}
-                    sx={{width: '96%', ml: '2%'}} 
-                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
-                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <Autocomplete 
+                disablePortal 
+                id="CompanyState" 
+                onChange={handleCompanyStateChange}
+                options={statesList} 
+                sx={{width: '96%', ml: '2%', mt: '1%', mb: '3%'}} 
+                renderInput={(params) => 
+                    <TextField 
+                        {...params} 
+                        label="State" 
+                        variant='standard' 
+                        error={companyStateErrorFlag}
+                        InputLabelProps={{sx: {fontSize: '130%'}}} 
+                        value={companyState} />}/>
             </Box>
             }
         </Box>
