@@ -14,7 +14,8 @@ import {
 import AppLoader from "../property_page/AppLoader";
 import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
 import ListingImage from '../property_page/listing.jpg'
-import useApp from '../../hooks/useApp'
+import useAddProperty from "../../mutators/Property/useAddProperty";
+import { v4 as uuidv4 } from 'uuid';
 
 const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";
 
@@ -22,28 +23,30 @@ const AddProp = () => {
   const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
   const [loading, setLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
-  const { createProperty } = useApp();
+  const { addProperty } = useAddProperty();
+
 
   const [newProp, setNewProp] = useState({
-    streetNumber: 0,
-    unitNumber: "",
+    streetNumber: "",
+    unitNumber: 0,
     streetName: "",
     streetType: "",
     suburb: "",
     state: "",
-    vacancy: 0,
+    postcode: "",
+    vacancy: "",
     attendees: 0,
     applications: 0,
-    listingImage: ListingImage,
+    listingImages: [ListingImage],
     propertyType: "",
-    rent: 0,
+    rent: "",
     payFreq: "",
     leaseStartDate: "",
     propManager: "",
-    bedrooms: 0,
-    bathrooms: 0,
-    carSpaces: 0,
-    footprint: 0,
+    bedrooms: "",
+    bathrooms: "",
+    carSpaces: "",
+    footprint: "",
     description: "",
     amenities: "",
     status: "Active",
@@ -54,18 +57,53 @@ const AddProp = () => {
       setLoading(false);
     }, []);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewProp(prevState => ({
-        ...prevState,
-        [name]: value
-    }))
-}
+  
+  // List of fields that should be converted to integers
+  const intFields = [
+    'streetNumber',
+    'unitNumber',
+    'bedrooms',
+    'bathrooms',
+    'carSpaces',
+    'rent',
+    'footprint',
+    'attendees',
+  ];
+
+  setNewProp((prevState) => ({
+    ...prevState,
+    [name]: intFields.includes(name) ? parseInt(value, 10) || '' : value, // Convert to int if the field is in intFields
+  }));
+};
 
 async function confirmPressed(event) {
   event.preventDefault();
   console.log(newProp)
-  await createProperty("testID", newProp)
+  await addProperty(
+    '1b9500a6-ac39-4c6a-971f-766f85b41d78',       // Hardcoded Company ID
+    uuidv4(),                                     // UUID for Property ID
+    newProp.streetNumber,
+    newProp.streetName,
+    newProp.streetType,
+    newProp.suburb,
+    newProp.state,
+    newProp.bedrooms, newProp.bathrooms, newProp.carSpaces,
+    newProp.propertyType, 
+    newProp.rent, 
+    newProp.footprint, 
+    newProp.description, 
+    newProp.amenities, 
+    newProp.listingImages, 
+    newProp.payFreq, 
+    'fc8e3cf4-cbbc-4557-b303-7aa028c616eb',       // Hardcoded Property Manager ID
+    null, 
+    new Date(),
+    0, 
+    new Date(newProp.leaseStartDate), 
+    newProp.unitNumber, 
+    newProp.postcode)
 }
 
 const handlePhotosChange = (event) => {
@@ -94,154 +132,248 @@ const handlePhotosChange = (event) => {
         <Typography variant="h6" gutterBottom>
           Details
         </Typography>
-        <FormControl fullWidth gutterBottom>
-          <InputLabel id="property-manager-select-label">Property Manager</InputLabel>
-          <Select
-              required
-              label="Property Manager"
-              id="property-manager-select"
-              value={newProp.propManager}
-              onChange={handleChange}
-              name='propManager'
-          >
-          <MenuItem>None</MenuItem>
-          {propManagers.map((manager) => (
-            <MenuItem key={manager.property_manager_id} value={manager.property_manager_id}>
-              {`${manager.property_manager_first_name} ${manager.property_manager_last_name}`}
-            </MenuItem>
-          ))}
-          </Select>
-        </FormControl>
+        <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
         <FormControl fullWidth>
-            <InputLabel id="property-type-select-label">Property Type</InputLabel>
+            <InputLabel id="property-manager-select-label">Property Manager</InputLabel>
             <Select
                 required
-                label="Property Type"
-                id="property-type-select"
-                value={newProp.type}
+                label="Property Manager"
+                id="property-manager-select"
+                value={newProp.propManager}
                 onChange={handleChange}
-                name='type'
+                name='propManager'
+                sx={{ flexBasis: '50%' }}
             >
-                <MenuItem value="Apartment">Apartment</MenuItem>
-                <MenuItem value="House">House</MenuItem>
-                <MenuItem value="Studio">Studio</MenuItem>
+            <MenuItem>None</MenuItem>
+            {propManagers.map((manager) => (
+              <MenuItem key={manager.property_manager_id} value={manager.property_manager_id}>
+                {`${manager.property_manager_first_name} ${manager.property_manager_last_name}`}
+              </MenuItem>
+            ))}
             </Select>
-        </FormControl>
+          </FormControl>
+          <FormControl fullWidth>
+              <InputLabel id="property-type-select-label">Property Type</InputLabel>
+              <Select
+                  required
+                  label="Property Type"
+                  id="property-type-select"
+                  value={newProp.propertyType}
+                  onChange={handleChange}
+                  name='propertyType'
+                  sx={{ flexBasis: '50%' }}
+              >
+                  <MenuItem value="Apartment">Apartment</MenuItem>
+                  <MenuItem value="House">House</MenuItem>
+                  <MenuItem value="Studio">Studio</MenuItem>
+              </Select>
+          </FormControl>
+        </Box>
         <TextField
-          required
-          label="Address"
-          variant="outlined"
-        />
+            required
+            label="Property Description"
+            variant="outlined"
+            value={newProp.description}
+            name='description'
+            multiline
+            rows={5}
+            sx = {{ flexBasis: '100%' }}
+            onChange={handleChange}
+          />
+        <Typography variant="h6" gutterBottom>
+          Address
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 0 }}>
+          <TextField
+            required
+            label="Street Number"
+            value={newProp.streetNumber}
+            name='streetNumber'
+            variant="outlined"
+            sx={{ flexBasis: '15%' }}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Unit Number"
+            value={newProp.unitNumber}
+            name='unitNumber'
+            variant="outlined"
+            sx={{ flexBasis: '15%' }}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            label="Street Name"
+            value={newProp.streetName}
+            name='streetName'
+            variant="outlined"
+            sx={{ flexBasis: '45%' }}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            label="Street Type"
+            value={newProp.streetType}
+            name='streetType'
+            variant="outlined"
+            sx={{ flexBasis: '30%' }}
+            onChange={handleChange}
+          />
+        </Box>
+        <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
         <TextField
-          required
-          label="Suburb"
-          variant="outlined"
-        />
-        <TextField
-          required
-          label="State"
-          variant="outlined"
-        />
-        <TextField
-          required
-          label="Postcode"
-          variant="outlined"
-        />
+            required
+            label="Suburb"
+            value={newProp.suburb}
+            name='suburb'
+            variant="outlined"
+            sx={{ flexBasis: '50%' }}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            label="State"
+            value={newProp.state}
+            name='state'
+            variant="outlined"
+            sx={{ flexBasis: '30%' }}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            label="Postcode"
+            value={newProp.postcode}
+            name='postcode'
+            variant="outlined"
+            sx={{ flexBasis: '20%' }}
+            onChange={handleChange}
+          />
+        </Box>
         <Typography variant="h6" gutterBottom>
           Facilities
         </Typography>
         <Stack direction='row' spacing={1}>
-                        <FormControl fullWidth >
-                            <InputLabel htmlFor="bedroom-select">Bedroom(s)</InputLabel>
-                            <Select
-                                label="Bedroom(s)"
-                                value={newProp.bedrooms}
-                                onChange={handleChange}
-                                name='bedrooms'
-                            >
-                                <MenuItem value="0">0</MenuItem>
-                                <MenuItem value="1">1</MenuItem>
-                                <MenuItem value="2">2</MenuItem>
-                                <MenuItem value="3">3</MenuItem>
-                                <MenuItem value="4">4</MenuItem>
-                                <MenuItem value="5">5</MenuItem>
-                                <MenuItem value="6+">6+</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="bathroom-select">Bathroom(s)</InputLabel>
-                            <Select
-                                label="Bathroom(s)"
-                                value={newProp.bathrooms}
-                                onChange={handleChange}
-                                name='bathrooms'
-                            >
-                                <MenuItem value="0">0</MenuItem>
-                                <MenuItem value="1">1</MenuItem>
-                                <MenuItem value="2">2</MenuItem>
-                                <MenuItem value="3">3</MenuItem>
-                                <MenuItem value="4">4</MenuItem>
-                                <MenuItem value="5">5</MenuItem>
-                                <MenuItem value="6+">6+</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="car-spaces-select">Car Spaces</InputLabel>
-                            <Select
-                                label="Car Spaces"
-                                value={newProp.car_spaces}
-                                onChange={handleChange}
-                                name='car_spaces'
-                            >
-                                <MenuItem value="0">0</MenuItem>
-                                <MenuItem value="1">1</MenuItem>
-                                <MenuItem value="2">2</MenuItem>
-                                <MenuItem value="3">3</MenuItem>
-                                <MenuItem value="4">4</MenuItem>
-                                <MenuItem value="5">5</MenuItem>
-                                <MenuItem value="6+">6+</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Stack>
+          <FormControl fullWidth >
+              <InputLabel htmlFor="bedroom-select">Bedroom(s)</InputLabel>
+              <Select
+                  label="Bedroom(s)"
+                  value={newProp.bedrooms}
+                  onChange={handleChange}
+                  name='bedrooms'
+              >
+                  <MenuItem value="0">0</MenuItem>
+                  <MenuItem value="1">1</MenuItem>
+                  <MenuItem value="2">2</MenuItem>
+                  <MenuItem value="3">3</MenuItem>
+                  <MenuItem value="4">4</MenuItem>
+                  <MenuItem value="5">5</MenuItem>
+                  <MenuItem value="6+">6+</MenuItem>
+              </Select>
+          </FormControl>
+          <FormControl fullWidth>
+              <InputLabel htmlFor="bathroom-select">Bathroom(s)</InputLabel>
+              <Select
+                  label="Bathroom(s)"
+                  value={newProp.bathrooms}
+                  onChange={handleChange}
+                  name='bathrooms'
+              >
+                  <MenuItem value="0">0</MenuItem>
+                  <MenuItem value="1">1</MenuItem>
+                  <MenuItem value="2">2</MenuItem>
+                  <MenuItem value="3">3</MenuItem>
+                  <MenuItem value="4">4</MenuItem>
+                  <MenuItem value="5">5</MenuItem>
+                  <MenuItem value="6+">6+</MenuItem>
+              </Select>
+          </FormControl>
+          <FormControl fullWidth>
+              <InputLabel htmlFor="car-spaces-select">Car Spaces</InputLabel>
+              <Select
+                  label="Car Spaces"
+                  value={newProp.carSpaces}
+                  onChange={handleChange}
+                  name='carSpaces'
+              >
+                  <MenuItem value="0">0</MenuItem>
+                  <MenuItem value="1">1</MenuItem>
+                  <MenuItem value="2">2</MenuItem>
+                  <MenuItem value="3">3</MenuItem>
+                  <MenuItem value="4">4</MenuItem>
+                  <MenuItem value="5">5</MenuItem>
+                  <MenuItem value="6+">6+</MenuItem>
+              </Select>
+          </FormControl>
+        </Stack>
+        <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
+          <TextField
+            required
+            label="Footprint (m²)"
+            value={newProp.footprint}
+            name='footprint'
+            variant="outlined"
+            sx={{ flexBasis: '50%' }}
+            onChange={handleChange}
+          />
+          <TextField
+            required
+            label="Amenities"
+            value={newProp.amenities}
+            name='amenities'
+            variant="outlined"
+            multiline
+            rows={2}
+            sx={{ flexBasis: '50%' }}
+            onChange={handleChange}
+          />
+        </Box>
         <Typography variant="h6" gutterBottom>
           Payment
         </Typography>
-        <TextField
-            label="Lease Start"
+        <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
+          <TextField
             required
-            placeholder='DD/MM/YYYY'
-            name='available'
-            value={newProp.available}
+            label="Rent Price"
+            value={newProp.rent}
+            name='rent'
+            variant="outlined"
+            onChange={handleChange}
+          />
+          <FormControl fullWidth>
+              <InputLabel htmlFor="outlined-adornment-amount">Payment Frequency</InputLabel>
+              <Select
+                  label="Payment Frequency"
+                  value={newProp.payFreq}
+                  name='payFreq'
+                  onChange={handleChange}
+                  sx={{ flexBasis: '50%' }}
+              >
+                  <MenuItem value={null}>Not Selected</MenuItem>
+                  <MenuItem value="Per Week">Per Week</MenuItem>
+                  <MenuItem value="Per Fortnight">Per Fortnight</MenuItem>
+                  <MenuItem value="Per Month">Per Month</MenuItem>
+              </Select>
+          </FormControl>
+        </Box>
+        <TextField
+            label="Lease Start (YYYY-MM-DD)"
+            required
+            placeholder='YYYY-MM-DD'
+            value={newProp.leaseStartDate}
+            name='leaseStartDate'
             onChange={handleChange}
         />
-        <TextField
-          required
-          label="Amount"
-          variant="outlined"
-        />
-        <FormControl fullWidth>
-            <InputLabel htmlFor="outlined-adornment-amount">Payment Frequency</InputLabel>
-            <Select
-                label="Payment Frequency"
-                value={newProp.payFreq}
-                onChange={handleChange}
-                name='payFreq'
-            >
-                <MenuItem value={null}>Not Selected</MenuItem>
-                <MenuItem value="Per Week">Per Week</MenuItem>
-                <MenuItem value="Per Fortnight">Per Fortnight</MenuItem>
-                <MenuItem value="Per Month">Per Month</MenuItem>
-            </Select>
-        </FormControl>
         <Box>
-            <Typography variant="h6" gutterBottom>
-              Upload Photos
+          {/* THIS IS NOT WORKING AS OF YET */}
+            <Typography variant="h6" gutterBottom>    
+              Upload Photos (NOT WORKING)
             </Typography>
             <input
               accept="image/*"
               type="file"
               multiple
               onChange={handlePhotosChange}
+              value={newProp.listingImage}
               style={{ display: 'block', margin: '10px 0' }}
             />
           </Box>
