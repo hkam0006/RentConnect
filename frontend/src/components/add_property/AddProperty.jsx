@@ -23,6 +23,7 @@ const AddProp = () => {
   const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
   const [loading, setLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
+  const [errors, setErrors] = useState({});
   const { addProperty } = useAddProperty();
 
 
@@ -59,58 +60,154 @@ const AddProp = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Clear the error for this field
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ''
+    }));
   
-  // List of fields that should be converted to integers
-  const intFields = [
-    'streetNumber',
-    'unitNumber',
-    'bedrooms',
-    'bathrooms',
-    'carSpaces',
-    'rent',
-    'footprint',
-    'attendees',
-  ];
+    // List of fields that should be converted to integers
+    const intFields = [
+      'streetNumber',
+      'unitNumber',
+      'bedrooms',
+      'bathrooms',
+      'carSpaces',
+      'rent',
+      'footprint',
+      'attendees',
+    ];
 
-  setNewProp((prevState) => ({
-    ...prevState,
-    [name]: intFields.includes(name) ? parseInt(value, 10) || '' : value, // Convert to int if the field is in intFields
-  }));
-};
+    setNewProp((prevState) => ({
+      ...prevState,
+        [name]: intFields.includes(name) ? parseInt(value, 10) || '' : value, // Convert to int if the field is in intFields
+      })
+    );
+  };
 
-async function confirmPressed(event) {
-  event.preventDefault();
-  console.log(newProp)
-  await addProperty(
-    '1b9500a6-ac39-4c6a-971f-766f85b41d78',       // Hardcoded Company ID
-    uuidv4(),                                     // UUID for Property ID
-    newProp.streetNumber,
-    newProp.streetName,
-    newProp.streetType,
-    newProp.suburb,
-    newProp.state,
-    newProp.bedrooms, newProp.bathrooms, newProp.carSpaces,
-    newProp.propertyType, 
-    newProp.rent, 
-    newProp.footprint, 
-    newProp.description, 
-    newProp.amenities, 
-    newProp.listingImages, 
-    newProp.payFreq, 
-    'fc8e3cf4-cbbc-4557-b303-7aa028c616eb',       // Hardcoded Property Manager ID
-    null, 
-    new Date(),
-    0, 
-    new Date(newProp.leaseStartDate), 
-    newProp.unitNumber, 
-    newProp.postcode)
-}
+  const handleClear = () => {
+    setNewProp({
+      streetNumber: "",
+      unitNumber: 0,
+      streetName: "",
+      streetType: "",
+      suburb: "",
+      state: "",
+      postcode: "",
+      vacancy: "",
+      attendees: 0,
+      applications: 0,
+      listingImages: [ListingImage],
+      propertyType: "",
+      rent: "",
+      payFreq: "",
+      leaseStartDate: "",
+      propManager: "",
+      bedrooms: "",
+      bathrooms: "",
+      carSpaces: "",
+      footprint: "",
+      description: "",
+      amenities: "",
+      status: "Active",
+      isAppliedFor: false
+    });
+  
+    setErrors({});  // Clear all errors as well
+  };
 
-const handlePhotosChange = (event) => {
-  const files = Array.from(event.target.files);
-  setPhotos(files);
-};
+  async function confirmPressed(event) {
+    event.preventDefault();
+    console.log(newProp)
 
+    const isValid = validateForm();
+    if (!isValid) {
+      return;  // Stop submission if the form is not valid
+    }
+
+    await addProperty(
+      TEST_COMPANY_ID,                              // Hardcoded Company ID
+      uuidv4(),                                     // UUID for Property ID
+      newProp.streetNumber,
+      newProp.streetName,
+      newProp.streetType,
+      newProp.suburb,
+      newProp.state,
+      newProp.bedrooms, newProp.bathrooms, newProp.carSpaces,
+      newProp.propertyType, 
+      newProp.rent, 
+      newProp.footprint, 
+      newProp.description, 
+      newProp.amenities, 
+      newProp.listingImages, 
+      newProp.payFreq, 
+      'fc8e3cf4-cbbc-4557-b303-7aa028c616eb',       // Hardcoded Property Manager ID
+      null, 
+      new Date(),
+      0, 
+      new Date(newProp.leaseStartDate), 
+      newProp.unitNumber, 
+      newProp.postcode
+    )
+  }
+
+  const handlePhotosChange = (event) => {
+    const files = Array.from(event.target.files);
+    setPhotos(files);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+  
+    // Check if required fields are filled
+    const requiredFields = [
+      'streetNumber',
+      'streetName',
+      'streetType',
+      'suburb',
+      'state',
+      'postcode',
+      'description',
+      'footprint',
+      'rent',
+      'leaseStartDate',
+      'propertyType',
+      'propManager',
+      'payFreq'
+    ];
+  
+    requiredFields.forEach((field) => {
+      if (!newProp[field]) {
+        newErrors[field] = `${field} is required`;
+      }
+    });
+  
+    // Check if integer fields contain valid numbers
+    const intFields = [
+      'streetNumber',
+      'unitNumber',
+      'bedrooms',
+      'bathrooms',
+      'carSpaces',
+      'rent',
+      'footprint',
+      'attendees',
+    ];
+  
+    intFields.forEach((field) => {
+      if (isNaN(newProp[field]) || newProp[field] === '') {
+        newErrors[field] = `${field} must be a valid number`;
+      }
+    });
+  
+    // Set errors state
+    setErrors(newErrors);
+  
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
+  };
+  
 
   if (loading) return <AppLoader />;
 
@@ -151,6 +248,7 @@ const handlePhotosChange = (event) => {
               </MenuItem>
             ))}
             </Select>
+            {errors.propManager && <Typography color="error">{errors.propManager}</Typography>}
           </FormControl>
           <FormControl fullWidth>
               <InputLabel id="property-type-select-label">Property Type</InputLabel>
@@ -167,6 +265,7 @@ const handlePhotosChange = (event) => {
                   <MenuItem value="House">House</MenuItem>
                   <MenuItem value="Studio">Studio</MenuItem>
               </Select>
+              {errors.propertyType && <Typography color="error">{errors.propertyType}</Typography>}
           </FormControl>
         </Box>
         <TextField
@@ -179,6 +278,8 @@ const handlePhotosChange = (event) => {
             rows={5}
             sx = {{ flexBasis: '100%' }}
             onChange={handleChange}
+            error={!!errors.description}  // Show error styling if there's an error
+            helperText={errors.description}  // Display the error message
           />
         <Typography variant="h6" gutterBottom>
           Address
@@ -192,6 +293,8 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '15%' }}
             onChange={handleChange}
+            error={!!errors.streetNumber}  // Show error styling if there's an error
+            helperText={errors.streetNumber}  // Display the error message
           />
           <TextField
             label="Unit Number"
@@ -200,6 +303,8 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '15%' }}
             onChange={handleChange}
+            error={!!errors.unitNumber}  // Show error styling if there's an error
+            helperText={errors.unitNumber}  // Display the error message
           />
           <TextField
             required
@@ -209,6 +314,8 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '45%' }}
             onChange={handleChange}
+            error={!!errors.streetName}  // Show error styling if there's an error
+            helperText={errors.streetName}  // Display the error message
           />
           <TextField
             required
@@ -218,6 +325,8 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '30%' }}
             onChange={handleChange}
+            error={!!errors.streetType}  // Show error styling if there's an error
+            helperText={errors.streetType}  // Display the error message
           />
         </Box>
         <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
@@ -229,6 +338,8 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '50%' }}
             onChange={handleChange}
+            error={!!errors.suburb}  // Show error styling if there's an error
+            helperText={errors.suburb}  // Display the error message
           />
           <TextField
             required
@@ -238,6 +349,8 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '30%' }}
             onChange={handleChange}
+            error={!!errors.state}  // Show error styling if there's an error
+            helperText={errors.state}  // Display the error message
           />
           <TextField
             required
@@ -247,6 +360,8 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '20%' }}
             onChange={handleChange}
+            error={!!errors.postcode}  // Show error styling if there's an error
+            helperText={errors.postcode}  // Display the error message
           />
         </Box>
         <Typography variant="h6" gutterBottom>
@@ -269,6 +384,7 @@ const handlePhotosChange = (event) => {
                   <MenuItem value="5">5</MenuItem>
                   <MenuItem value="6+">6+</MenuItem>
               </Select>
+              {errors.bedrooms && <Typography color="error">{errors.bedrooms}</Typography>}
           </FormControl>
           <FormControl fullWidth>
               <InputLabel htmlFor="bathroom-select">Bathroom(s)</InputLabel>
@@ -286,6 +402,7 @@ const handlePhotosChange = (event) => {
                   <MenuItem value="5">5</MenuItem>
                   <MenuItem value="6+">6+</MenuItem>
               </Select>
+              {errors.bathrooms && <Typography color="error">{errors.bathrooms}</Typography>}
           </FormControl>
           <FormControl fullWidth>
               <InputLabel htmlFor="car-spaces-select">Car Spaces</InputLabel>
@@ -303,6 +420,7 @@ const handlePhotosChange = (event) => {
                   <MenuItem value="5">5</MenuItem>
                   <MenuItem value="6+">6+</MenuItem>
               </Select>
+              {errors.carSpaces && <Typography color="error">{errors.carSpaces}</Typography>}
           </FormControl>
         </Stack>
         <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
@@ -314,9 +432,10 @@ const handlePhotosChange = (event) => {
             variant="outlined"
             sx={{ flexBasis: '50%' }}
             onChange={handleChange}
+            error={!!errors.footprint}  // Show error styling if there's an error
+            helperText={errors.footprint}  // Display the error message
           />
           <TextField
-            required
             label="Amenities"
             value={newProp.amenities}
             name='amenities'
@@ -325,6 +444,8 @@ const handlePhotosChange = (event) => {
             rows={2}
             sx={{ flexBasis: '50%' }}
             onChange={handleChange}
+            error={!!errors.amenities}  // Show error styling if there's an error
+            helperText={errors.amenities}  // Display the error message
           />
         </Box>
         <Typography variant="h6" gutterBottom>
@@ -338,6 +459,8 @@ const handlePhotosChange = (event) => {
             name='rent'
             variant="outlined"
             onChange={handleChange}
+            error={!!errors.rent}  // Show error styling if there's an error
+            helperText={errors.rent}  // Display the error message
           />
           <FormControl fullWidth>
               <InputLabel htmlFor="outlined-adornment-amount">Payment Frequency</InputLabel>
@@ -353,6 +476,7 @@ const handlePhotosChange = (event) => {
                   <MenuItem value="Per Fortnight">Per Fortnight</MenuItem>
                   <MenuItem value="Per Month">Per Month</MenuItem>
               </Select>
+              {errors.payFreq && <Typography color="error">{errors.payFreq}</Typography>}
           </FormControl>
         </Box>
         <TextField
@@ -362,6 +486,8 @@ const handlePhotosChange = (event) => {
             value={newProp.leaseStartDate}
             name='leaseStartDate'
             onChange={handleChange}
+            error={!!errors.leaseStartDate}  // Show error styling if there's an error
+            helperText={errors.leaseStartDate}  // Display the error message
         />
         <Box>
           {/* THIS IS NOT WORKING AS OF YET */}
@@ -380,6 +506,9 @@ const handlePhotosChange = (event) => {
         <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
           <Button variant="contained" color="primary" type="submit" onClick={(e) => confirmPressed(e)}>
             Add Property
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={handleClear}>
+            Clear
           </Button>
         </Stack>
       </Box>
