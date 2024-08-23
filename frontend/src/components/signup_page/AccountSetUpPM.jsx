@@ -83,6 +83,41 @@ function AccountSetUpPM(){
         setNewCompanyNameErrorFlag(false);
     }
 
+    const [companyPhoneNum, setCompanyPhoneNum] = useState('');
+    const [companyPhoneNumErrorFlag, setCompanyPhoneNumErrorFlag] = useState(false);
+    const handleCompanyPhoneNumChange = f => {
+        setCompanyPhoneNum(f.target.value);
+        setCompanyPhoneNumErrorFlag(false);
+    }
+
+    const [companyStreetAddress, setCompanyStreetAddress] = useState('');
+    const [companyStreetAddressErrorFlag, setCompanyStreetAddressErrorFlag] = useState(false);
+    const handleCompanyStreetAddressChange = f => {
+        setCompanyStreetAddress(f.target.value);
+        setCompanyStreetAddressErrorFlag(false);
+    }
+
+    const [companySuburb, setCompanySuburb] = useState('');
+    const [companySuburbErrorFlag, setCompanySuburbErrorFlag] = useState(false);
+    const handleCompanySuburbChange = f => {
+        setCompanySuburb(f.target.value);
+        setCompanySuburbErrorFlag(false);
+    }
+
+    const [companyState, setCompanyState] = useState('');
+    const [companyStateErrorFlag, setCompanyStateErrorFlag] = useState(false);
+    const handleCompanyStateChange = f => {
+        setCompanyState(f.target.value);
+        setCompanyStateErrorFlag(false);
+    }
+
+    const [abn, setAbn] = useState('');
+    const [abnErrorFlag, setAbnErrorFlag] = useState(false);
+    const handleAbnChange = f => {
+        setAbn(f.target.value);
+        setAbnErrorFlag(false);
+    }
+
     const { deleteAccountSetUp } = useDeleteAccountSetUp();
     const { addCompany } = useAddCompany();
     const { fetchCompany } = useGetCompanyByName();
@@ -109,7 +144,7 @@ function AccountSetUpPM(){
             await deleteAccountSetUp(user.id);
             var company_id = ''
             if (newCompanyFlag){
-                await addCompany(user.id, newCompanyName);
+                await addCompany(user.id, newCompanyName, abn, companyPhoneNum, companyStreetAddress, companySuburb, companyState);
                 company_id = await fetchCompany(newCompanyName);
             }
             else{
@@ -188,6 +223,7 @@ function AccountSetUpPM(){
                         InputLabelProps={{sx: {fontSize: '130%'}}} 
                         value={companyIndex} />}/>
             : 
+            <Box sx={{mb: '4%'}}>
             <TextField 
                 id='NewCompanyName' 
                 value={newCompanyName} 
@@ -195,9 +231,60 @@ function AccountSetUpPM(){
                 label='Company Name' 
                 variant='standard' 
                 error={newCompanyNameErrorFlag}
-                sx={{width: '96%', ml: '2%', mb: '3%', mt: '1%'}} 
+                sx={{width: '96%', ml: '2%'}} 
                 inputProps={{sx: {height:'0%', fontSize: '130%'}}} 
                 InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='CompanyPhoneNum' 
+                    value={companyPhoneNum} 
+                    onChange={handleCompanyPhoneNumChange} 
+                    label='Company Phone Number'
+                    variant='standard'  
+                    error={companyPhoneNumErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='ABN' 
+                    value={abn} 
+                    onChange={handleAbnChange} 
+                    label='Australian Business Number (ABN)'
+                    variant='standard'  
+                    error={abnErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='CompanyStreetAddress' 
+                    value={companyStreetAddress} 
+                    onChange={handleCompanyStreetAddressChange} 
+                    label='Street Address'
+                    variant='standard'  
+                    error={companyStreetAddressErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='CompanySuburb' 
+                    value={companySuburb} 
+                    onChange={handleCompanySuburbChange} 
+                    label='Suburb'
+                    variant='standard'  
+                    error={companySuburbErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='CompanyState' 
+                    value={companyState} 
+                    onChange={handleCompanyStateChange} 
+                    label='State'
+                    variant='standard'  
+                    error={companyStateErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
             }
         </Box>
         <br/>
