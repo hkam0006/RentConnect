@@ -62,14 +62,14 @@ function AccountSetUpPM(){
     const [companies, setCompanies] = useState([]);
     React.useEffect(() => {
         (async () => {
-            const {data, error} = await fetchCompanies();
+            const {data} = await fetchCompanies();
             var companies = [];
             data.forEach(company => {
                 companies.push(company.company_name);
             });
             setCompanies(companies);
         })();
-    }, []);
+    });
 
     const [newCompanyFlag, setNewCompanyFlag] = useState(false);
     const handleNewCompanyFlagChange = f => {
@@ -120,7 +120,7 @@ function AccountSetUpPM(){
         setAbnErrorFlag(false);
     }
 
-    const [statesList, setStatesList] = useState(["ACT","NSW","NT","QLD","SA","TAS","VIC","WA"]);
+    const statesList = ["ACT","NSW","NT","QLD","SA","TAS","VIC","WA"];
     const { deleteAccountSetUp } = useDeleteAccountSetUp();
     const { addCompany } = useAddCompany();
     const { fetchCompany } = useGetCompanyByName();
@@ -128,43 +128,43 @@ function AccountSetUpPM(){
 
     const handleAccountCreation = async () => {
         var anyError = false;
-        if (fname == ''){
+        if (fname === ''){
             setFnameErrorFlag(true);
             anyError = true;
         }
-        if (lname == ''){
+        if (lname === ''){
             setLnameErrorFlag(true);
             anyError = true;
         }
-        if (phoneNum == ''){
+        if (phoneNum === ''){
             setPhoneNumErrorFlag(true);
             anyError = true;
         }
-        if (!newCompanyFlag && companyIndex == -1){
+        if (!newCompanyFlag && companyIndex === -1){
             setCompanyIndexErrorFlag(true);
             anyError = true;
         }
-        if (newCompanyFlag && newCompanyName == ''){
+        if (newCompanyFlag && newCompanyName === ''){
             setNewCompanyNameErrorFlag(true);
             anyError = true;
         }
-        if (newCompanyFlag && companyPhoneNum == ''){
+        if (newCompanyFlag && companyPhoneNum === ''){
             setCompanyPhoneNumErrorFlag(true);
             anyError = true;
         }
-        if (newCompanyFlag && abn == ''){
+        if (newCompanyFlag && abn === ''){
             setAbnErrorFlag(true);
             anyError = true;
         }
-        if (newCompanyFlag && companyStreetAddress == ''){
+        if (newCompanyFlag && companyStreetAddress === ''){
             setCompanyStreetAddressErrorFlag(true);
             anyError = true;
         }
-        if (newCompanyFlag && companySuburb == ''){
+        if (newCompanyFlag && companySuburb === ''){
             setCompanySuburbErrorFlag(true);
             anyError = true;
         }
-        if (newCompanyFlag && companyState == ''){
+        if (newCompanyFlag && companyState === ''){
             setCompanyStateErrorFlag(true);
             anyError = true;
         }
@@ -172,7 +172,7 @@ function AccountSetUpPM(){
             await deleteAccountSetUp(user.id);
             var company_id = ''
             if (newCompanyFlag){
-                await addCompany(user.id, newCompanyName, abn, companyPhoneNum, companyStreetAddress, companySuburb, companyState);
+                await addCompany(user.id, newCompanyName, abn, companyPhoneNum, companyStreetAddress, companySuburb, statesList[companyState]);
                 company_id = await fetchCompany(newCompanyName);
             }
             else{
