@@ -23,8 +23,9 @@ import Carousel from "react-material-ui-carousel";
 import Paper from "@mui/material/Paper";
 import {supabase} from "../../supabase";
 import useGetUserID from "../../queries/useGetUserID";
+import useGetApplicationsByPropertyAndUserID from "../../queries/Application/useGetApplicationsByPropertyAndUserID";
 
-export default function PropertyDetailsTenant() {
+export default function RenterApplicationDetails() {
 
     // Dummy viewings
     const viewing1 = {
@@ -93,9 +94,6 @@ export default function PropertyDetailsTenant() {
         })();
     });
 
-    // and check if we're displaying a page to show application or what
-
-
     // property ID to query database.
     const { propertyId } = useParams()
     const { fetchProperty } = useGetPropertyByPropertyID(propertyId)
@@ -103,12 +101,20 @@ export default function PropertyDetailsTenant() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+    // get applications from user at this property
+    const [applications, setApplications] = useState([]);
+    const { fetchApplications } = useGetApplicationsByPropertyAndUserID(propertyId, userID)
 
+    console.log(propertyId)
+
+    // make calls to DB
     useEffect (() => {
         (async () => {
-            const { data, error } = await fetchProperty()
-            setProp(data[0]);
-            setError(error);
+            const { propertyData, propertyError } = await fetchProperty()
+            setProp(propertyData);
+            setError(propertyError);
+            const { applicationsData, applicationsError } = await fetchApplications()
+            setApplications(applicationsData);
             setLoading(false);
         })();
     }, []);
@@ -123,113 +129,113 @@ export default function PropertyDetailsTenant() {
         {inspectionRequestOpen && (
             <InspectionRequestModal
                 open={inspectionRequestOpen}
-                handleClose={handleInspectionRequestClose} 
+                handleClose={handleInspectionRequestClose}
                 data={inspectionRequestData}
                 setData={setInspectionRequestData}
                 handleSubmit={handleInspectionRequestSubmit}
             />
         )}
-    <NavigationMenu>
-        <div style={{padding: "20px", marginTop: "64px"}}>
-            <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
-                <Card>
-                    <CardContent>
-                        <Grid container justifyContent='flex-end'>
-                            <Stack direction='row' spacing={1}>
-                                <Button
-                                    xs={{ mt: 5, mr: 2 }}
-                                    variant='contained'
-                                    size='medium'
-                                    style={{ colour: 'white' }}
+        <NavigationMenu>
+            <div style={{padding: "20px", marginTop: "64px"}}>
+                <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
+                    <Card>
+                        <CardContent>
+                            <Grid container justifyContent='flex-end'>
+                                <Stack direction='row' spacing={1}>
+                                    <Button
+                                        xs={{ mt: 5, mr: 2 }}
+                                        variant='contained'
+                                        size='medium'
+                                        style={{ colour: 'white' }}
+                                    >
+                                        Message the agent
+                                    </Button>
+                                    <Button
+                                        xs={{ mt: 5, mr: 2 }}
+                                        variant='contained'
+                                        size='medium'
+                                        style={{ backgroundColor: 'green', colour: 'white' }}
+                                        endIcon={<OpenInNewIcon />}
+                                    >
+                                        Apply
+                                    </Button>
+                                </Stack>
+                            </Grid>
+                            <Divider sx={{ mt: 2, mb: 2 }}/>
+                            <Grid container spacing={2} sx={{maxHeight: '100%'}}>
+                                <Grid item xs={4}>
+                                    <Typography variant="h4" gutterBottom>
+                                        {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
+                                    </Typography>
+                                    <Typography variant="h5" gutterBottom>
+                                        {prop.property_suburb + ', ' + prop.property_state}
+                                    </Typography>
+                                    <Box>
+                                        <Typography variant="h7">
+                                            {prop.property_type}
+                                        </Typography>
+                                        <Typography sx={{ mt: 13, fontWeight: 'bold' }} variant="h5">
+                                            ${'' + prop.property_rent} per week
+                                        </Typography>
+                                        <Typography sx={{ mt: 13 }} variant="h6">
+                                            <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
+                                        </Typography>
+                                        <Typography sx={{ mt: 2 }}>
+                                            Available from: {prop.property_lease_start}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item xs={8} id="photos">
+                                    {
+                                        prop.property_pictures && prop.property_pictures.length > 0 && (
+                                            <ImageCarousel images={prop.property_pictures} />
+                                        )
+                                    }
+                                </Grid>
+                            </Grid>
+                            <Divider sx={{ mt: 2, mb: 2 }}/>
+                            <Grid container spacing={2}>
+                                <Grid item xs={6}>
+                                    <Typography variant="h5" gutterBottom>
+                                        Description
+                                    </Typography>
+                                    <Typography>
+                                        {prop.property_description}
+                                    </Typography>
+                                    <Divider sx={{ mt: 2, mb: 2 }}/>
+                                    <Typography variant="h5" gutterBottom>
+                                        Amenities
+                                    </Typography>
+                                    <Typography>
+                                        {prop.property_amenities}
+                                    </Typography>
+                                    <Divider sx={{ mt: 2, mb: 2 }}/>
+                                    <Box>
+                                        <Typography variant="h5">
+                                            Upcoming viewings
+                                        </Typography>
+                                        <UpcomingViewingsTable
+                                            viewings={viewings}
+                                            property={property}
+                                        />
+                                    </Box>
+                                </Grid>
+                                <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
+                                <Box
+                                    display="flex"
+                                    // alignItems="center"
+                                    justifyContent="center"
+                                    style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
                                 >
-                                    Message the agent
-                                </Button>
-                                <Button
-                                    xs={{ mt: 5, mr: 2 }}
-                                    variant='contained'
-                                    size='medium'
-                                    style={{ backgroundColor: 'green', colour: 'white' }}
-                                    endIcon={<OpenInNewIcon />}
-                                >
-                                    Apply
-                                </Button>
-                            </Stack>
-                        </Grid>
-                        <Divider sx={{ mt: 2, mb: 2 }}/>
-                        <Grid container spacing={2} sx={{maxHeight: '100%'}}>
-                            <Grid item xs={4}>
-                                <Typography variant="h4" gutterBottom>
-                                    {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
-                                </Typography>
-                                <Typography variant="h5" gutterBottom>
-                                    {prop.property_suburb + ', ' + prop.property_state}
-                                </Typography>
-                                <Box>
-                                    <Typography variant="h7">
-                                        {prop.property_type}
-                                    </Typography>
-                                    <Typography sx={{ mt: 13, fontWeight: 'bold' }} variant="h5">
-                                        ${'' + prop.property_rent} per week
-                                    </Typography>
-                                    <Typography sx={{ mt: 13 }} variant="h6">
-                                        <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
-                                    </Typography>
-                                    <Typography sx={{ mt: 2 }}>
-                                        Available from: {prop.property_lease_start}
+                                    <Typography variant="h4">
+                                        Map goes here
                                     </Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={8} id="photos">
-                                {
-                                    prop.property_pictures && prop.property_pictures.length > 0 && (
-                                        <ImageCarousel images={prop.property_pictures} />
-                                    )
-                                }
-                            </Grid>
-                        </Grid>
-                        <Divider sx={{ mt: 2, mb: 2 }}/>
-                        <Grid container spacing={2}>
-                            <Grid item xs={6}>
-                                <Typography variant="h5" gutterBottom>
-                                    Description
-                                </Typography>
-                                <Typography>
-                                    {prop.property_description}
-                                </Typography>
-                                <Divider sx={{ mt: 2, mb: 2 }}/>
-                                <Typography variant="h5" gutterBottom>
-                                    Amenities
-                                </Typography>
-                                <Typography>
-                                    {prop.property_amenities}
-                                </Typography>
-                                <Divider sx={{ mt: 2, mb: 2 }}/>
-                                <Box>
-                                    <Typography variant="h5">
-                                        Upcoming viewings
-                                    </Typography>
-                                    <UpcomingViewingsTable
-                                        viewings={viewings}
-                                        property={property}
-                                    />
-                                </Box>
-                            </Grid>
-                            <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
-                            <Box
-                                display="flex"
-                                // alignItems="center"
-                                justifyContent="center"
-                                style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
-                            >
-                                <Typography variant="h4">
-                                    Map goes here
-                                </Typography>
-                            </Box>
-                        </Grid>
-                    </CardContent>
-                </Card>
-            </Paper>
-        </div>
+                        </CardContent>
+                    </Card>
+                </Paper>
+            </div>
         </NavigationMenu>
     </>
 }
@@ -270,6 +276,6 @@ function AmenitiesList({ amenities }) {
                 ))}
             </Grid>
         </Grid>
-        
+
     );
 }

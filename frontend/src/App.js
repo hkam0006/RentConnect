@@ -26,6 +26,7 @@ import { login, logout, setManager, setRenter } from './utils/UserSlice';
 import ManagerRoute from './utils/ManagerRoute';
 import LandingPage from './public-components/LandingPage';
 import PublicPropertyPage from './public-components/PublicPropertyPage';
+import RenterApplicationDetails from "./renter-components/application_page/RenterApplicationDetails";
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
             <Route path='/dashboard' element={<Dashboard />}/>
             <Route path='/RentalProfile' element={<RentalProfile />}></Route>
             <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
+            <Route path='/application/:propertyId' element={<RenterApplicationDetails />} />
             <Route path='/search' element={<PropertySearch />} />
             <Route path='/renterapplication' element={<RenterApplication />} />
             <Route path='/MyApplication' element={<ReceivedApplication />} />
