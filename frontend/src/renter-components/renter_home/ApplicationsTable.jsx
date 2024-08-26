@@ -143,7 +143,7 @@ export default function ApplicationsTable(applications) {
                         <TableCell align="right">
                             <Stack spacing={1}>
                                 <Button variant='contained'
-                                        onClick={() => navigate(`/property/${properties[index].property_id}`)}>View</Button>
+                                        onClick={() => navigate(`/tenant/property/${properties[index].property_id}`)}>View</Button>
                             </Stack>
                         </TableCell>
                     </TableRow>

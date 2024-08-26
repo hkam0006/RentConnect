@@ -18,6 +18,9 @@ import ListingImageAppt from '../../manager-components/property_page/listing2.jp
 import NavigationMenu from '../../manager-components/navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
+import AppLoader from "../../manager-components/property_page/AppLoader";
+import Carousel from "react-material-ui-carousel";
+import Paper from "@mui/material/Paper";
 
 export default function PropertyDetailsTenant() {
 
@@ -79,8 +82,8 @@ export default function PropertyDetailsTenant() {
     };
 
     // property ID to query database.
-    const TEST_PROPERTY_ID = 'cf96fd08-1903-4a93-95a9-51c675f9ff41'
-    const { fetchProperty } = useGetPropertyByPropertyID(TEST_PROPERTY_ID)
+    const { propertyId } = useParams()
+    const { fetchProperty } = useGetPropertyByPropertyID(propertyId)
     const [prop, setProp] = useState()
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -89,17 +92,20 @@ export default function PropertyDetailsTenant() {
     useEffect (() => {
         (async () => {
             const { data, error } = await fetchProperty()
-
-            console.log(data)
             setProp(data[0]);
             setError(error);
             setLoading(false);
         })();
     }, []);
 
+    if (loading) return <AppLoader />
+
     if (!prop) {
         return <Typography>No property found.</Typography>
     }
+
+    console.log(propertyId)
+    console.log(prop.property_street_name)
 
 
     return <>
@@ -112,100 +118,108 @@ export default function PropertyDetailsTenant() {
                 handleSubmit={handleInspectionRequestSubmit}
             />
         )}
-        <Container>
-            <Card>
-                <CardContent>
-                    <Grid container justifyContent='flex-end'>
-                        <Stack direction='row' spacing={1}>
-                            <Button 
-                                xs={{ mt: 5, mr: 2 }} 
-                                variant='contained' 
-                                size='medium'
-                                style={{ colour: 'white' }}
-                            >
-                                Message the agent
-                            </Button>
-                            <Button 
-                                xs={{ mt: 5, mr: 2 }} 
-                                variant='contained' 
-                                size='medium'
-                                style={{ backgroundColor: 'green', colour: 'white' }}
-                                endIcon={<OpenInNewIcon />}
-                            >
-                                Apply
-                            </Button>
-                        </Stack>
-                    </Grid>
-                    <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2} sx={{maxHeight: '100%'}}>
-                        <Grid item xs={4}>
-                            <Typography variant="h4" gutterBottom>
-                                {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
-                            </Typography>
-                            <Typography variant="h5" gutterBottom> 
-                                {prop.property_suburb + ', ' + prop.property_state}
-                            </Typography>
-                            <Box>
-                                <Typography variant="h7">
-                                    {prop.property_type}
+    <NavigationMenu>
+        <div style={{padding: "20px", marginTop: "64px"}}>
+            <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
+                <Card>
+                    <CardContent>
+                        <Grid container justifyContent='flex-end'>
+                            <Stack direction='row' spacing={1}>
+                                <Button
+                                    xs={{ mt: 5, mr: 2 }}
+                                    variant='contained'
+                                    size='medium'
+                                    style={{ colour: 'white' }}
+                                >
+                                    Message the agent
+                                </Button>
+                                <Button
+                                    xs={{ mt: 5, mr: 2 }}
+                                    variant='contained'
+                                    size='medium'
+                                    style={{ backgroundColor: 'green', colour: 'white' }}
+                                    endIcon={<OpenInNewIcon />}
+                                >
+                                    Apply
+                                </Button>
+                            </Stack>
+                        </Grid>
+                        <Divider sx={{ mt: 2, mb: 2 }}/>
+                        <Grid container spacing={2} sx={{maxHeight: '100%'}}>
+                            <Grid item xs={4}>
+                                <Typography variant="h4" gutterBottom>
+                                    {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
                                 </Typography>
-                                <Typography sx={{ mt: 13, fontWeight: 'bold' }} variant="h5">
-                                    ${'' + prop.property_rent} per week
+                                <Typography variant="h5" gutterBottom>
+                                    {prop.property_suburb + ', ' + prop.property_state}
                                 </Typography>
-                                <Typography sx={{ mt: 13 }} variant="h6">
-                                    <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
-                                </Typography> 
-                                <Typography sx={{ mt: 2 }}>
-                                    Available from: {prop.property_lease_start}
+                                <Box>
+                                    <Typography variant="h7">
+                                        {prop.property_type}
+                                    </Typography>
+                                    <Typography sx={{ mt: 13, fontWeight: 'bold' }} variant="h5">
+                                        ${'' + prop.property_rent} per week
+                                    </Typography>
+                                    <Typography sx={{ mt: 13 }} variant="h6">
+                                        <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
+                                    </Typography>
+                                    <Typography sx={{ mt: 2 }}>
+                                        Available from: {prop.property_lease_start}
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={8} id="photos">
+                                {
+                                    prop.property_pictures && prop.property_pictures.length > 0 && (
+                                        <ImageCarousel images={prop.property_pictures} />
+                                    )
+                                }
+                            </Grid>
+                        </Grid>
+                        <Divider sx={{ mt: 2, mb: 2 }}/>
+                        <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                                <Typography variant="h5" gutterBottom>
+                                    Description
+                                </Typography>
+                                <Typography>
+                                    {prop.property_description}
+                                </Typography>
+                                <Divider sx={{ mt: 2, mb: 2 }}/>
+                                <Typography variant="h5" gutterBottom>
+                                    Amenities
+                                </Typography>
+                                <Typography>
+                                    {prop.property_amenities}
+                                </Typography>
+                                <Divider sx={{ mt: 2, mb: 2 }}/>
+                                <Box>
+                                    <Typography variant="h5">
+                                        Upcoming viewings
+                                    </Typography>
+                                    <UpcomingViewingsTable
+                                        viewings={viewings}
+                                        property={property}
+                                    />
+                                </Box>
+                            </Grid>
+                            <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
+                            <Box
+                                display="flex"
+                                // alignItems="center"
+                                justifyContent="center"
+                                style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
+                            >
+                                <Typography variant="h4">
+                                    Map goes here
                                 </Typography>
                             </Box>
                         </Grid>
-                        <Grid item xs={8} id="photos">
-                            <ImageCarousel images={prop.property_pictures} />
-                        </Grid>
-                    </Grid>
-                    <Divider sx={{ mt: 2, mb: 2 }}/>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <Typography variant="h5" gutterBottom>
-                                Description
-                            </Typography>
-                            <Typography>
-                                {prop.property_description}
-                            </Typography>
-                            <Divider sx={{ mt: 2, mb: 2 }}/>
-                            <Typography variant="h5" gutterBottom>
-                                Amenities
-                            </Typography>
-                            <Typography>
-                                {prop.property_amenities}
-                            </Typography>
-                            <Divider sx={{ mt: 2, mb: 2 }}/>
-                            <Box>
-                                <Typography variant="h5">
-                                    Upcoming viewings
-                                </Typography>
-                                <UpcomingViewingsTable
-                                    viewings={viewings}
-                                    property={property}
-                                />
-                            </Box>
-                        </Grid>
-                        <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
-                        <Box
-                            display="flex"
-                            // alignItems="center"
-                            justifyContent="center"
-                            style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
-                        >
-                            <Typography variant="h4">
-                                Map goes here
-                            </Typography>
-                        </Box>
-                    </Grid>
-                </CardContent>
-            </Card>
-        </Container>
+                    </CardContent>
+                </Card>
+            </Paper>
+        </div>
+        </NavigationMenu>
     </>
 }
 
