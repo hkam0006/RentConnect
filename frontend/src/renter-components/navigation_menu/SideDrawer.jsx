@@ -19,9 +19,7 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import KeysIcon from "@mui/icons-material/VpnKey";
 import AddPropertyIcon from "@mui/icons-material/Add";
 import HelpIcon from "@mui/icons-material/Help";
-import Dashboard from "../dashboard_page/Dashboard";
-import Properties from "../property_page/Properties";
-import Application from "../applications/Application";
+import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 const drawerWidth = 200;
 
 export default function SideDrawer() {
@@ -43,38 +41,20 @@ export default function SideDrawer() {
           {[
             { text: "Dashboard", icon: <HomeIcon />, link: "/dashboard" },
             { text: "Messages", icon: <ChatIcon />, link: "/messages" },
+            { text: "Rental Profile", icon: <PermContactCalendarIcon />, link: "/RentalProfile" },
+            {text: "Properties", icon: <PropertiesIcon />, link: "/property",},
             {
-              text: "Inspection",
+              text: "Inspections",
               icon: <InspectionIcon />,
               link: "/inspection",
             },
-            {
-              text: "Inspection Runs",
-              icon: <InspectionRunsIcon />,
-              link: "/InspectionRun",
-            },
-            {
-              text: "Applications",
-              icon: <ApplicationsIcon />,
-              link: "/Application",
-            },
-            {
-              text: "Properties",
-              icon: <PropertiesIcon />,
-              link: "/property",
-            },
+
             {
               text: "References",
               icon: <ReferencesIcon />,
               link: "/references",
             },
             { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
-            { text: "Keys", icon: <KeysIcon />, link: "/keys" },
-            {
-              text: "Add Property",
-              icon: <AddPropertyIcon />,
-              link: "/add_property",
-            },
             { text: "Help", icon: <HelpIcon />, link: "/help" },
           ].map((item) => (
             <ListItem key={item.text} disablePadding>

@@ -1,12 +1,12 @@
-import { supabase } from "../../supabase";
-import { useState, useEffect } from 'react';
+import {supabase} from "../../supabase";
 
+const useGetApplicationByPropertyAndUserID = (property_id, renter_id) => {
 
-const useGetApplicationsByRenterID = (renter_id) =>{
     const fetchApplications = async () => {
         const {data, error} = await supabase
             .from("APPLICATION")
             .select("*")
+            .eq("property_id", property_id)
             .eq("renter_id", renter_id)
 
         return {data, error}
@@ -15,6 +15,4 @@ const useGetApplicationsByRenterID = (renter_id) =>{
     return {fetchApplications};
 };
 
-
-
-export default useGetApplicationsByRenterID;
+export default useGetApplicationByPropertyAndUserID;

@@ -1,24 +1,33 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import ApplicationDetails from './components/application_details/ApplicationDetails';
+import ApplicationDetails from './manager-components/application_details/ApplicationDetails';
 import theme from './theme';
-import Properties from './components/property_page/Properties';
-import PropertyDetails  from './components/property_page/PropertyDetails';
-import Contacts from './components/contacts/Contacts';
-import Application from './components/applications/Application';
-import Dashboard from './components/dashboard_page/Dashboard';
-import PropertyDetailsTenant from './components/property_page/tenant/PropertyDetailsTenant';
+import Properties from './manager-components/property_page/Properties';
+import PropertyDetails  from './manager-components/property_page/PropertyDetails';
+import Contacts from './manager-components/contacts/Contacts';
+import Application from './manager-components/applications/Application';
+import Dashboard from './manager-components/dashboard_page/Dashboard';
+import PropertyDetailsTenant from './renter-components/property_page/PropertyDetailsTenant';
 import {CssBaseline, ThemeProvider} from "@mui/material";
-import PropertySearch from './components/property_search/PropertyGrid';
-import RentalProfile from './components/rental_profile/RentalProfile';
-import RenterApplication from './components/renter_application/RenterApplication';
-import ReceivedApplication from './components/applications/manager/RecievedApplication';
-import LogIn from './components/login_page/LogIn';
-import Inspection from './components/inspection_page/Inspection';
-import Messaging from './components/messaging/Messaging'
-import Keys from './components/keys/Keys';
-import InspectionRun from './components/inspection_run/InspectionRun'
-import SignUp from './components/signup_page/SignUp';
+import PropertySearch from './manager-components/property_search/PropertyGrid';
+import RentalProfile from './manager-components/rental_profile/RentalProfile';
+import RenterApplication from './renter-components/renter_application/RenterApplication';
+import ReceivedApplication from './manager-components/applications/manager/RecievedApplication';
+import LogIn from './manager-components/login_page/Login';
+import Inspection from './manager-components/inspection_page/Inspection';
+import Messaging from './manager-components/messaging/Messaging'
+import Keys from './manager-components/keys/Keys';
+import InspectionRun from './manager-components/inspection_run/InspectionRun'
+import SignUp from './manager-components/signup_page/SignUp';
+import RenterHome from './renter-components/renter_home/RenterHome';
+import RenterRoute from './utils/RenterRoute';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout, setManager, setRenter } from './utils/UserSlice';
+import ManagerRoute from './utils/ManagerRoute';
+import LandingPage from './public-components/LandingPage';
+import PublicPropertyPage from './public-components/PublicPropertyPage';
+import RenterApplicationDetails from "./renter-components/application_page/RenterApplicationDetails";
+
 import AccountSetUpPM from './components/signup_page/AccountSetUpPM';
 import AddProp from './components/add_property/AddProperty';
 import AccountSetUpR from './components/signup_page/AccountSetUpR';
@@ -38,6 +47,7 @@ function App() {
             <Route path='/dashboard' element={<Dashboard />}/>
             <Route path='/RentalProfile' element={<RentalProfile />}></Route>
             <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
+            <Route path='/application/:propertyId' element={<RenterApplicationDetails />} />
             <Route path='/search' element={<PropertySearch />} />
             <Route path='/renterapplication' element={<RenterApplication />} />
             <Route path='/MyApplication' element={<ReceivedApplication />} />
@@ -48,6 +58,11 @@ function App() {
             <Route path='/keys' element={<Keys/>} />
             <Route path='/InspectionRun' element={<InspectionRun/>} />
             <Route path='/SignUp' element={<SignUp/>} />
+            <Route path='/RenterHome' element={<RenterHome/>} />
+            <Route path='/ProtectedRenterHome' element={<RenterRoute Component={RenterHome}/>} />
+            <Route path='/ProtectedManagerHome' element={<ManagerRoute Component={Dashboard}/>} />
+            <Route path='/Landing' element={<LandingPage/>} />
+            <Route path='/LandingSearch' element={<PublicPropertyPage />}/>
             <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
             <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<AddProp/>} />
@@ -58,6 +73,12 @@ function App() {
 }
 
 function Home() {
+  const isLoggedIn = useSelector(state => state.user.isLoggedIn)
+  const isRenter = useSelector(state => state.user.isRenter)
+  const isManager = useSelector(state => state.user.isManager)
+
+  const dispatch = useDispatch();
+  
   return (
     <div>
       <Link to="/Application">
@@ -98,6 +119,29 @@ function Home() {
         </Link>
         <Link to="/InspectionRun">
             <button>Go to Inspection Runs</button>
+        </Link>
+        <Link to="/RenterHome">
+            <button>Go to Renter Homepage</button>
+        </Link>
+        <br />
+        <br />
+        <h3>
+          Logged In: {isLoggedIn ? "true" : "false"} 
+          <button onClick={() => dispatch(login())}>Sign In</button>
+          <button onClick={() => dispatch(logout())}>Sign Out</button>
+        </h3>
+        <h3>
+          Is Renter: {isRenter ? "true" : "false"} 
+          <button onClick={() => dispatch(setRenter())}>Set Renter</button>
+        </h3>
+        <h3>Is Manager: {isManager ? "true" : "false"} 
+        <button onClick={() => dispatch(setManager())}>Set Manager</button>
+        </h3>
+        <Link to="/ProtectedRenterHome">
+            <button>Go to Protected Renter Home</button>
+        </Link>
+        <Link to="/ProtectedManagerHome">
+            <button>Go to Protected Manager Home</button>
         </Link>
     </div>
 

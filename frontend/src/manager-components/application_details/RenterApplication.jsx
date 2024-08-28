@@ -104,9 +104,9 @@ export default function RenterApplication() {
 
     function dataValidation() {
         switch (stepperValue) {
-            case 0: return personalInformationValidation(applicant)
-            case 1: return IDDocumentsValidation(applicant)
-            case 2: return employmentHistoryValidation(applicant)
+            case 0: return personalInformationValidation()
+            //case 1: return <IDDocuments />
+            //case 2: return <EmploymentHistory />
             //case 3: return <SupportingDocuments />
             default: return false;
         }
@@ -156,20 +156,28 @@ export default function RenterApplication() {
     });
 
     const [applicant, setApplicant] = React.useState({
-        first_name: "John",
-        last_name: "Smith",
+        first_name: "",
+        last_name: "",
         date_of_birth: "17/04/2002",
-        mobile: "0485767462",
-        email: "john.smith@example.com",
-        license_number: "05867462",
+        mobile: "",
+        email: "",
+        license_number: "",
         license_expiry: "04/01/2034",
         industry: "",
         occupation: "",
         employer_name: "",
         employer_contact: "",
         employer_email: "",
-        employment_time: null,
-        annual_income: null,
+        employment_time: 5.3,
+        annual_income: 80000,
+    });
+
+    const [personalInformation, setPersonalInformation] = React.useState({
+        first_name: "John",
+        last_name: "Smith",
+        date_of_birth: dayjs('2002-04-17'),
+        mobile: "0499999999",
+        email: "john.smith@example.com",
     });
 
     const [personalInformationErrors, setPersonalInformationErrors] = React.useState({
@@ -180,21 +188,6 @@ export default function RenterApplication() {
         email: false,
     });
 
-    const [IDDocumentErrors, setIDDocumentErrors] = React.useState({
-        license_number: false,
-        license_expiry: false,
-    });
-
-    const [EmploymentDetailsErrors, setEmploymentDetailsErrors] = React.useState({
-        industry: false,
-        occupation: false,
-        employer_name: false,
-        employer_contact: false,
-        employer_email: false,
-        employment_time: false,
-        income: false,
-    })
-
     // stepper string values
     const steps = [
         'Personal Information',
@@ -203,24 +196,11 @@ export default function RenterApplication() {
         'Supporting Documents',
     ];
 
-    function handleApplicantDataChange(newData, type) {
-        setApplicant(newData);
-
-        if (type === "personal") {
-            personalInformationValidation(newData);
-        } else if (type === "id") {
-            IDDocumentsValidation(newData);
-        } else if (type === "employment") {
-            employmentHistoryValidation(newData);
-        }
-    }
-
-    // functions for personal information section
     function PersonalInformation({formData, onFormChange, formErrors}) {
         const handleChange = (e) => {
             const { name, value } = e.target;
             // Update form data
-            onFormChange({ ...formData, [name]: value }, "personal");
+            onFormChange({ ...formData, [name]: value }, personalInformationValidation());
             // run test
         };
 
@@ -287,55 +267,54 @@ export default function RenterApplication() {
         );
     }
 
-    function personalInformationValidation(applicantData) {
-        let failureFlag = false;
-        if (applicantData.first_name.trim() === "") {
+    function handlePersonalInformationChange(newData, callback) {
+        setPersonalInformation(newData);
+
+        if (callback && typeof callback === 'function') {
+            callback();
+        }
+    }
+
+    function personalInformationValidation() {
+        if (personalInformation.first_name.trim() === "") {
             personalInformationErrors.first_name = true;
-            failureFlag = true;
+            return false;
         } else {
             personalInformationErrors.first_name = false;
         }
 
-        if (applicantData.last_name.trim() === "") {
+        if (personalInformation.last_name.trim() === "") {
             personalInformationErrors.last_name = true;
-            failureFlag = true;
+            return false;
         } else {
             personalInformationErrors.last_name = false;
         }
 
-        if (!(dayjs(applicantData.date_of_birth,'DD/MM/YYYY').isBefore(dayjs()))) {
+        if (!(dayjs(personalInformation.date_of_birth,'DD/MM/YYYY').isBefore(dayjs()))) {
             personalInformationErrors.date_of_birth = true;
-            failureFlag = true;
+            return false;
         } else {
             personalInformationErrors.date_of_birth = false;
         }
 
-        if (!(/^04\d{8}$/.test(applicantData.mobile))) { // all numbers, starts with 04 and 10 characters long
+        if (!(/^04\d{8}$/.test(personalInformation.mobile))) { // all numbers, starts with 04 and 10 characters long
             personalInformationErrors.mobile = true;
-            failureFlag = true;
+            return false;
         } else {
             personalInformationErrors.mobile = false;
         }
 
-        if (applicantData.email.trim() === "") {
+        if (personalInformation.email.trim() === "") {
             personalInformationErrors.email = true;
-            failureFlag = true;
+            return false;
         } else {
             personalInformationErrors.email = false;
+            return true;
         }
-
-        return !failureFlag;
     }
 
     // card for providing ID documents
-    function IDDocuments({formData, onFormChange, formErrors}) {
-        const handleChange = (e) => {
-            const { name, value } = e.target;
-            // Update form data
-            onFormChange({ ...formData, [name]: value }, "id");
-            // run test
-        };
-
+    function IDDocuments() {
         return (
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
@@ -343,22 +322,11 @@ export default function RenterApplication() {
                         <Grid item xs={12}><Typography variant={"h5"}>Thanks! Now moving onto your identification...</Typography></Grid>
                         <Grid item xs={12}><Typography variant={"body"}>Note: RentConnect currently only supports Australian Drivers License.</Typography></Grid>
                         <Grid item xs={6}>
-                            <TextField required
-                                       name="license_number"
-                                       id="outlined-required" label="License Number"
-                                       onBlur={handleChange}
-                                       defaultValue={formData.license_number}
-                                       error={formErrors.license_number}
-                            />
+                            <TextField required id="outlined-required" label="License Number" defaultValue="" />
                         </Grid>
                         <Grid item xs={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateField required
-                                           name="license_expiry" label="Date of Expiry"
-                                           defaultValue={dayjs(formData.license_expiry,'DD/MM/YYYY')}
-                                           onBlur={handleChange}
-                                           error={formErrors.license_expiry}
-                                />
+                                <DateField required label="Date of Expiry" />
                             </LocalizationProvider>
                         </Grid>
                     </Grid>
@@ -367,91 +335,12 @@ export default function RenterApplication() {
         );
     }
 
-    function IDDocumentsValidation(applicantData) {
-        let failureFlag = false;
-        if (!(/^\d+$/.test(applicantData.license_number))) { // all numbers
-            IDDocumentErrors.license_number = true;
-            failureFlag = true;
-        } else {
-            IDDocumentErrors.license_number = false;
-        }
-
-        if (dayjs(applicantData.license_expiry,'DD/MM/YYYY').isBefore(dayjs())) {
-            IDDocumentErrors.license_expiry = true;
-            failureFlag = true;
-        } else {
-            IDDocumentErrors.license_expiry = false;
-        }
-
-        return !failureFlag;
-    }
-
-    const [employmentYears, setEmploymentYears] = useState(0.0);
-    const [employmentMonths, setEmploymentMonths] = useState(0.0);
-    const [occupationIndustry, setOccupationIndustry] = useState("");
-    const [incomeFrequency, setIncomeFrequency] = useState("");
-    const [incomeString, setIncomeString] = useState("");
     // card for providing employment history
-    function EmploymentHistory({formData, onFormChange, formErrors}) {
-
-        const handleChange = (e) => {
-            const { name, value } = e.target;
-            // Update form data
-            onFormChange({ ...formData, [name]: value }, "employment");
-            // run test
-        };
-
-        const handleEmploymentTimeChange = (e) => {
-            const { name, value } = e.target;
-
-            if (!(/^\d+$/.test(value))) { // not a valid number
-                formErrors.employment_time = true;
-                return;
-            }
-
-            let employmentTime = 0
-            if (name === "employment_years") {
-                setEmploymentYears(parseFloat(value));
-                employmentTime = value + (1 / 12 * employmentMonths);
-            } else {
-                setEmploymentMonths(parseFloat(value))
-                employmentTime = employmentYears + (1 / 12 * value);
-            }
-
-            onFormChange({ ...formData, ["employment_time"]: employmentTime }, employmentHistoryValidation());
-        }
-
-        const handleIncomeFrequencyChange = (e) => {
-            setIncomeFrequency(e.target.value);
-        }
-
-        const handleIncomeValueChange = (e) => {
-            const incomePerFrequency = e.target.value;
-            setIncomeString(incomePerFrequency);
-
-            let income = 0;
-            let incomePerFrequencyInt;
-
-            if (!(/^\d+$/.test(incomePerFrequency))) { // not a valid number
-                formErrors.income = true;
-                return;
-            }
-
-            incomePerFrequencyInt = parseInt(incomePerFrequency)
-            if (incomeFrequency === "Monthly") {
-                income = incomePerFrequencyInt * 12;
-            } else if (incomeFrequency === "Fortnightly") {
-                income = incomePerFrequencyInt * 26;
-            } else {
-                income = incomePerFrequencyInt * 52;
-            }
-
-            onFormChange({ ...formData, ["annual_income"]: income }, employmentHistoryValidation());
-        }
+    function EmploymentHistory() {
+        const [occupationIndustry, setOccupationIndustry] = useState("");
 
         function occupationIndustryChange(e) {
             setOccupationIndustry(e.target.value);
-            handleChange(e)
         }
 
         function getOccupationList() {
@@ -559,17 +448,16 @@ export default function RenterApplication() {
         function OccupationSelect() {
 
             if (occupationIndustry === "") {
-                return <Select disabled label={"Occupation"} error={formErrors.occupation}></Select>
+                return <Select disabled label={"Occupation"}></Select>
             } else {
                 const occupationList = getOccupationList();
 
                 return (
                     <Select
-                        labelId="demo-simple-select-label" id="demo-simple-select"
-                        name={"occupation"} label="Occupation"
-                        defaultValue={formData.occupation}
-                        onChange={handleChange}
-                        error={formErrors.occupation}
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Occupation"
+                        //onChange={handleChange}
                     >
                         {occupationList.map((option) => (
                             <MenuItem value={option.value}>{option.label}</MenuItem>
@@ -591,12 +479,11 @@ export default function RenterApplication() {
                                     <FormControl fullWidth>
                                         <InputLabel id="demo-simple-select-label">Industry</InputLabel>
                                         <Select
-                                            labelId="demo-simple-select-label" id="demo-simple-select"
-                                            name={"industry"}
-                                            defaultValue={formData.industry}
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            //value={occupationIndustry}
                                             label="Industry"
                                             onChange={occupationIndustryChange}
-                                            error={formErrors.industry}
                                         >
                                             <MenuItem value={"academic"}>Academic Research</MenuItem>
                                             <MenuItem value={"business"}>Business Services</MenuItem>
@@ -624,31 +511,13 @@ export default function RenterApplication() {
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required
-                                               id="outlined-required" label="Employer Name"
-                                               name={"employer_name"}
-                                               defaultValue={formData.employer_name}
-                                               onBlur={handleChange}
-                                               error={formErrors.employer_name}
-                                    />
+                                    <TextField fullWidth required id="outlined-required" label="Employer Name" defaultValue="" />
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required
-                                               id="outlined-required" label="Employer Number"
-                                               name={"employer_contact"}
-                                               defaultValue={formData.employer_contact}
-                                               onBlur={handleChange}
-                                               error={formErrors.employer_contact}
-                                    />
+                                    <TextField fullWidth required id="outlined-required" label="Employer Number" defaultValue="" />
                                 </Grid>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required
-                                               id="outlined-required" label="Employer Email"
-                                               name={"employer_email"}
-                                               defaultValue={formData.employer_email}
-                                               onBlur={handleChange}
-                                               error={formErrors.employer_email}
-                                    />
+                                    <TextField fullWidth required id="outlined-required" label="Employer Email" defaultValue="" />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -658,22 +527,13 @@ export default function RenterApplication() {
                                     <Grid item xs={6}><Typography variant={"body1"}>Time with Current Employer</Typography></Grid>
                                     <Grid container spacing={2} style={{paddingTop: "5px"}}>
                                         <Grid item xs={6}>
-                                            <TextField fullWidth required
-                                                       id="outlined-required" label="Years"
-                                                       name={"employment_years"}
-                                                       defaultValue={employmentYears}
-                                                       onBlur={handleEmploymentTimeChange}
-                                                       error={formErrors.employment_time}
-                                            />
-                                        </Grid>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <TextField fullWidth required id="outlined-required" label="Years" defaultValue="" />
+                                            </LocalizationProvider>                                </Grid>
                                         <Grid item xs={6}>
-                                            <TextField required
-                                                       label="Months" name={"employment_months"}
-                                                       defaultValue={employmentMonths}
-                                                       onBlur={handleEmploymentTimeChange}
-                                                       error={formErrors.employment_time}
-                                            />
-                                        </Grid>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                                <DateField required label="Months" />
+                                            </LocalizationProvider>                                </Grid>
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={6}>
@@ -685,24 +545,17 @@ export default function RenterApplication() {
                                                 <Select
                                                         labelId="demo-simple-select-label"
                                                         id="demo-simple-select"
+                                                    //value={age}
                                                         label="Frequency of Income"
-                                                        defaultValue={incomeFrequency}
-                                                        onChange={handleIncomeFrequencyChange}
-                                                        error={formErrors.income}
+                                                    //onChange={handleChange}
                                                 >
-                                                    <MenuItem value={"Monthly"}>Monthly</MenuItem>
-                                                    <MenuItem value={"Fortnightly"}>Fortnightly</MenuItem>
-                                                    <MenuItem value={"Weekly"}>Weekly</MenuItem>
+                                                    <MenuItem value={10}>Monthly</MenuItem>
+                                                    <MenuItem value={20}>Fortnightly</MenuItem>
+                                                    <MenuItem value={20}>Weekly</MenuItem>
                                                 </Select>
-                                            </FormControl>
-                                        </Grid>
+                                            </FormControl>                            </Grid>
                                         <Grid item xs={6}>
-                                            <TextField fullWidth required
-                                                       id="outlined-required" label="Income"
-                                                       onBlur={handleIncomeValueChange}
-                                                       defaultValue={incomeString}
-                                                       error={formErrors.income}
-                                            />
+                                            <TextField fullWidth required id="outlined-required" label="Income" defaultValue="" />
                                         </Grid>
                                     </Grid>
                                 </Grid>
@@ -714,60 +567,6 @@ export default function RenterApplication() {
         );
     }
 
-    function employmentHistoryValidation(applicantData) {
-        let failureFlag = false;
-        if (applicantData.industry.trim() === "") {
-            EmploymentDetailsErrors.industry = true;
-            failureFlag = true;
-        } else {
-            EmploymentDetailsErrors.industry = false;
-        }
-
-        if (applicantData.occupation.trim() === "") {
-            EmploymentDetailsErrors.occupation = true;
-            failureFlag = true;
-        } else {
-            EmploymentDetailsErrors.occupation = false;
-        }
-
-        if (applicantData.employer_name.trim() === "") {
-            EmploymentDetailsErrors.employer_name = true;
-            failureFlag = true;
-        } else {
-            EmploymentDetailsErrors.employer_name = false;
-        }
-
-        if (!(/^04\d{8}$/.test(applicantData.employer_contact))) { // check for valid mobile number
-            EmploymentDetailsErrors.employer_contact = true;
-            failureFlag = true;
-        } else {
-            EmploymentDetailsErrors.employer_contact = false;
-        }
-
-        if (applicantData.employer_email.trim() === "") {
-            EmploymentDetailsErrors.employer_email = true;
-            failureFlag = true;
-        } else {
-            EmploymentDetailsErrors.employer_email = false;
-        }
-
-        if (applicantData.employment_time == null) {
-            EmploymentDetailsErrors.employment_time = true;
-            failureFlag = true;
-        } else {
-            EmploymentDetailsErrors.employment_time = false;
-        }
-
-        if (applicantData.annual_income == null) {
-            EmploymentDetailsErrors.income = true;
-            failureFlag = true;
-        } else {
-            EmploymentDetailsErrors.income = false;
-        }
-
-        return !failureFlag
-    }
-
     function SupportingDocuments() {
         return (
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
@@ -776,7 +575,7 @@ export default function RenterApplication() {
                         <Grid item xs={12}><Typography variant={"h5"}>Almost done! Just the final touches...</Typography></Grid>
                         <Grid item xs={12}><Typography variant={"body"}>If you have any additional supporting documents, enter the URL below.</Typography></Grid>
                         <Grid item xs={12}>
-                            <TextField fullWidth id="outlined-required" label="Document URL" defaultValue="" />
+                            <TextField fullWidth required id="outlined-required" label="Document URL" defaultValue="" />
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -786,9 +585,9 @@ export default function RenterApplication() {
 
     function ApplicationForm() {
         switch (stepperValue) {
-            case 0: return <PersonalInformation formData={applicant} onFormChange={handleApplicantDataChange} formErrors={personalInformationErrors} />
-            case 1: return <IDDocuments formData={applicant} onFormChange={handleApplicantDataChange} formErrors={IDDocumentErrors} />
-            case 2: return <EmploymentHistory formData={applicant} onFormChange={handleApplicantDataChange} formErrors={EmploymentDetailsErrors}/>
+            case 0: return <PersonalInformation formData={personalInformation} onFormChange={handlePersonalInformationChange} formErrors={personalInformationErrors} />
+            case 1: return <IDDocuments />
+            case 2: return <EmploymentHistory />
             case 3: return <SupportingDocuments />
             default: return <PersonalInformation />
         }

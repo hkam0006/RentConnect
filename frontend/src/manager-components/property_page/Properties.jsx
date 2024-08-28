@@ -29,7 +29,6 @@ export default function Properties() {
   useEffect(() => {
     (async () => {
       const { data, error } = await fetchProperties()
-
       setProperties(data);
       setError(error);
       setUnfiltered(data);
