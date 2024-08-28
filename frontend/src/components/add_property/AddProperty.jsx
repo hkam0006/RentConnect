@@ -157,6 +157,25 @@ const AddProp = () => {
     setPhotos(files);
   };
 
+  const formErrors = {
+    'streetNumber': 'The street number',
+    'streetName': 'The street name',
+    'streetType': 'The street type',
+    'suburb': 'A suburb',
+    'state': 'A state',
+    'postcode': 'A postcode',
+    'description': ' A description of the property',
+    'footprint': 'The property footprint',
+    'rent': 'The rent price',
+    'leaseStartDate': 'The lease start date',
+    'propertyType': 'The property type',
+    'propManager': 'A property manager',
+    'payFreq': 'The payment frequency',
+    'bedrooms': 'The number of bedrooms',
+    'bathrooms': 'The number of bathrooms',
+    'carSpaces': 'The number of car spaces',
+  }
+
   const validateForm = () => {
     const newErrors = {};
   
@@ -179,7 +198,7 @@ const AddProp = () => {
   
     requiredFields.forEach((field) => {
       if (!newProp[field]) {
-        newErrors[field] = `${field} is required`;
+        newErrors[field] = `${formErrors[field]} is required`;
       }
     });
   
@@ -197,7 +216,7 @@ const AddProp = () => {
   
     intFields.forEach((field) => {
       if (isNaN(newProp[field]) || newProp[field] === '') {
-        newErrors[field] = `${field} must be a valid number`;
+        newErrors[field] = `${formErrors[field]} must be a valid number`;
       }
     });
   
@@ -230,7 +249,7 @@ const AddProp = () => {
           Details
         </Typography>
         <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
-        <FormControl fullWidth>
+        <FormControl fullWidth error={!!errors.propManager}>
             <InputLabel id="property-manager-select-label">Property Manager</InputLabel>
             <Select
                 required
@@ -248,9 +267,9 @@ const AddProp = () => {
               </MenuItem>
             ))}
             </Select>
-            {errors.propManager && <Typography color="error">{errors.propManager}</Typography>}
+            {errors.propManager && <p class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained Mui-required css-j8xf70-MuiFormHelperText-root">{errors.propManager}</p>}
           </FormControl>
-          <FormControl fullWidth>
+          <FormControl fullWidth error={!!errors.propertyType}>
               <InputLabel id="property-type-select-label">Property Type</InputLabel>
               <Select
                   required
@@ -265,7 +284,7 @@ const AddProp = () => {
                   <MenuItem value="House">House</MenuItem>
                   <MenuItem value="Studio">Studio</MenuItem>
               </Select>
-              {errors.propertyType && <Typography color="error">{errors.propertyType}</Typography>}
+              {errors.propertyType && <p class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained Mui-required css-j8xf70-MuiFormHelperText-root">{errors.propertyType}</p>}
           </FormControl>
         </Box>
         <TextField
@@ -368,7 +387,7 @@ const AddProp = () => {
           Facilities
         </Typography>
         <Stack direction='row' spacing={1}>
-          <FormControl fullWidth >
+          <FormControl fullWidth error={!!errors.bedrooms}>
               <InputLabel htmlFor="bedroom-select">Bedroom(s)</InputLabel>
               <Select
                   label="Bedroom(s)"
@@ -384,9 +403,9 @@ const AddProp = () => {
                   <MenuItem value="5">5</MenuItem>
                   <MenuItem value="6+">6+</MenuItem>
               </Select>
-              {errors.bedrooms && <Typography color="error">{errors.bedrooms}</Typography>}
+              {errors.bedrooms && <p class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained Mui-required css-j8xf70-MuiFormHelperText-root">{errors.bedrooms}</p>}
           </FormControl>
-          <FormControl fullWidth>
+          <FormControl fullWidth error={!!errors.bathrooms}>
               <InputLabel htmlFor="bathroom-select">Bathroom(s)</InputLabel>
               <Select
                   label="Bathroom(s)"
@@ -402,9 +421,9 @@ const AddProp = () => {
                   <MenuItem value="5">5</MenuItem>
                   <MenuItem value="6+">6+</MenuItem>
               </Select>
-              {errors.bathrooms && <Typography color="error">{errors.bathrooms}</Typography>}
+              {errors.bathrooms && <p class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained Mui-required css-j8xf70-MuiFormHelperText-root">{errors.bathrooms}</p>}
           </FormControl>
-          <FormControl fullWidth>
+          <FormControl fullWidth error={!!errors.carSpaces}>
               <InputLabel htmlFor="car-spaces-select">Car Spaces</InputLabel>
               <Select
                   label="Car Spaces"
@@ -420,7 +439,7 @@ const AddProp = () => {
                   <MenuItem value="5">5</MenuItem>
                   <MenuItem value="6+">6+</MenuItem>
               </Select>
-              {errors.carSpaces && <Typography color="error">{errors.carSpaces}</Typography>}
+              {errors.carSpaces && <p class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained Mui-required css-j8xf70-MuiFormHelperText-root">{errors.carSpaces}</p>}
           </FormControl>
         </Stack>
         <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
@@ -462,7 +481,7 @@ const AddProp = () => {
             error={!!errors.rent}  // Show error styling if there's an error
             helperText={errors.rent}  // Display the error message
           />
-          <FormControl fullWidth>
+          <FormControl fullWidth error={!!errors.payFreq}>
               <InputLabel htmlFor="outlined-adornment-amount">Payment Frequency</InputLabel>
               <Select
                   label="Payment Frequency"
@@ -476,7 +495,7 @@ const AddProp = () => {
                   <MenuItem value="Per Fortnight">Per Fortnight</MenuItem>
                   <MenuItem value="Per Month">Per Month</MenuItem>
               </Select>
-              {errors.payFreq && <Typography color="error">{errors.payFreq}</Typography>}
+              {errors.payFreq && <p class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained Mui-required css-j8xf70-MuiFormHelperText-root">{errors.payFreq}</p>}
           </FormControl>
         </Box>
         <TextField
