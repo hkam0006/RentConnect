@@ -18,7 +18,7 @@ import Inspection from './manager-components/inspection_page/Inspection';
 import Messaging from './manager-components/messaging/Messaging'
 import Keys from './manager-components/keys/Keys';
 import InspectionRun from './manager-components/inspection_run/InspectionRun'
-import SignUp from './manager-components/signup_page/SignUp';
+import SignUp from './public-components/SignUp';
 import RenterHome from './renter-components/renter_home/RenterHome';
 import RenterRoute from './utils/RenterRoute';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,10 +27,9 @@ import ManagerRoute from './utils/ManagerRoute';
 import LandingPage from './public-components/LandingPage';
 import PublicPropertyPage from './public-components/PublicPropertyPage';
 import RenterApplicationDetails from "./renter-components/application_page/RenterApplicationDetails";
-
-import AccountSetUpPM from './components/signup_page/AccountSetUpPM';
-import AddProp from './components/add_property/AddProperty';
-import AccountSetUpR from './components/signup_page/AccountSetUpR';
+import AccountSetUpPM from './manager-components/account_setup/AccountSetUpPM';
+import AddProp from './manager-components/add_property/AddProperty';
+import AccountSetUpR from './renter-components/account_setup/AccountSetUpR';
 
 function App() {
     return (
