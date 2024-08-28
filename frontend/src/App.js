@@ -21,6 +21,7 @@ import InspectionRun from './components/inspection_run/InspectionRun'
 import SignUp from './components/signup_page/SignUp';
 import AccountSetUpPM from './components/signup_page/AccountSetUpPM';
 import AddProp from './components/add_property/AddProperty';
+import AccountSetUpR from './components/signup_page/AccountSetUpR';
 
 function App() {
     return (
@@ -48,6 +49,7 @@ function App() {
             <Route path='/InspectionRun' element={<InspectionRun/>} />
             <Route path='/SignUp' element={<SignUp/>} />
             <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
+            <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<AddProp/>} />
           </Routes>
         </Router>

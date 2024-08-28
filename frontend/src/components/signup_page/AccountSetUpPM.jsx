@@ -62,14 +62,14 @@ function AccountSetUpPM(){
     const [companies, setCompanies] = useState([]);
     React.useEffect(() => {
         (async () => {
-            const {data, error} = await fetchCompanies();
+            const {data} = await fetchCompanies();
             var companies = [];
             data.forEach(company => {
                 companies.push(company.company_name);
             });
             setCompanies(companies);
         })();
-    }, []);
+    });
 
     const [newCompanyFlag, setNewCompanyFlag] = useState(false);
     const handleNewCompanyFlagChange = f => {
@@ -83,33 +83,96 @@ function AccountSetUpPM(){
         setNewCompanyNameErrorFlag(false);
     }
 
+    const [companyPhoneNum, setCompanyPhoneNum] = useState('');
+    const [companyPhoneNumErrorFlag, setCompanyPhoneNumErrorFlag] = useState(false);
+    const handleCompanyPhoneNumChange = f => {
+        if (!Number.isNaN(Number(f.target.value))){
+            setCompanyPhoneNum(f.target.value);
+            setCompanyPhoneNumErrorFlag(false);
+        }
+    }
+
+    const [companyStreetAddress, setCompanyStreetAddress] = useState('');
+    const [companyStreetAddressErrorFlag, setCompanyStreetAddressErrorFlag] = useState(false);
+    const handleCompanyStreetAddressChange = f => {
+        setCompanyStreetAddress(f.target.value);
+        setCompanyStreetAddressErrorFlag(false);
+    }
+
+    const [companySuburb, setCompanySuburb] = useState('');
+    const [companySuburbErrorFlag, setCompanySuburbErrorFlag] = useState(false);
+    const handleCompanySuburbChange = f => {
+        setCompanySuburb(f.target.value);
+        setCompanySuburbErrorFlag(false);
+    }
+
+    const [companyState, setCompanyState] = useState('');
+    const [companyStateErrorFlag, setCompanyStateErrorFlag] = useState(false);
+    const handleCompanyStateChange = f => {
+        setCompanyState(f.target.value);
+        setCompanyStateErrorFlag(false);
+    }
+
+    const [abn, setAbn] = useState('');
+    const [abnErrorFlag, setAbnErrorFlag] = useState(false);
+    const handleAbnChange = f => {
+        setAbn(f.target.value);
+        setAbnErrorFlag(false);
+    }
+
+    const statesList = ["ACT","NSW","NT","QLD","SA","TAS","VIC","WA"];
     const { deleteAccountSetUp } = useDeleteAccountSetUp();
     const { addCompany } = useAddCompany();
     const { fetchCompany } = useGetCompanyByName();
     const { addPropertyManager } = useAddPropertyManager();
 
     const handleAccountCreation = async () => {
-        var temp = user;
-        if (fname == ''){
+        var anyError = false;
+        if (fname === ''){
             setFnameErrorFlag(true);
+            anyError = true;
         }
-        if (lname == ''){
+        if (lname === ''){
             setLnameErrorFlag(true);
+            anyError = true;
         }
-        if (phoneNum == ''){
+        if (phoneNum === ''){
             setPhoneNumErrorFlag(true);
+            anyError = true;
         }
-        if (!newCompanyFlag && companyIndex == -1){
+        if (!newCompanyFlag && companyIndex === -1){
             setCompanyIndexErrorFlag(true);
+            anyError = true;
         }
-        if (newCompanyFlag && newCompanyName == ''){
+        if (newCompanyFlag && newCompanyName === ''){
             setNewCompanyNameErrorFlag(true);
+            anyError = true;
         }
-        if (!(fnameErrorFlag || lnameErrorFlag || phoneNumErrorFlag || companyNameErrorFlag || newCompanyNameErrorFlag)){
+        if (newCompanyFlag && companyPhoneNum === ''){
+            setCompanyPhoneNumErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && abn === ''){
+            setAbnErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && companyStreetAddress === ''){
+            setCompanyStreetAddressErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && companySuburb === ''){
+            setCompanySuburbErrorFlag(true);
+            anyError = true;
+        }
+        if (newCompanyFlag && companyState === ''){
+            setCompanyStateErrorFlag(true);
+            anyError = true;
+        }
+        if (!anyError){
             await deleteAccountSetUp(user.id);
             var company_id = ''
             if (newCompanyFlag){
-                await addCompany(user.id, newCompanyName);
+                await addCompany(user.id, newCompanyName, abn, companyPhoneNum, companyStreetAddress, companySuburb, statesList[companyState]);
                 company_id = await fetchCompany(newCompanyName);
             }
             else{
@@ -188,6 +251,7 @@ function AccountSetUpPM(){
                         InputLabelProps={{sx: {fontSize: '130%'}}} 
                         value={companyIndex} />}/>
             : 
+            <Box sx={{mb: '4%'}}>
             <TextField 
                 id='NewCompanyName' 
                 value={newCompanyName} 
@@ -195,9 +259,64 @@ function AccountSetUpPM(){
                 label='Company Name' 
                 variant='standard' 
                 error={newCompanyNameErrorFlag}
-                sx={{width: '96%', ml: '2%', mb: '3%', mt: '1%'}} 
+                sx={{width: '96%', ml: '2%'}} 
                 inputProps={{sx: {height:'0%', fontSize: '130%'}}} 
                 InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='CompanyPhoneNum' 
+                    value={companyPhoneNum} 
+                    onChange={handleCompanyPhoneNumChange} 
+                    label='Company Phone Number'
+                    variant='standard'  
+                    error={companyPhoneNumErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='ABN' 
+                    value={abn} 
+                    onChange={handleAbnChange} 
+                    label='Australian Business Number (ABN)'
+                    variant='standard'  
+                    error={abnErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='CompanyStreetAddress' 
+                    value={companyStreetAddress} 
+                    onChange={handleCompanyStreetAddressChange} 
+                    label='Street Address'
+                    variant='standard'  
+                    error={companyStreetAddressErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <TextField 
+                    id='CompanySuburb' 
+                    value={companySuburb} 
+                    onChange={handleCompanySuburbChange} 
+                    label='Suburb'
+                    variant='standard'  
+                    error={companySuburbErrorFlag}
+                    sx={{width: '96%', ml: '2%'}} 
+                    inputProps={{sx: {height: '15%', fontSize: '130%'}}} 
+                    InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            <Autocomplete 
+                disablePortal 
+                id="CompanyState" 
+                onChange={handleCompanyStateChange}
+                options={statesList} 
+                sx={{width: '96%', ml: '2%', mt: '1%', mb: '3%'}} 
+                renderInput={(params) => 
+                    <TextField 
+                        {...params} 
+                        label="State" 
+                        variant='standard' 
+                        error={companyStateErrorFlag}
+                        InputLabelProps={{sx: {fontSize: '130%'}}} 
+                        value={companyState} />}/>
+            </Box>
             }
         </Box>
         <br/>

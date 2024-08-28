@@ -22,14 +22,27 @@ function SignUp(){
     const handlePasswordConfChange = f => {
         setPasswordConf(f.target.value);
     }
+    
+    const [accountType, setAccountType] = useState('');
+    const [accountTypeChosen, setAccountTypeChosen] = useState(false);
     const [errorTextFlag, setErrorTextFlag] = useState(false);
     const [errorText, setErrorText] = useState(false);
 
     const {addAccountSetUp} = useAddAccountSetUp();
 
+    const handleSelectPM = () => {
+        setAccountType('Property Manager');
+        setAccountTypeChosen(true);
+    }
+
+    const handleSelectR = () => {
+        setAccountType('Renter');
+        setAccountTypeChosen(true);
+    }
+
     const navigate = useNavigate();
     const handleAccountCreation = () => {
-        if (password != passwordConf){   
+        if (password !== passwordConf){   
             setErrorText('Passwords must match')
             setErrorTextFlag(true);
             setPassword('');
@@ -76,7 +89,7 @@ function SignUp(){
                 password: password,
               }).then(data=> {
                 if (!data.error){
-                    addAccountSetUp(data.data.user.id, 'Property Manager');
+                    addAccountSetUp(data.data.user.id, accountType); 
                     navigate('/dashboard');
                 }
                 else{
@@ -98,25 +111,38 @@ function SignUp(){
   return (
     <Box sx={{ml: '35%', mt: '10%', backgroundColor: 'white', width: '30%', mb: '10%', borderRadius: 2}}>
         <br/>
-        <Box sx={{fontSize: '220%', fontWeight: 'bold', ml: '7%'}}>Sign Up</Box>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-            <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-            <TextField id='Email' value={email} onChange={handleEmailChange} label='Email' variant='standard' sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+        <Box sx={{fontSize: '220%', fontWeight: 'bold', textAlign: 'center'}}>Sign Up</Box>
+        {!accountTypeChosen?
+        <Box sx={{display: 'flex', flexDirection: 'column', mt: '5%'}}>
+            <Button variant="contained" disableElevation sx={{ ml: '10%', mr: '10%'}} onClick={handleSelectR}>
+                Renter
+            </Button>
+            <br/>
+            <Button variant="contained" disableElevation sx={{ ml: '10%', mr: '10%'}} onClick={handleSelectPM}>
+                Property Manager
+            </Button>
         </Box>
-        <br/>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-            <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-            <TextField id='Password' value={password} onChange={handlePasswordChange} label='Password' variant='standard' type='password' error={errorTextFlag} helperText={errorTextFlag?errorText:''} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
-        </Box>
-        <br/>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-            <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-            <TextField id='PasswordConf' value={passwordConf} onChange={handlePasswordConfChange} label='Confirm Password' variant='standard' type='password' error={errorTextFlag} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
-        </Box>
-        <br/>
-        <Box sx={{display: 'flex', justifyContent: 'center'}}>
-            <Button variant="contained" onClick={handleAccountCreation}>Create Account</Button>
-        </Box>
+        :<Box>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
+                <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
+                <TextField id='Email' value={email} onChange={handleEmailChange} label='Email' variant='standard' sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
+            <br/>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
+                <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
+                <TextField id='Password' value={password} onChange={handlePasswordChange} label='Password' variant='standard' type='password' error={errorTextFlag} helperText={errorTextFlag?errorText:''} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
+            <br/>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
+                <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
+                <TextField id='PasswordConf' value={passwordConf} onChange={handlePasswordConfChange} label='Confirm Password' variant='standard' type='password' error={errorTextFlag} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
+            </Box>
+            <br/>
+            <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                <Button variant="contained" onClick={handleAccountCreation}>Create Account</Button>
+            </Box>
+        </Box>}
+        
         <br/>
     </Box>
   );

@@ -1,8 +1,9 @@
 import React from 'react'
 import { Box } from '@mui/material'
 import ChatBox from './ChatBox'
+import SearchBox from './SearchBox'
 
-function ChatHistory({ data, handleSelectChat, currentUserID, otherUserID, uuidToName }) {
+function ChatHistory({ data, handleSelectChat, currentUserID, otherUserID, uuidToName, searchedName, handleNameSearch }) {
     return (
         <Box sx={{
             display: 'flex',
@@ -22,6 +23,9 @@ function ChatHistory({ data, handleSelectChat, currentUserID, otherUserID, uuidT
                 '-ms-overflow-style': 'none',
                 'scrollbar-width': 'none',
             }}>
+                <Box sx={{ padding: 2, paddingBottom: 0, width: '100%' }}>
+                    <SearchBox searchedName={searchedName} handleNameSearch={handleNameSearch}></SearchBox>
+                </Box>
                 {data && (
                     <Box sx={{ padding: 2, width: '100%' }}>
                         {data.map((singleData, index) =>
