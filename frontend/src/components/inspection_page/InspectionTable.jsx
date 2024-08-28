@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -46,6 +46,18 @@ const formatDateTime = (dateTime) => {
 };
 
 const InspectionTable = ({ inspectionsData, setInspections }) => {
+  const [userID, setUserID] = useState(null);
+  useEffect(() => {
+    async function getUserID() {
+      await supabase.auth.getUser().then((value) => {
+        if (value.data?.user) {
+          setUserID(value.data.user.id);
+        }
+      });
+    }
+    getUserID();
+  }, []);
+
   const [open, setOpen] = useState(false);
   const [selectedInspection, setSelectedInspection] = useState(null);
   const [newDateTime, setNewDateTime] = useState("");
@@ -106,7 +118,7 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
             inspection_run_default_buffer: inspectionData.inspection_buffer,
             company_id: inspectionData.company_id,
             inspection_run_date: new Date().toISOString().split("T")[0],
-            property_manager_id: inspectionData.property_manager_id,
+            property_manager_id: userID,
             inspection_run_transportation: "Car",
           },
         ]);
