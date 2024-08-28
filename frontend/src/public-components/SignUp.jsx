@@ -5,9 +5,9 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import Lock from '@mui/icons-material/Lock';
 import { Button} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from "../../supabase";
+import { supabase } from "../supabase";
 import { useState} from 'react';
-import useAddAccountSetUp from '../../mutators/Account SetUp/useAddAccountSetUp';
+import useAddAccountSetUp from '../mutators/Account SetUp/useAddAccountSetUp';
 
 function SignUp(){
     const [email, setEmail] = useState('');
