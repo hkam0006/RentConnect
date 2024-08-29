@@ -6,7 +6,7 @@ import Lock from '@mui/icons-material/Lock';
 import { Button, Grid, FormControlLabel, Typography, Avatar, Paper, Checkbox, LoadingButton }  from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from "../../supabase";
+import { supabase } from "../supabase";
 import { useState} from 'react';
 
 function Copyright(props) {
@@ -22,6 +22,8 @@ function Copyright(props) {
   );
 }
 
+
+
 function LogIn(){
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('');
@@ -34,6 +36,43 @@ function LogIn(){
   }
   const [errorText, setErrorText] = useState(false);
   const navigate = useNavigate();
+
+  const fetchAccountSetup = useGetAccountTypeByUUID();
+  const attemptLogIn = () => {
+    supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      }).then( async data=> {
+        if (!data.error){
+            var account_type = await fetchAccountSetup(data.data.user.id)
+            if (account_type.data[0]){
+                switch(account_type.data[0].account_type){
+                    case 'Property Manager':
+                        navigate('/AccountSetUpPM');
+                        break;
+                    case 'Renter':
+                        navigate('/AccountSetUpR');
+                        break;
+                    default:
+                        console.log('invalid account type found');
+                        return;
+                }
+            }
+            else{
+                navigate('/dashboard');
+            }
+        }
+        else{
+            setErrorText(true);
+            setPassword('');
+        }
+    })
+    .catch(error => {
+        setErrorText(true);
+        setPassword('');
+        console.log(error);
+    })
+  }
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
         <Grid
@@ -99,26 +138,7 @@ function LogIn(){
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                   disabled={loading}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password,
-                      }).then(data=> {
-                        if (!data.error){
-                            navigate('/dashboard');
-                        }
-                        else{
-                            setErrorText(true);
-                            setPassword('');
-                        }
-                    })
-                    .catch(error => {
-                        setErrorText(true);
-                        setPassword('');
-                        console.log(error);
-                    })
-                  }}
+                  onClick={attemptLogIn}
                 >
                   Sign In
                 </Button>

@@ -13,7 +13,7 @@ import PropertySearch from './manager-components/property_search/PropertyGrid';
 import RentalProfile from './manager-components/rental_profile/RentalProfile';
 import RenterApplication from './renter-components/renter_application/RenterApplication';
 import ReceivedApplication from './manager-components/applications/manager/RecievedApplication';
-import LogIn from './manager-components/login_page/Login';
+import LogIn from './public-components/Login';
 import Inspection from './manager-components/inspection_page/Inspection';
 import Messaging from './manager-components/messaging/Messaging'
 import Keys from './manager-components/keys/Keys';
