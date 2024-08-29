@@ -8,6 +8,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from "../supabase";
 import { useState} from 'react';
+import useGetAccountTypeByUUID from '../queries/Account Setup/useGetAccountTypeByUUID';
 
 function Copyright(props) {
   return (
