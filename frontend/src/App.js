@@ -10,7 +10,6 @@ import Dashboard from './manager-components/dashboard_page/Dashboard';
 import PropertyDetailsTenant from './renter-components/property_page/PropertyDetailsTenant';
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import PropertySearch from './manager-components/property_search/PropertyGrid';
-import RentalProfile from './manager-components/rental_profile/RentalProfile';
 import RenterApplication from './renter-components/renter_application/RenterApplication';
 import ReceivedApplication from './manager-components/applications/manager/RecievedApplication';
 import LogIn from './manager-components/login_page/Login';
@@ -27,6 +26,9 @@ import ManagerRoute from './utils/ManagerRoute';
 import LandingPage from './public-components/LandingPage';
 import PublicPropertyPage from './public-components/PublicPropertyPage';
 import RenterApplicationDetails from "./renter-components/application_page/RenterApplicationDetails";
+import RentalProfile from './renter-components/rental_profile/RentalProfile';
+import BuildRentalProfile from './renter-components/rental_profile/BuildRentalProfile';
+
 
 
 function App() {
@@ -59,6 +61,7 @@ function App() {
             <Route path='/ProtectedManagerHome' element={<ManagerRoute Component={Dashboard}/>} />
             <Route path='/Landing' element={<LandingPage/>} />
             <Route path='/LandingSearch' element={<PublicPropertyPage />}/>
+            <Route path='/BuildRentalProfile' element={<BuildRentalProfile />}/>
           </Routes>
         </Router>
     </ThemeProvider>
