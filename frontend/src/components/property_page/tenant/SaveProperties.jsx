@@ -10,9 +10,14 @@ import {
     TableHead,
     TableRow,
     tableCellClasses,
+    Stack
   } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import ImgElement from '../ImgElement';
 
+const fullAddress = (number, name, type, suburb, state) => {
+    return `${number} ${name} ${type}, ${suburb}, ${state}`
+  }
 const SavedProperties = () => {
     const [activeSection, setActiveSection] = useState("savedProperties");
     const [savedPropertiesData, setSavedPropertiesData] = useState([]);
@@ -88,8 +93,17 @@ const SavedProperties = () => {
                         >
                         <TableCell>
                             <Typography variant="body" fontWeight={700}>
-                            {savedProperty.propertyData.property_street_number}
+                            {fullAddress(
+                    savedProperty.propertyData.property_street_number,
+                    savedProperty.propertyData.property_street_name,
+                    savedProperty.propertyData.property_street_type,
+                    savedProperty.propertyData.property_suburb,
+                    savedProperty.propertyData.property_state
+                  )}
                             </Typography>
+                            <Stack direction='row' spacing={2} justifyContent="start" >
+                            <ImgElement sx={{ height: '150px', width: '264px', borderRadius: 3 }} src={savedProperty.propertyData.property_pictures[0]} alt='Stock Listing Image' />
+                            </Stack>
                         </TableCell>
                     </TableRow>
                     )
