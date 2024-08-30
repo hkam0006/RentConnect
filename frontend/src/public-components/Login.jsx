@@ -39,7 +39,8 @@ function LogIn(){
   const navigate = useNavigate();
 
   const fetchAccountSetup = useGetAccountTypeByUUID();
-  const attemptLogIn = () => {
+  const attemptLogIn = (e) => {
+    e.preventDefault()
     supabase.auth.signInWithPassword({
         email: email,
         password: password,
@@ -73,7 +74,7 @@ function LogIn(){
         setPassword('');
         console.log(error);
     })
-  }
+  };
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
         <Grid
