@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from "../supabase";
 import { useState} from 'react';
 import useGetAccountTypeByUUID from '../queries/Account Setup/useGetAccountTypeByUUID';
+import { useSelector } from 'react-redux';
 
 function Copyright(props) {
   return (

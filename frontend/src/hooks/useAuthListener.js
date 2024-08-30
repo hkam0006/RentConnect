@@ -42,7 +42,6 @@ const useAuthListener = () => {
           if (data.length > 0) {
             dispatch(setRenter())
             dispatch(setUser(data[0]))
-
           }
         })
       } else if (event === 'SIGNED_OUT'){

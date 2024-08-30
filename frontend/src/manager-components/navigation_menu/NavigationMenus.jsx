@@ -29,10 +29,7 @@ export default function NavigationMenu({ children }) {
 
     const handleLogOut = () => {
         supabase.auth.signOut().then(data=> {
-            if (!data.error){
-                navigate('/');
-            }
-            else{
+            if (data.error){
                 console.log('Failed to log out:')
                 console.log(data.error)
             }
