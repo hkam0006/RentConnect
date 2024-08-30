@@ -28,7 +28,7 @@ const useAuthListener = () => {
 
   useEffect(() => {
     const {data} = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+      if ((event === 'SIGNED_IN' || event === "INITIAL_SESSION") && session) {
         const user = session.user;
         // Example role-checking logic
         
@@ -36,17 +36,17 @@ const useAuthListener = () => {
           if (data.length > 0) {
             dispatch(setManager())
             dispatch(setUser(data[0]))
-            navigate("/dashboard")
           }
         })
         isRenter(user.id).then((data) => {
           if (data.length > 0) {
             dispatch(setRenter())
             dispatch(setUser(data[0]))
-            navigate("/RenterHome")
+
           }
         })
       } else if (event === 'SIGNED_OUT'){
+        dispatch(logout())
         navigate("/Landing")
       }
     });

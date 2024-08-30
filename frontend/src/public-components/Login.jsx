@@ -61,6 +61,9 @@ function LogIn(){
                         return;
                 }
             }
+            else{
+                navigate('/dashboard');
+            }
         }
         else{
             setErrorText(true);
