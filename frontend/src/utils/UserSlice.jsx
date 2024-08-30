@@ -30,7 +30,7 @@ const UserSlice = createSlice({
       state.isAdmin = true;
     },
     setUser: (state, action) => {
-      state.user = action.payload;
+      state.currentUser = action.payload;
     }
   }
 })
