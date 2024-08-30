@@ -30,12 +30,13 @@ import RenterApplicationDetails from "./renter-components/application_page/Rente
 import AccountSetUpPM from './manager-components/account_setup/AccountSetUpPM';
 import AddProp from './manager-components/add_property/AddProperty';
 import AccountSetUpR from './renter-components/account_setup/AccountSetUpR';
+import useAuthListener from './hooks/useAuthListener';
 
 function App() {
+  useAuthListener()
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='Application' element={<Application />} />
@@ -66,7 +67,6 @@ function App() {
             <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<AddProp/>} />
           </Routes>
-        </Router>
     </ThemeProvider>
   )
 }

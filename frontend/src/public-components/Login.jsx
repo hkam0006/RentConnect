@@ -46,6 +46,7 @@ function LogIn(){
         password: password,
       }).then( async data=> {
         if (!data.error){
+            console.log(data)
             var account_type = await fetchAccountSetup(data.data.user.id)
             if (account_type.data[0]){
                 switch(account_type.data[0].account_type){
@@ -59,9 +60,6 @@ function LogIn(){
                         console.log('invalid account type found');
                         return;
                 }
-            }
-            else{
-                navigate('/dashboard');
             }
         }
         else{

@@ -2,10 +2,8 @@ import React, { useState } from 'react'
 import { Typography, Stack, Button, Modal, Box, TextField, Select, MenuItem, FormControl, InputLabel, OutlinedInput, InputAdornment } from "@mui/material"
 import ListingImage from './listing.jpg'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import useApp from '../../hooks/useApp'
 
 export default function AddPropertyModal({ handleClose, propManagers }) {
-    const { createProperty } = useApp();
 
     const [newRow, setNewRow] = useState({
         address: "",
@@ -44,7 +42,7 @@ export default function AddPropertyModal({ handleClose, propManagers }) {
     };
 
     async function confirmPressed(event) {
-        await createProperty("testID", newRow)
+        // await createProperty("testID", newRow)
         handleClose(event)
     }
 
