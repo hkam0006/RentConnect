@@ -80,7 +80,7 @@ function Home() {
       <Link to="/Application">
         <button>Go to Applications Page</button>
       </Link>
-      <Link to="/ApplicationDetails/1b9500a6-ac39-4c6a-971f-766f85b41d78/cf96fd08-1903-4a93-95a9-51c675f9ff41/66de5be5-e19c-4495-9442-a089eff74af2">
+      <Link to="/ApplicationDetails/1b9500a6-ac39-4c6a-971f-766f85b41d78/089637e1-9d42-417f-bc1d-13c3e1058786/c779fb8e-674f-46da-ba91-47cc5f2f269d">
         <button>Go to ApplicationDetails</button>
       </Link>
       <Link to="/property">

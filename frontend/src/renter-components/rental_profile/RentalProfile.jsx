@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from "../../supabase"
 
 import { Typography, Grid, Paper, Button, Box } from '@mui/material'
@@ -8,9 +8,9 @@ import { useNavigate } from 'react-router-dom'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
 import ApplicationCard from './ApplicationCard'
 
-import useCheckRenterAddressHistoryByRenterID from '../../queries/Renter/useCheckRenterAddressHistoryByRenterID'
-import useCheckRenterEmploymentByRenterID from '../../queries/Renter/useCheckRenterEmploymentByRenterID'
-import useCheckRenterSupportingDocumentsByRenterID from '../../queries/Renter/useCheckRenterSupportingDocumentsByRenterID'
+import useCheckRenterAddressHistoryByRenterID from '../../queries/Previous Tenancy/useCheckRenterAddressHistoryByRenterID'
+import useCheckRenterEmploymentByRenterID from '../../queries/Renter Employment/useCheckRenterEmploymentByRenterID'
+import useCheckRenterSupportingDocumentsByRenterID from '../../queries/Application Supporting Document/useCheckRenterSupportingDocumentsByRenterID'
 
 import useGetApplicationsByRenterID from '../../queries/Application/useGetApplicationsByRenterID'
 
@@ -26,6 +26,7 @@ function RentalProfile () {
     const appliedProperties = useGetApplicationsByRenterID(userID)
 
     useEffect(() => {
+        // TODO: set this back to getting user id when login is working
         async function getUserID() {
           const { data, error } = await supabase.auth.getUser()
           if (error) {
@@ -37,7 +38,7 @@ function RentalProfile () {
         }
         getUserID()
         setUserID('c779fb8e-674f-46da-ba91-47cc5f2f269d')
-      }, [])
+    }, [])
     
     useEffect(() => {
         let score = 25
@@ -88,7 +89,7 @@ function RentalProfile () {
             
         )
     }
-    console.log(appliedProperties)
+    
     const RentalApplications = () => {
         return (
             <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
