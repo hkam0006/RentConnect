@@ -31,6 +31,7 @@ import AddProp from './manager-components/add_property/AddProperty';
 import AccountSetUpR from './renter-components/account_setup/AccountSetUpR';
 import useAuthListener from './hooks/useAuthListener';import RentalProfile from './renter-components/rental_profile/RentalProfile';
 import BuildRentalProfile from './renter-components/rental_profile/BuildRentalProfile';
+import SavedProperties from './renter-components/property_page/SaveProperties';
 
 
 
@@ -44,6 +45,7 @@ function App() {
             <Route path='Application' element={<Application />} />
             <Route path='/ApplicationDetails/:companyId/:propertyId/:renterId' element={<ApplicationDetails />} />
             <Route path='/property' element={<Properties />} />
+            <Route path='/savedproperties' element={<SavedProperties/>} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
             <Route path='/contacts' element={<Contacts />}/>
             <Route path='/dashboard' element={<Dashboard />}/>
@@ -68,7 +70,6 @@ function App() {
             <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
             <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<AddProp/>} />
-            <Route path='/BuildRentalProfile' element={<BuildRentalProfile />}/>
           </Routes>
     </ThemeProvider>
   )
@@ -91,6 +92,9 @@ function Home() {
       </Link>
       <Link to="/property">
         <button>Go to Properties</button>
+      </Link>
+      <Link to="/savedproperties">
+        <button>Go to Saved Properties</button>
       </Link>
       <Link to="/property/testID">
         <button>Go to Property Details</button>
