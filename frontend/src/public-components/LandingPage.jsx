@@ -29,7 +29,7 @@ const SearchPropertyBar = ({onSearch, value, onChange}) => {
         inputProps={{ 'aria-label': 'search suburb' }}
         onChange={(e) => onChange(e.target.value)}
       />
-      <IconButton sx={{ p: '10px' }} aria-label="search">
+      <IconButton sx={{ p: '10px' }} aria-label="search" onClick={() => onSearch()}>
         <SearchIcon />
       </IconButton>
       <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />

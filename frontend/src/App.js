@@ -10,7 +10,6 @@ import Dashboard from './manager-components/dashboard_page/Dashboard';
 import PropertyDetailsTenant from './renter-components/property_page/PropertyDetailsTenant';
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import PropertySearch from './manager-components/property_search/PropertyGrid';
-import RentalProfile from './manager-components/rental_profile/RentalProfile';
 import RenterApplication from './renter-components/renter_application/RenterApplication';
 import ReceivedApplication from './manager-components/applications/manager/RecievedApplication';
 import LogIn from './public-components/Login';
@@ -30,7 +29,10 @@ import RenterApplicationDetails from "./renter-components/application_page/Rente
 import AccountSetUpPM from './manager-components/account_setup/AccountSetUpPM';
 import AddProp from './manager-components/add_property/AddProperty';
 import AccountSetUpR from './renter-components/account_setup/AccountSetUpR';
-import useAuthListener from './hooks/useAuthListener';
+import useAuthListener from './hooks/useAuthListener';import RentalProfile from './renter-components/rental_profile/RentalProfile';
+import BuildRentalProfile from './renter-components/rental_profile/BuildRentalProfile';
+
+
 
 function App() {
   useAuthListener()
@@ -66,6 +68,7 @@ function App() {
             <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
             <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<AddProp/>} />
+            <Route path='/BuildRentalProfile' element={<BuildRentalProfile />}/>
           </Routes>
     </ThemeProvider>
   )
@@ -83,7 +86,7 @@ function Home() {
       <Link to="/Application">
         <button>Go to Applications Page</button>
       </Link>
-      <Link to="/ApplicationDetails/1b9500a6-ac39-4c6a-971f-766f85b41d78/cf96fd08-1903-4a93-95a9-51c675f9ff41/66de5be5-e19c-4495-9442-a089eff74af2">
+      <Link to="/ApplicationDetails/1b9500a6-ac39-4c6a-971f-766f85b41d78/089637e1-9d42-417f-bc1d-13c3e1058786/c779fb8e-674f-46da-ba91-47cc5f2f269d">
         <button>Go to ApplicationDetails</button>
       </Link>
       <Link to="/property">
