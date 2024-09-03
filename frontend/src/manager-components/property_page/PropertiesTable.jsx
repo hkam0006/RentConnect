@@ -42,6 +42,27 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
 
   const navigate = useNavigate();
 
+  const handleSaveProperty = async (property) => {
+    try {
+      const { data, error } = await supabase
+        .from('SAVED PROPERTIES')
+        .insert([
+          {
+            property_id: property.property_id,
+            company_id: property.company_id,
+          }
+        ]);
+
+      if (error) {
+        console.error('Error saving property:', error);
+      } else {
+        console.log('Property saved successfully:', data);
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+    }
+  };
+
   return <>
     {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
     {properties.length > 0 ? <TableContainer sx={{ borderRadius: 3, height: "700px" }}>
@@ -103,6 +124,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
                 <Stack spacing={1}>
                   <Button variant='contained' onClick={() => navigate(`/property/${row.property_id}`)}>View</Button>
                   <Button variant='outlined'>More</Button>
+                  <Button variant='outlined' onClick={() => handleSaveProperty(row)}>Save</Button>
                 </Stack>
               </TableCell>
             </TableRow>
