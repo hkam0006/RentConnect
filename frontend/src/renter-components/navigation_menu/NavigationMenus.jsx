@@ -27,6 +27,11 @@ export default function NavigationMenu({ children }) {
         setAccountAnchorEl(null);
     };
 
+    const handleLogOut = () => {
+      setAccountAnchorEl(null);
+      supabase.auth.signOut();
+    }
+
     const [user, setUser] = useState({});
     useEffect(() => {
         async function getUserData() {
@@ -90,6 +95,7 @@ export default function NavigationMenu({ children }) {
                             >
                                 <MenuItem onClick={handleAccountClose}>Profile</MenuItem>
                                 <MenuItem onClick={handleAccountClose}>My account</MenuItem>
+                                <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
                             </Menu>
                         </Box>
                     )}

@@ -1,7 +1,7 @@
-import NavigationMenu from "../navigation_menu/NavigationMenus";
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Grid, Paper, Stack } from "@mui/material";
 import { supabase } from "../../supabase";
+import NavigationMenu from "../navigation_menu/NavigationMenus";
 import InspectionTable from "./InspectionTable";
 import HistoryTable from "./HistoryTable";
 
@@ -10,6 +10,48 @@ const Inspection = () => {
   const [inspectionsData, setInspectionsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userID, setUserID] = useState(null);
+  const [accountType, setAccountType] = useState(null);
+
+  useEffect(() => {
+    async function getUserID() {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) {
+        setUserID(data.user.id);
+      }
+    }
+    getUserID();
+  }, []);
+
+  useEffect(() => {
+    async function getAccountType() {
+      if (userID) {
+        // Check if user is a renter
+        const renterResponse = await supabase
+          .from("RENTER")
+          .select("renter_id")
+          .eq("renter_id", userID)
+          .single();
+
+        if (renterResponse.data) {
+          setAccountType("RENTER");
+          return;
+        }
+
+        // Check if user is a property manager
+        const managerResponse = await supabase
+          .from("PROPERTY MANAGER")
+          .select("property_manager_id")
+          .eq("property_manager_id", userID)
+          .single();
+
+        if (managerResponse.data) {
+          setAccountType("PROPERTY MANAGER");
+        }
+      }
+    }
+    getAccountType();
+  }, [userID]);
 
   useEffect(() => {
     const fetchInspectionsData = async () => {
@@ -50,8 +92,10 @@ const Inspection = () => {
       }
     };
 
-    fetchInspectionsData();
-  }, []);
+    if (accountType === "PROPERTY MANAGER" || accountType === "RENTER") {
+      fetchInspectionsData();
+    }
+  }, [accountType]);
 
   const renderContent = () => {
     if (loading) {
@@ -119,33 +163,72 @@ const Inspection = () => {
     (inspection) => inspection.inspection_type === "pending"
   );
 
-  return (
-    <NavigationMenu>
-      <Grid
-        container
-        spacing={2}
-        style={{ padding: "30px", paddingTop: "110px" }}
-        justifyContent="flex-start"
-      >
-        <Button
-          variant={activeSection === "inspection" ? "contained" : "outlined"}
-          onClick={() => setActiveSection("inspection")}
-          style={{ margin: "10px", fontSize: "150%" }}
+  if (accountType == null) {
+    return (
+      <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+        <Stack textAlign="center">
+          <Typography variant="h6">
+            You do not have access to this content.
+          </Typography>
+        </Stack>
+      </Paper>
+    );
+  } else if (accountType === "RENTER") {
+    return (
+      <NavigationMenu>
+        <Grid
+          container
+          spacing={2}
+          style={{ padding: "30px", paddingTop: "110px" }}
+          justifyContent="flex-start"
         >
-          Inspection
-        </Button>
+          <Button
+            variant={activeSection === "inspection" ? "contained" : "outlined"}
+            onClick={() => setActiveSection("inspection")}
+            style={{ margin: "10px", fontSize: "150%" }}
+          >
+            Inspection
+          </Button>
 
-        <Button
-          variant={activeSection === "history" ? "contained" : "outlined"}
-          onClick={() => setActiveSection("history")}
-          style={{ margin: "10px", fontSize: "150%" }}
+          <Button
+            variant={activeSection === "history" ? "contained" : "outlined"}
+            onClick={() => setActiveSection("history")}
+            style={{ margin: "10px", fontSize: "150%" }}
+          >
+            History
+          </Button>
+        </Grid>
+        <div style={{ padding: "20px" }}>{renderContent()}</div>
+      </NavigationMenu>
+    );
+  } else if (accountType === "PROPERTY MANAGER") {
+    return (
+      <NavigationMenu>
+        <Grid
+          container
+          spacing={2}
+          style={{ padding: "30px", paddingTop: "110px" }}
+          justifyContent="flex-start"
         >
-          History
-        </Button>
-      </Grid>
-      <div style={{ padding: "20px" }}>{renderContent()}</div>
-    </NavigationMenu>
-  );
+          <Button
+            variant={activeSection === "inspection" ? "contained" : "outlined"}
+            onClick={() => setActiveSection("inspection")}
+            style={{ margin: "10px", fontSize: "150%" }}
+          >
+            Inspection
+          </Button>
+
+          <Button
+            variant={activeSection === "history" ? "contained" : "outlined"}
+            onClick={() => setActiveSection("history")}
+            style={{ margin: "10px", fontSize: "150%" }}
+          >
+            History
+          </Button>
+        </Grid>
+        <div style={{ padding: "20px" }}>{renderContent()}</div>
+      </NavigationMenu>
+    );
+  }
 };
-
 export default Inspection;
