@@ -23,7 +23,7 @@ function RentalProfile () {
     const hasSupportingDocuments = useCheckRenterSupportingDocumentsByRenterID(userID)
     const [profileCompletionScore, setProfileCompletionScore] = useState(25)
 
-    const appliedProperties = useGetApplicationsByRenterID(userID)
+    const {appliedProperties, loading} = useGetApplicationsByRenterID(userID)
 
     useEffect(() => {
         // TODO: set this back to getting user id when login is working

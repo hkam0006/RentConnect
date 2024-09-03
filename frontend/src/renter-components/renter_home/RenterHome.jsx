@@ -11,34 +11,13 @@ import AppLoader from "../../manager-components/property_page/AppLoader";
 import useGetApplicationsByRenterID from "../../queries/Application/useGetApplicationsByRenterID";
 import useGetPropertiesByCompanyID from "../../queries/Property/useGetPropertiesByCompanyID";
 
-const TEST_RENTER_ID = "c779fb8e-674f-46da-ba91-47cc5f2f269d"
+const TEST_RENTER_ID = "ccde4c7b-dcdb-4669-b2fd-48b354cf8ab3"
 
 export default function RenterHome() {
-    const { fetchApplications } = useGetApplicationsByRenterID(TEST_RENTER_ID);
-    const [applications, setApplications] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        (async () => {
-            const { data, error } = await fetchApplications()
-            setApplications(data);
-            setError(error);
-            setLoading(false)
-        })();
-    }, [])
+    const {applications, loading} = useGetApplicationsByRenterID(TEST_RENTER_ID);
 
-    const [user, setUser] = useState({});
-    useEffect(() => {
-        async function getUserData() {
-            await supabase.auth.getUser().then((value) =>{
-                if (value.data?.user) {
-                    setUser(value.data.user);
-                }
-            })
-        }
-        getUserData();
-    }, []);
+    // TODO: add code to get user ID and replace for TEST_ID
 
     if (loading) return <AppLoader />
 

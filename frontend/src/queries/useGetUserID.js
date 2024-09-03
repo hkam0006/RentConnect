@@ -1,19 +1,27 @@
 import {supabase} from "../supabase";
+import {useEffect, useState} from "react";
 
 const useGetUserID = () => {
+    const [userID, setUserID] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const fetchUserID = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
+    useEffect(() => {
+        const fetchUserID = async () => {
+            setLoading(true);
+            const { data: { session } } = await supabase.auth.getSession();
 
-        if (session) {
-            return session.user.id;  // Return the user ID
-        } else {
-            console.log("No user session found.");
-            return null;
+            if (session) {
+                setUserID(session.user.id);
+                setLoading(false)
+            } else {
+                console.log("No user session found.");
+                setLoading(false);
+            }
         }
-    }
+        fetchUserID();
+    }, []);
 
-    return {fetchUserID};
+    return {userID, loading};
 };
 
 export default useGetUserID;

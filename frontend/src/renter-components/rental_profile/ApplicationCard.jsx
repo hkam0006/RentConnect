@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 function ApplicationCard({ application }) {
     const navigate = useNavigate()
-    const property = useGetPropertyByPropertyID(application.property_id)?.[0] || null
+    const { property, loading } = useGetPropertyByPropertyID(application.property_id)?.[0] || null
 
     const applicationStatusColour = (status) => {
         switch (status) {
