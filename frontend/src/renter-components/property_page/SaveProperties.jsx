@@ -157,7 +157,7 @@ const SavedProperties = () => {
                   <Stack spacing={1}>
                   <Button variant='contained' onClick={() => navigate(`/property/${savedProperty.propertyData.property_id}`)}>View</Button>
                   <Button variant='outlined'>More</Button>
-                  <Button variant='outlined' onClick={() => handleUnsave(savedProperty.id)}>Unsave</Button>
+                  <Button variant='outlined' onClick={() => handleUnsave(savedProperty.id)} >Unsave</Button>
                 </Stack>
                   </TableCell>
                 </TableRow>
