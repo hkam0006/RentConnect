@@ -35,7 +35,6 @@ import SavedProperties from './renter-components/property_page/SaveProperties';
 import Rprofile from './manager-components/profile_page/Rprofile';
 import PMprofile from './manager-components/profile_page/PMprofile';
 
-
 function App() {
   useAuthListener()
     return (
@@ -43,36 +42,33 @@ function App() {
         <CssBaseline />
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='Application' element={<Application />} />
-            <Route path='/ApplicationDetails/:companyId/:propertyId/:renterId' element={<ApplicationDetails />} />
-            <Route path='/property' element={<Properties />} />
-            <Route path='/savedproperties' element={<SavedProperties/>} />
+            <Route path='Application' element={<ManagerRoute Component={Application}/>} />
+            <Route path='/ApplicationDetails/:companyId/:propertyId/:renterId' element={<ManagerRoute Component={ApplicationDetails}/>} />
+            <Route path='/property' element={<ManagerRoute Component={Properties}/>} />
+            <Route path='/savedproperties' element={<RenterRoute Component={SavedProperties}/>} />
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
             <Route path='/contacts' element={<Contacts />}/>
-            <Route path='/dashboard' element={<Dashboard />}/>
-            <Route path='/RentalProfile' element={<RentalProfile />}></Route>
-            <Route path='/tenant/property/:propertyId' element={<PropertyDetailsTenant />} />
-            <Route path='/application/:propertyId' element={<RenterApplicationDetails />} />
-            <Route path='/search' element={<PropertySearch />} />
-            <Route path='/renterapplication' element={<RenterApplication />} />
-            <Route path='/MyApplication' element={<ReceivedApplication />} />
+            <Route path='/dashboard' element={<ManagerRoute Component={Dashboard} />}/>
+            <Route path='/RentalProfile' element={<RenterRoute Component={RentalProfile} />}></Route>
+            <Route path='/tenant/property/:propertyId' element={<RenterRoute Component={PropertyDetailsTenant} />} />
+            <Route path='/application/:propertyId' element={<RenterRoute Component={RenterApplicationDetails} />} />
+            <Route path='/renterapplication' element={<RenterRoute Component={RenterApplication} />} />
+            <Route path='/MyApplication' element={<RenterRoute Component={ReceivedApplication} />} />
             <Route path='/LogIn' element={<LogIn/>} />
             <Route path='/Inspection' element={<Inspection/>} />
             <Route path='/messages' element={<Messaging/>} />
             <Route path='/messages/:directMessageUserID' element={<Messaging/>} />
-            <Route path='/keys' element={<Keys/>} />
-            <Route path='/InspectionRun' element={<InspectionRun/>} />
+            <Route path='/keys' element={<ManagerRoute Component={Keys}/>} />
+            <Route path='/InspectionRun' element={<ManagerRoute Component={InspectionRun}/>} />
             <Route path='/SignUp' element={<SignUp/>} />
-            <Route path='/RenterHome' element={<RenterHome/>} />
-            <Route path='/ProtectedRenterHome' element={<RenterRoute Component={RenterHome}/>} />
-            <Route path='/ProtectedManagerHome' element={<ManagerRoute Component={Dashboard}/>} />
+            <Route path='/RenterHome' element={<RenterRoute Component={RenterHome}/>} />
             <Route path='/Landing' element={<LandingPage/>} />
             <Route path='/LandingSearch' element={<PublicPropertyPage />}/>
-            <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
-            <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
-            <Route path='add_property' element={<AddProp/>} />
-            <Route path='/Rprofile/:rID' element={<Rprofile/>} />
-            <Route path='/PMprofile/:pmID' element={<PMprofile/>} />
+            <Route path='/AccountSetUpPM' element={<ManagerRoute Component={AccountSetUpPM}/>} />
+            <Route path='/AccountSetUpR' element={<RenterRoute Component={AccountSetUpR}/>} />
+            <Route path='add_property' element={<ManagerRoute Component={AddProp}/>} />
+            <Route path='/Rprofile/:rID' element={<ManagerRoute Component={Rprofile}/>} />
+            <Route path='/PMprofile/:pmID' element={<ManagerRoute Component={PMprofile}/>} />
           </Routes>
     </ThemeProvider>
   )
