@@ -1,27 +1,15 @@
 import { supabase } from "../../supabase";
-import { useState, useEffect } from 'react';
 
+const useGetCompanyByCompanyID = () =>{
+  const fetchCompany = async (company_id) => {
+    const { data, error } = await supabase
+      .from("COMPANY")
+      .select("*")
+      .eq("company_id", company_id);
 
-const useGetCompanyByCompanyID = (company_id) =>{
-    const [company, setCompany] = useState([]);
-  
-    useEffect(() => {
-      const fetchCompany = async () => {
-        const { data, error } = await supabase
-        .from("COMPANY")
-        .select("*")
-        .eq("company_id", company_id);
-  
-        if (error) {
-          console.error("Error fetching company:", error.message);
-        } else {
-          setCompany(data);
-        }
-      };
-  
-      fetchCompany();
-    }, []);
-      return company;
-    };
+    return {data, error}
+  };
+  return fetchCompany
+};
 
 export default useGetCompanyByCompanyID;

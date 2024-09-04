@@ -13,7 +13,7 @@ import useGetApplicationSupportingDocumentsByID from '../../queries/Application 
 
 import useUpdateApplicationStatusByID from '../../mutators/Application/useUpdateApplicationStatusByID'
 
-import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID'
+import useGetOnlyRenterByRenterID from '../../queries/Renter/useGetOnlyRenterByRenterID'
 import useGetPreviousTenanciesByRenterID from '../../queries/Previous Tenancy/useGetPreviousTenanciesByRenterID'
 import useGetRenterEmploymentsByRenterID from '../../queries/Renter Employment/useGetRenterEmploymentsByRenterID'
 import useGetPetsByRenterID from '../../queries/Pet/useGetPetsByRenterID'
@@ -54,7 +54,7 @@ function ApplicationDetails() {
     const getApplicationComment = useGetApplicationCommentByID(propertyId, renterId)
     const getApplicationSupportingDocuments = useGetApplicationSupportingDocumentsByID(propertyId, renterId)
 
-    const getRenter = useGetRenterByRenterID(renterId)
+    const getRenter = useGetOnlyRenterByRenterID(renterId)
     const getRenterTenancy = useGetPreviousTenanciesByRenterID(renterId)
     const getRenterEmployment = useGetRenterEmploymentsByRenterID(renterId)
     const getRenterPet = useGetPetsByRenterID(renterId)
