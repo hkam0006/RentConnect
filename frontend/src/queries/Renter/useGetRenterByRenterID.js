@@ -1,29 +1,15 @@
-import { supabase } from "../../supabase"
-import { useState, useEffect } from 'react'
+import { supabase } from "../../supabase";
 
-const useGetRenterByRenterID = (renter_id) => {
-    const [renter, setRenter] = useState([])
+const useGetRenterByRenterID = () =>{
+  const fetchRenter = async (account_id) => {
+    const { data, error } = await supabase
+      .from("RENTER")
+      .select("*")
+      .eq("renter_id", account_id);
 
-    useEffect(() => {
-        const fetchRenter = async () => {
-            if (renter_id) {
-                const { data, error } = await supabase
-                    .from("RENTER")
-                    .select("*")
-                    .eq("renter_id", renter_id)
-                    .limit(1)
+    return {data, error}
+  };
+  return fetchRenter
+};
 
-                if (error) {
-                    console.error("Error fetching renter:", error.message)
-                }
-                setRenter(data)
-            }
-        }
-
-        fetchRenter()
-    }, [renter_id])
-
-    return renter
-}
-
-export default useGetRenterByRenterID
+export default useGetRenterByRenterID;

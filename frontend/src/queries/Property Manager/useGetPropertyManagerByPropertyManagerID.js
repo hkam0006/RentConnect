@@ -1,28 +1,15 @@
-import { supabase } from "../../supabase"
-import { useState, useEffect } from 'react'
+import { supabase } from "../../supabase";
 
+const useGetPropertyManagerByPropertyManagerID = () =>{
+  const fetchPropertyManager = async (account_id) => {
+    const { data, error } = await supabase
+      .from("PROPERTY MANAGER")
+      .select("*")
+      .eq("property_manager_id", account_id);
 
-const useGetPropertyManagerByPropertyManagerID = (property_manager_id) =>{
-    const [property_manager, setPropertyManager] = useState([])
-  
-    useEffect(() => {
-      const fetchPropertyManager = async () => {
-        const { data, error } = await supabase
-        .from("PROPERTY MANAGER")
-        .select("*")
-        .eq("property_manager_id", property_manager_id)
-  
-        if (error) {
-          console.error("Error fetching property manager:", error.message)
-        } else {
-          setPropertyManager(data)
-        }
-      }
-      if (property_manager_id) {
-        fetchPropertyManager()
-      }
-    }, [property_manager_id])
-      return property_manager
-    }
+    return {data, error}
+  };
+  return fetchPropertyManager
+};
 
-export default useGetPropertyManagerByPropertyManagerID
+export default useGetPropertyManagerByPropertyManagerID;

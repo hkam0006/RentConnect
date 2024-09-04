@@ -32,7 +32,8 @@ import AccountSetUpR from './renter-components/account_setup/AccountSetUpR';
 import useAuthListener from './hooks/useAuthListener';import RentalProfile from './renter-components/rental_profile/RentalProfile';
 import BuildRentalProfile from './renter-components/rental_profile/BuildRentalProfile';
 import SavedProperties from './renter-components/property_page/SaveProperties';
-
+import Rprofile from './manager-components/profile_page/Rprofile';
+import PMprofile from './manager-components/profile_page/PMprofile';
 
 
 function App() {
@@ -70,6 +71,8 @@ function App() {
             <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
             <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<AddProp/>} />
+            <Route path='/Rprofile/:rID' element={<Rprofile/>} />
+            <Route path='/PMprofile/:pmID' element={<PMprofile/>} />
           </Routes>
     </ThemeProvider>
   )
