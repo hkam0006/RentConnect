@@ -10,16 +10,14 @@ import useGetApplicationsByCompanyID from "../../queries/Application/useGetAppli
 import AppLoader from "../../manager-components/property_page/AppLoader";
 import useGetApplicationsByRenterID from "../../queries/Application/useGetApplicationsByRenterID";
 import useGetPropertiesByCompanyID from "../../queries/Property/useGetPropertiesByCompanyID";
-
-const TEST_RENTER_ID = "ccde4c7b-dcdb-4669-b2fd-48b354cf8ab3"
+import useGetUserID from "../../queries/useGetUserID";
 
 export default function RenterHome() {
 
-    const {applications, loading} = useGetApplicationsByRenterID(TEST_RENTER_ID);
+    const {userID, loading: userLoading} = useGetUserID();
+    const {applications, loading: applicationsLoading} = useGetApplicationsByRenterID(userID);
 
-    // TODO: add code to get user ID and replace for TEST_ID
-
-    if (loading) return <AppLoader />
+    if (userLoading || applicationsLoading) return <AppLoader />
 
     return (
         <NavigationMenu>

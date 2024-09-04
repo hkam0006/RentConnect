@@ -42,6 +42,7 @@ export default function RenterApplicationDetails() {
 
     // get applications from user at this property
     const { applications, loading: applicationLoading } = useGetApplicationsByPropertyAndUserID(propertyId, userID)
+    console.log(applications)
 
     // For request inspection modal
     const [inspectionRequestOpen, setInspectionRequestOpen] = useState(false);
@@ -102,21 +103,21 @@ export default function RenterApplicationDetails() {
                             </Grid>
                             <Divider sx={{ mt: 2, mb: 2 }}/>
                             <Grid container spacing={2} sx={{maxHeight: '100%'}}>
-                                <Grid item xs={4}>
-                                    <Typography variant="h4" gutterBottom>
+                                <Grid item md={6} xl={8}>
+                                    <Typography variant="h4" sx={{fontWeight: 'bold'}}>
                                         {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
                                     </Typography>
-                                    <Typography variant="h5" gutterBottom>
+                                    <Typography variant="h5">
                                         {prop.property_suburb + ', ' + prop.property_state}
                                     </Typography>
                                     <Box>
                                         <Typography variant="h7">
                                             {prop.property_type}
                                         </Typography>
-                                        <Typography sx={{ mt: 13, fontWeight: 'bold' }} variant="h5">
+                                        <Typography sx={{ mt: 2, fontWeight: 'bold' }} variant="h5">
                                             ${'' + prop.property_rent} per week
                                         </Typography>
-                                        <Typography sx={{ mt: 13 }} variant="h6">
+                                        <Typography sx={{ mt: 2 }} variant="h6">
                                             <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
@@ -124,7 +125,7 @@ export default function RenterApplicationDetails() {
                                         </Typography>
                                     </Box>
                                 </Grid>
-                                <Grid item xs={8} id="photos">
+                                <Grid item md={6} xl={4} style={{maxHeight: '500px', justifyContent: 'flex-end'}} id="photos">
                                     {
                                         prop.property_pictures && prop.property_pictures.length > 0 && (
                                             <ImageCarousel images={prop.property_pictures} />
@@ -148,7 +149,27 @@ export default function RenterApplicationDetails() {
                                     <Typography>
                                         {prop.property_amenities}
                                     </Typography>
-                                    <Divider sx={{ mt: 2, mb: 2 }}/>
+                                </Grid>
+                                <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
+                                <Grid item xs={5}>
+                                        <Typography variant="h4">
+                                            Map goes here
+                                        </Typography>
+                                </Grid>
+                            </Grid>
+                            <Divider sx={{ mb: 2 }}/>
+                            <Typography variant="h5" style={{fontWeight: 'bold'}} gutterBottom>
+                                Applications
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Paper>
+            </div>
+        </NavigationMenu>
+    </>
+}
+/*
+
                                     <Box>
                                         <Typography variant="h5">
                                             Upcoming viewings
@@ -158,26 +179,7 @@ export default function RenterApplicationDetails() {
                                             property={property}
                                         />
                                     </Box>
-                                </Grid>
-                                <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
-                                <Box
-                                    display="flex"
-                                    // alignItems="center"
-                                    justifyContent="center"
-                                    style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
-                                >
-                                    <Typography variant="h4">
-                                        Map goes here
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </Paper>
-            </div>
-        </NavigationMenu>
-    </>
-}
+ */
 
 // Function to display amenities of a property
 function AmenitiesList({ amenities }) {
