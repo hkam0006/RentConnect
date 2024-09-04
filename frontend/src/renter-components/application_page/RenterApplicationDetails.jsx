@@ -15,7 +15,7 @@ import ImageCarousel from '../../manager-components/property_page/ImageCarousel'
 // Demo Images
 import ListingImage from '../../manager-components/property_page/listing.jpg'
 import ListingImageAppt from '../../manager-components/property_page/listing2.jpg'
-import NavigationMenu from '../../manager-components/navigation_menu/NavigationMenus';
+import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 import AppLoader from "../../manager-components/property_page/AppLoader";
@@ -27,49 +27,22 @@ import useGetApplicationsByPropertyAndUserID from "../../queries/Application/use
 
 export default function RenterApplicationDetails() {
 
-    // Dummy viewings
-    const viewing1 = {
-        date: "4th May 2024",
-        time: "11:25 AM"
-    }
-    const viewing2 = {
-        date: "22nd May 2024",
-        time: "2:45 PM"
-    }
-
     // Cuncomment below to view the table
     const viewings = [
         // viewing1,
         // viewing2
     ]
 
-    // Dummy property
-    const [property, setProperty] = useState({
-        street: '1702/655 Chapel Street',
-        suburb: 'South Yarra 3141',
-        bedrooms: 2,
-        bathrooms: 2,
-        carSpots: 1,
-        squareMetres: 285,
-        vacancy: 25,
-        attendees: 31,
-        applications: 15,
-        listingImages: [
-            ListingImage,
-            ListingImageAppt,
-            ListingImage,
-            ListingImageAppt
-        ],
-        type: "Townhouse",
-        price: "750",
-        available: "31st March 2024",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        amenities: {
-            airConditioning: ['Air conditioning', AcUnitIcon],
-            wardrobes: ['Built-in wardrobes', CheckroomIcon],
-            deck: ['Deck', DeckIcon]
-        }
-    });
+    // get user ID
+    const {userID, loading: userLoading} = useGetUserID();
+
+    // property ID to query database.
+    const { propertyId } = useParams()
+    const { property, loading: propertyLoading } = useGetPropertyByPropertyID(propertyId);
+
+    // get applications from user at this property
+    const { applications, loading: applicationLoading } = useGetApplicationsByPropertyAndUserID(propertyId, userID)
+    console.log(applications)
 
     // For request inspection modal
     const [inspectionRequestOpen, setInspectionRequestOpen] = useState(false);
@@ -84,46 +57,13 @@ export default function RenterApplicationDetails() {
         handleInspectionRequestClose();
     };
 
-    // get user ID
-    const [userID, setUserID] = useState(null);
-    const { fetchUserID } = useGetUserID();
-    useEffect( () => {
-        (async () => {
-            const {data} = await fetchUserID();
-            setUserID(data);
-        })();
-    });
+    if (propertyLoading || applicationLoading) return <AppLoader />
 
-    // property ID to query database.
-    const { propertyId } = useParams()
-    const { fetchProperty } = useGetPropertyByPropertyID(propertyId)
-    const [prop, setProp] = useState()
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-
-    // get applications from user at this property
-    const [applications, setApplications] = useState([]);
-    const { fetchApplications } = useGetApplicationsByPropertyAndUserID(propertyId, userID)
-
-    console.log(propertyId)
-
-    // make calls to DB
-    useEffect (() => {
-        (async () => {
-            const { propertyData, propertyError } = await fetchProperty()
-            setProp(propertyData);
-            setError(propertyError);
-            const { applicationsData, applicationsError } = await fetchApplications()
-            setApplications(applicationsData);
-            setLoading(false);
-        })();
-    }, []);
-
-    if (loading) return <AppLoader />
-
-    if (!prop) {
+    if (!property) {
         return <Typography>No property found.</Typography>
     }
+
+    let prop = property[0];
 
     return <>
         {inspectionRequestOpen && (
@@ -163,21 +103,21 @@ export default function RenterApplicationDetails() {
                             </Grid>
                             <Divider sx={{ mt: 2, mb: 2 }}/>
                             <Grid container spacing={2} sx={{maxHeight: '100%'}}>
-                                <Grid item xs={4}>
-                                    <Typography variant="h4" gutterBottom>
+                                <Grid item md={6} xl={8}>
+                                    <Typography variant="h4" sx={{fontWeight: 'bold'}}>
                                         {'' + prop.property_street_number + ' ' + prop.property_street_name + ' ' + prop.property_street_type}
                                     </Typography>
-                                    <Typography variant="h5" gutterBottom>
+                                    <Typography variant="h5">
                                         {prop.property_suburb + ', ' + prop.property_state}
                                     </Typography>
                                     <Box>
                                         <Typography variant="h7">
                                             {prop.property_type}
                                         </Typography>
-                                        <Typography sx={{ mt: 13, fontWeight: 'bold' }} variant="h5">
+                                        <Typography sx={{ mt: 2, fontWeight: 'bold' }} variant="h5">
                                             ${'' + prop.property_rent} per week
                                         </Typography>
-                                        <Typography sx={{ mt: 13 }} variant="h6">
+                                        <Typography sx={{ mt: 2 }} variant="h6">
                                             <BedIcon /> {'' + prop.property_bedroom_count} <BathtubIcon /> {'' + prop.property_bathroom_count} <DriveEtaIcon /> {'' + prop.property_car_spot_count} <SquareFootIcon /> {'' + prop.property_footprint}m²
                                         </Typography>
                                         <Typography sx={{ mt: 2 }}>
@@ -185,7 +125,7 @@ export default function RenterApplicationDetails() {
                                         </Typography>
                                     </Box>
                                 </Grid>
-                                <Grid item xs={8} id="photos">
+                                <Grid item md={6} xl={4} style={{maxHeight: '500px', justifyContent: 'flex-end'}} id="photos">
                                     {
                                         prop.property_pictures && prop.property_pictures.length > 0 && (
                                             <ImageCarousel images={prop.property_pictures} />
@@ -209,7 +149,27 @@ export default function RenterApplicationDetails() {
                                     <Typography>
                                         {prop.property_amenities}
                                     </Typography>
-                                    <Divider sx={{ mt: 2, mb: 2 }}/>
+                                </Grid>
+                                <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
+                                <Grid item xs={5}>
+                                        <Typography variant="h4">
+                                            Map goes here
+                                        </Typography>
+                                </Grid>
+                            </Grid>
+                            <Divider sx={{ mb: 2 }}/>
+                            <Typography variant="h5" style={{fontWeight: 'bold'}} gutterBottom>
+                                Applications
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Paper>
+            </div>
+        </NavigationMenu>
+    </>
+}
+/*
+
                                     <Box>
                                         <Typography variant="h5">
                                             Upcoming viewings
@@ -219,26 +179,7 @@ export default function RenterApplicationDetails() {
                                             property={property}
                                         />
                                     </Box>
-                                </Grid>
-                                <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
-                                <Box
-                                    display="flex"
-                                    // alignItems="center"
-                                    justifyContent="center"
-                                    style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
-                                >
-                                    <Typography variant="h4">
-                                        Map goes here
-                                    </Typography>
-                                </Box>
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </Paper>
-            </div>
-        </NavigationMenu>
-    </>
-}
+ */
 
 // Function to display amenities of a property
 function AmenitiesList({ amenities }) {

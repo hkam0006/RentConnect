@@ -42,37 +42,14 @@ export default function PropertyDetailsTenant() {
         // viewing2
     ]
 
-    // Dummy property
-    const [property, setProperty] = useState({
-        street: '1702/655 Chapel Street',
-        suburb: 'South Yarra 3141',
-        bedrooms: 2,
-        bathrooms: 2,
-        carSpots: 1,
-        squareMetres: 285,
-        vacancy: 25,
-        attendees: 31,
-        applications: 15,
-        listingImages: [
-            ListingImage,
-            ListingImageAppt,
-            ListingImage,
-            ListingImageAppt
-        ],
-        type: "Townhouse",
-        price: "750",
-        available: "31st March 2024",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        amenities: {
-            airConditioning: ['Air conditioning', AcUnitIcon],
-            wardrobes: ['Built-in wardrobes', CheckroomIcon],
-            deck: ['Deck', DeckIcon]
-        }
-    });
+    // property ID to query database
+    const { propertyId } = useParams();
+    console.log(propertyId);
+    const { property, loading } = useGetPropertyByPropertyID(propertyId);
 
     // For request inspection modal
     const [inspectionRequestOpen, setInspectionRequestOpen] = useState(false);
-    const [inspectionRequestData, setInspectionRequestData] = useState(property);
+    const [inspectionRequestData, setInspectionRequestData] = useState(property[0]);
     const handleInspectionRequestOpen = () => setInspectionRequestOpen(true);
     const handleInspectionRequestClose = () => setInspectionRequestOpen(false);
 
@@ -83,41 +60,13 @@ export default function PropertyDetailsTenant() {
         handleInspectionRequestClose();
     };
 
-    // get user ID
-    const [userID, setUserID] = useState(null);
-    const { fetchUserID } = useGetUserID();
-    useEffect( () => {
-        (async () => {
-            const {data} = await fetchUserID();
-            setUserID(data);
-        })();
-    });
-
-    // and check if we're displaying a page to show application or what
-
-
-    // property ID to query database.
-    const { propertyId } = useParams()
-    const { fetchProperty } = useGetPropertyByPropertyID(propertyId)
-    const [prop, setProp] = useState()
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-
-
-    useEffect (() => {
-        (async () => {
-            const { data, error } = await fetchProperty()
-            setProp(data[0]);
-            setError(error);
-            setLoading(false);
-        })();
-    }, []);
-
     if (loading) return <AppLoader />
 
-    if (!prop) {
+    if (!property) {
         return <Typography>No property found.</Typography>
     }
+
+    let prop = property[0];
 
     return <>
         {inspectionRequestOpen && (
@@ -210,7 +159,7 @@ export default function PropertyDetailsTenant() {
                                     </Typography>
                                     <UpcomingViewingsTable
                                         viewings={viewings}
-                                        property={property}
+                                        property={prop}
                                     />
                                 </Box>
                             </Grid>
@@ -235,6 +184,7 @@ export default function PropertyDetailsTenant() {
 }
 
 // Function to display amenities of a property
+/*
 function AmenitiesList({ amenities }) {
     const amenitiesArray = Object.values(amenities);
 
@@ -270,6 +220,7 @@ function AmenitiesList({ amenities }) {
                 ))}
             </Grid>
         </Grid>
-        
+
     );
 }
+ */

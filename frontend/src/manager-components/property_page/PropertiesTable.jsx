@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ImgElement from './ImgElement';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Box } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Box, Snackbar, Alert } from "@mui/material"
 import { styled } from '@mui/material/styles';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
@@ -20,6 +20,7 @@ const fullAddress = (number, name, type, suburb, state) => {
 export function PropertiesTable({ properties, handleAddProperties, propManagers, setProperties }) {
 
   const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -44,6 +45,24 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
 
   const handleSaveProperty = async (property) => {
     try {
+      // Check if the property is already saved
+      const { data: existingSavedProperties, error: checkError } = await supabase
+        .from('SAVED PROPERTIES')
+        .select('*')
+        .eq('property_id', property.property_id);
+
+      if (checkError) {
+        console.error('Error checking saved properties:', checkError);
+        return;
+      }
+
+      // If the property is already saved, show the Snackbar and return
+      if (existingSavedProperties.length > 0) {
+        setSnackbarOpen(true);
+        return;
+      }
+
+      // If not saved, proceed to add the property
       const { data, error } = await supabase
         .from('SAVED PROPERTIES')
         .insert([
@@ -57,14 +76,32 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
         console.error('Error saving property:', error);
       } else {
         console.log('Property saved successfully:', data);
+        navigate('/savedproperties');
       }
     } catch (err) {
       console.error('Unexpected error:', err);
     }
   };
 
+  // Handle Snackbar close event
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+
   return <>
     {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
+    {/* Snackbar for showing "Property already saved" message */}
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={handleSnackbarClose}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
+      <Alert onClose={handleSnackbarClose} severity="info" sx={{ width: '100%' }}>
+        Property already saved!
+      </Alert>
+    </Snackbar>
     {properties.length > 0 ? <TableContainer sx={{ borderRadius: 3, height: "700px" }}>
       <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Table of properties" >
         <TableHead>

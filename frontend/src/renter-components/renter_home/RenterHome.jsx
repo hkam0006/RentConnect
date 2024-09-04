@@ -10,37 +10,14 @@ import useGetApplicationsByCompanyID from "../../queries/Application/useGetAppli
 import AppLoader from "../../manager-components/property_page/AppLoader";
 import useGetApplicationsByRenterID from "../../queries/Application/useGetApplicationsByRenterID";
 import useGetPropertiesByCompanyID from "../../queries/Property/useGetPropertiesByCompanyID";
-
-const TEST_RENTER_ID = "c779fb8e-674f-46da-ba91-47cc5f2f269d"
+import useGetUserID from "../../queries/useGetUserID";
 
 export default function RenterHome() {
-    const { fetchApplications } = useGetApplicationsByRenterID(TEST_RENTER_ID);
-    const [applications, setApplications] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        (async () => {
-            const { data, error } = await fetchApplications()
-            setApplications(data);
-            setError(error);
-            setLoading(false)
-        })();
-    }, [])
+    const {userID, loading: userLoading} = useGetUserID();
+    const {applications, loading: applicationsLoading} = useGetApplicationsByRenterID(userID);
 
-    const [user, setUser] = useState({});
-    useEffect(() => {
-        async function getUserData() {
-            await supabase.auth.getUser().then((value) =>{
-                if (value.data?.user) {
-                    setUser(value.data.user);
-                }
-            })
-        }
-        getUserData();
-    }, []);
-
-    if (loading) return <AppLoader />
+    if (userLoading || applicationsLoading) return <AppLoader />
 
     return (
         <NavigationMenu>

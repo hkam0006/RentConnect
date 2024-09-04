@@ -39,7 +39,7 @@ export default function SideDrawer() {
       <Box sx={{ overflow: "auto" }}>
         <List>
           {[
-            { text: "Dashboard", icon: <HomeIcon />, link: "/dashboard" },
+            { text: "Dashboard", icon: <HomeIcon />, link: "/RenterHome" },
             { text: "Messages", icon: <ChatIcon />, link: "/messages" },
             { text: "Rental Profile", icon: <PermContactCalendarIcon />, link: "/RentalProfile" },
             {text: "Properties", icon: <PropertiesIcon />, link: "/property",},

@@ -32,52 +32,17 @@ export default function PropertyDetails() {
         inspectedDate: '25 April 2024',
         status: 'Shortlisted'
     }
-    // Dummy application
-    const app2 = {
-        matchScore: '70',
-        name: "Jane Tenant",
-        rentToIncomeRatio: '43%',
-        inspectedDate: '25 April 2024',
-        status: 'Pending'
-    }
-    // Dummy array of applications
     const applications = [
-        app1,
-        app2
+        app1
     ]
 
-    // Dummy property
-    const [property, setProperty] = useState({
-        name: '1702/655 Chapel Street, South Yarra 3141',
-        bedrooms: 2,
-        bathrooms: 2,
-        carSpots: 1,
-        squareMetres: 285,
-        vacancy: 25,
-        attendees: 31,
-        applications: 15,
-        listingImages: [
-            ListingImage,
-            ListingImageAppt,
-            ListingImage,
-            ListingImageAppt
-        ],
-        type: "Townhouse",
-        price: "750",
-        available: "31st March 2024",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        amenities: {
-            airConditioning: ['Air conditioning', AcUnitIcon],
-            wardrobes: ['Built-in wardrobes', CheckroomIcon],
-            deck: ['Deck', DeckIcon]
-        }
-    });
-
-
+    // property ID to query database.
+    const { propertyId } = useParams()
+    const { property, loading } = useGetPropertyByPropertyID(propertyId)
 
     // For editting modal
     const [open, setOpen] = useState(false);
-    const [data, setData] = useState(property);
+    const [data, setData] = useState(property[0]);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -85,42 +50,15 @@ export default function PropertyDetails() {
     const handleSubmit = () => {
 
         // For editting, handle database changes here
-        setProperty({ ...property, ...data });
+        //setProperty({ ...property, ...data });
         handleClose();
     };
-
-    const initialData = {
-        property_street_number: '',
-        property_street_name: '',
-        property_street_type: '',
-        property_type: '',
-        property_rent: '',
-        property_description: '',
-        property_amenities: ''
-      };
-
-
-    // property ID to query database.
-    const { propertyId } = useParams()
-    const { fetchProperty } = useGetPropertyByPropertyID(propertyId)
-    const [prop, setProp] = useState()
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-
-
-    useEffect (() => {
-        (async () => {
-            const { data, error } = await fetchProperty()
-
-            setProp(data[0]);
-            setError(error);
-            setLoading(false);
-        })();
-    }, []);
 
     if (!prop) {
         return <Typography>No property found.</Typography>
     }
+
+    let prop = property[0];
 
     return <>
         {open && (
