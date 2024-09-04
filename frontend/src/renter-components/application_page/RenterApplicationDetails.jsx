@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Stack, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
+import {
+    Container,
+    Stack,
+    Typography,
+    Box,
+    Grid,
+    Divider,
+    Card,
+    CardContent,
+    Button,
+    Table,
+    TableHead, TableRow, TableBody, TableCell, tableCellClasses, Chip
+} from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
@@ -15,6 +27,10 @@ import Paper from "@mui/material/Paper";
 import useGetUserID from "../../queries/useGetUserID";
 import useGetApplicationsByPropertyAndUserID from "../../queries/Application/useGetApplicationsByPropertyAndUserID";
 import MapShowingProperty from "../../public-components/MapShowingProperty";
+import ApplicationsTable from "../renter_home/ApplicationsTable";
+import ImgElement from "../../manager-components/property_page/ImgElement";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import {styled} from "@mui/material/styles";
 
 export default function RenterApplicationDetails() {
 
@@ -158,6 +174,9 @@ export default function RenterApplicationDetails() {
                             <Typography variant="h5" style={{fontWeight: 'bold'}} gutterBottom>
                                 Applications
                             </Typography>
+                            <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
+                                <PropertyApplicationsTable applications={applications}/>
+                            </Paper>
                         </CardContent>
                     </Card>
                 </Paper>
@@ -165,18 +184,72 @@ export default function RenterApplicationDetails() {
         </NavigationMenu>
     </>
 }
-/*
 
-                                    <Box>
-                                        <Typography variant="h5">
-                                            Upcoming viewings
-                                        </Typography>
-                                        <UpcomingViewingsTable
-                                            viewings={viewings}
-                                            property={property}
-                                        />
-                                    </Box>
- */
+function ApplicationStatusChip(appStatus) {
+    if (appStatus.appStatus === "approved") {
+        return <Chip label="Approved" color="success"/>
+    } else if (appStatus.appStatus === "rejected") {
+        return <Chip label="Rejected" color="error"/>
+    } else {
+        return <Chip label="In Progress" color="info" variant="outlined"/>
+    }
+}
+
+function applicationLastUpdated(application) {
+    if (application.application_status_finalised_date) {
+        return new Date(application.application_status_finalised_date).toLocaleDateString('en-GB')
+    } else {
+        return new Date().toLocaleDateString('en-GB')
+    }
+}
+
+function PropertyApplicationsTable({applications}) {
+    const StyledTableCell = styled(TableCell)(({ theme }) => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: "white",
+        },
+        [`&.${tableCellClasses.body}`]: {
+            fontSize: 12,
+        },
+    }));
+
+    return (
+        <Table stickyHeader sx={{minWidth: 650}} aria-label="Table of properties">
+            <TableHead>
+                <TableRow>
+                    <StyledTableCell><Typography fontSize={"12px"} fontWeight={700}>Application Date </Typography></StyledTableCell>
+                    <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Last Updated</Typography></StyledTableCell>
+                    <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Application Status</Typography></StyledTableCell>
+                </TableRow>
+            </TableHead>
+            <TableBody>
+                {applications.map((row, index) => (
+                    <TableRow
+                        key={index}
+                        sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                    >
+                        <TableCell width={{width: "fit-content"}}>
+                            {/* <Card sx={{ padding: 2, }} > */}
+                            <Typography variant='body' fontWeight={700}>
+                                {new Date(row.application_apply_date).toLocaleDateString('en-GB')}
+                            </Typography>
+                            <Stack direction='row' spacing={2} justifyContent="start" sx={{width: "fit-content"}}>
+                                test
+                            </Stack>
+                            {/* </Card> */}
+                        </TableCell>
+                        <TableCell align="right">
+                            {applicationLastUpdated(row)}
+                        </TableCell>
+                        <TableCell align="right">
+                            <ApplicationStatusChip appStatus={row.application_status}/>
+                        </TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
+    );
+}
 
 // Function to display amenities of a property
 function AmenitiesList({ amenities }) {
