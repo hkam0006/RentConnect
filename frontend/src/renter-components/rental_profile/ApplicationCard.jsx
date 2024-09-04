@@ -1,11 +1,13 @@
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID'
 import { Box, Typography, Button, Card, CardMedia } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import AppLoader from "../../manager-components/property_page/AppLoader";
 
 
 function ApplicationCard({ application }) {
     const navigate = useNavigate()
-    const { property, loading } = useGetPropertyByPropertyID(application.property_id)?.[0] || null
+    const { property: prop, loading } = useGetPropertyByPropertyID(application.property_id)
+    let property = prop[0];
 
     const applicationStatusColour = (status) => {
         switch (status) {
@@ -32,6 +34,8 @@ function ApplicationCard({ application }) {
                 return status
         }
     }
+
+    if (loading) return <AppLoader />
 
     return (
         <Box>

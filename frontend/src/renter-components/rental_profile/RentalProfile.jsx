@@ -13,18 +13,18 @@ import useCheckRenterEmploymentByRenterID from '../../queries/Renter Employment/
 import useCheckRenterSupportingDocumentsByRenterID from '../../queries/Application Supporting Document/useCheckRenterSupportingDocumentsByRenterID'
 
 import useGetApplicationsByRenterID from '../../queries/Application/useGetApplicationsByRenterID'
+import AppLoader from "../../manager-components/property_page/AppLoader";
+import useGetUserID from "../../queries/useGetUserID";
 
 function RentalProfile () {
-    const navigate = useNavigate()
-
-    const [userID, setUserID] = useState(null)
+    const {userID, loading: userLoading} = useGetUserID()
     const hasAddressHistory = useCheckRenterAddressHistoryByRenterID(userID)
     const hasEmployment = useCheckRenterEmploymentByRenterID(userID)
     const hasSupportingDocuments = useCheckRenterSupportingDocumentsByRenterID(userID)
     const [profileCompletionScore, setProfileCompletionScore] = useState(25)
+    const {applications: appliedProperties, loading: propLoading} = useGetApplicationsByRenterID(userID)
 
-    const {appliedProperties, loading} = useGetApplicationsByRenterID(userID)
-
+    /*
     useEffect(() => {
         // TODO: set this back to getting user id when login is working
         async function getUserID() {
@@ -39,6 +39,8 @@ function RentalProfile () {
         getUserID()
         setUserID('c779fb8e-674f-46da-ba91-47cc5f2f269d')
     }, [])
+
+     */
     
     useEffect(() => {
         let score = 25
@@ -54,69 +56,84 @@ function RentalProfile () {
         setProfileCompletionScore(score)
     }, [hasAddressHistory, hasEmployment, hasSupportingDocuments])
 
-    const ProfileCompletion = () => {
-        return (
-            <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
-                <Typography variant='h4'>Your Rental Profile</Typography>
-                <Grid container alignItems='center' paddingTop={2}>
-                    <Grid item xs={2}>
-                        <Typography variant='h4'>{profileCompletionScore}%</Typography>
-                    </Grid>
-                    <Grid item xs={10} sx={{ padding: 2 }}>
-                        <LinearProgress variant='determinate' value={profileCompletionScore} style={{ borderRadius: '10px', height: '40px' }}/>
-                    </Grid>
-                </Grid>
-                <Box paddingTop={2}>
-                    <Button variant='contained' color='primary' sx={{ width: '100%', height: '50px' }} onClick={() => navigate('/BuildRentalProfile')}>
-                        {(profileCompletionScore === 100) ? 'Update Profile' : 'Finish Building Your Profile'}
-                    </Button>
-                </Box>
-            </Paper>
-        )
-    }
-
-    const ApplyAnywhere = () => {
-        return (
-            <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
-                <Typography variant='h4'>Apply Anywhere</Typography>
-                <Typography variant='body1' paddingTop={2}>Re-use your Rent Connect Profile and apply for any property</Typography>
-                <Box paddingTop={2}>
-                    <Button variant='contained' color='primary' sx={{ width: '100%', height: '50px' }} onClick={() => navigate('/property')}>
-                        Apply Anywhere
-                    </Button>
-                </Box>
-            </Paper>
-            
-        )
-    }
-    
-    const RentalApplications = () => {
-        return (
-            <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
-                <Typography variant='h4' paddingBottom={2}>Your Rental Applications</Typography>
-                {(appliedProperties.length === 0) ? (
-                    <Typography variant='body1'>You currently have no applications in progress</Typography> 
-                ) : (
-                    appliedProperties.map((appliedProperty, index) => (
-                        <ApplicationCard key={index} application={appliedProperty} />
-                    ))
-                )}
-            </Paper>
-        )
-    }
+    if (userLoading || propLoading) { return <AppLoader />}
 
     return (
         <Box>
             <NavigationMenu />
             <Box display="flex" justifyContent="center">
                 <Box margin={2} sx={{ width: '50%', marginTop: '64px', marginLeft: '190px' }} >
-                    <ProfileCompletion />
+                    <ProfileCompletion completionScore={profileCompletionScore} />
                     <ApplyAnywhere />
-                    <RentalApplications />
+                    <RentalApplications properties={appliedProperties} />
                 </Box>
             </Box>
         </Box>
     )
+}
+
+const ProfileCompletion = ({completionScore}) => {
+    const navigate = useNavigate()
+
+    return (
+        <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
+            <Typography variant='h4'>Your Rental Profile</Typography>
+            <Grid container alignItems='center' paddingTop={2}>
+                <Grid item xs={2}>
+                    <Typography variant='h4'>{completionScore}%</Typography>
+                </Grid>
+                <Grid item xs={10} sx={{ padding: 2 }}>
+                    <LinearProgress variant='determinate' value={completionScore} style={{ borderRadius: '10px', height: '40px' }}/>
+                </Grid>
+            </Grid>
+            <Box paddingTop={2}>
+                <Button variant='contained' color='primary' sx={{ width: '100%', height: '50px' }} onClick={() => navigate('/BuildRentalProfile')}>
+                    {(completionScore === 100) ? 'Update Profile' : 'Finish Building Your Profile'}
+                </Button>
+            </Box>
+        </Paper>
+    )
+}
+
+const ApplyAnywhere = () => {
+    const navigate = useNavigate()
+
+    return (
+        <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
+            <Typography variant='h4'>Apply Anywhere</Typography>
+            <Typography variant='body1' paddingTop={2}>Re-use your Rent Connect Profile and apply for any property</Typography>
+            <Box paddingTop={2}>
+                <Button variant='contained' color='primary' sx={{ width: '100%', height: '50px' }} onClick={() => navigate('/property')}>
+                    Apply Anywhere
+                </Button>
+            </Box>
+        </Paper>
+
+    )
+}
+
+const RentalApplications = ({properties}) => {
+    if (properties) {
+        return (
+            <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
+                <Typography variant='h4' paddingBottom={2}>Your Rental Applications</Typography>
+                {(properties.length === 0) ? (
+                    <Typography variant='body1'>You currently have no applications in progress</Typography>
+                ) : (
+                    properties.map((appliedProperty, index) => (
+                        <ApplicationCard key={index} application={appliedProperty} />
+                    ))
+                )}
+            </Paper>
+        );
+    } else {
+        return (
+            <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
+                <Typography variant='h4' paddingBottom={2}>Your Rental Applications</Typography>
+                <Typography variant='body1'>You currently have no applications in progress</Typography>
+            </Paper>
+        );
+    }
 }
 
 export default RentalProfile

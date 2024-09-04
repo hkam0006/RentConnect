@@ -24,6 +24,7 @@ import Paper from "@mui/material/Paper";
 import {supabase} from "../../supabase";
 import useGetUserID from "../../queries/useGetUserID";
 import useGetApplicationsByPropertyAndUserID from "../../queries/Application/useGetApplicationsByPropertyAndUserID";
+import {Close} from "@mui/icons-material";
 
 export default function RenterApplicationDetails() {
 
@@ -43,6 +44,14 @@ export default function RenterApplicationDetails() {
     // get applications from user at this property
     const { applications, loading: applicationLoading } = useGetApplicationsByPropertyAndUserID(propertyId, userID)
     console.log(applications)
+
+    // determine if there is an active application
+    const [hasActiveApplication, setHasActiveApplication] = useState(false);
+    for (let i=0; i<applications.length; i++) {
+        if (applications[i].application_status === 'approved' && !setHasActiveApplication) {
+            setHasActiveApplication(true)
+        }
+    }
 
     // For request inspection modal
     const [inspectionRequestOpen, setInspectionRequestOpen] = useState(false);
@@ -90,15 +99,7 @@ export default function RenterApplicationDetails() {
                                     >
                                         Message the agent
                                     </Button>
-                                    <Button
-                                        xs={{ mt: 5, mr: 2 }}
-                                        variant='contained'
-                                        size='medium'
-                                        style={{ backgroundColor: 'green', colour: 'white' }}
-                                        endIcon={<OpenInNewIcon />}
-                                    >
-                                        Apply
-                                    </Button>
+                                    <ApplicationButton hasActiveApplication={hasActiveApplication}/>
                                 </Stack>
                             </Grid>
                             <Divider sx={{ mt: 2, mb: 2 }}/>
@@ -180,6 +181,37 @@ export default function RenterApplicationDetails() {
                                         />
                                     </Box>
  */
+
+const ApplicationButton = ({hasActiveApplication}) => {
+    let button;
+
+    if (hasActiveApplication) {
+        button = (
+            <Button
+                xs={{ mt: 5, mr: 2 }}
+                variant='contained'
+                size='medium'
+                style={{ backgroundColor: 'red', colour: 'white' }}
+                startIcon={<Close />}
+            >
+                Cancel Application
+            </Button>
+        );
+    } else {
+        button = (
+            <Button
+                xs={{ mt: 5, mr: 2 }}
+                variant='contained'
+                size='medium'
+                style={{ backgroundColor: 'green', colour: 'white' }}
+                endIcon={<OpenInNewIcon />}
+            >
+                Apply
+            </Button>
+        );
+    }
+    return button;
+}
 
 // Function to display amenities of a property
 function AmenitiesList({ amenities }) {
