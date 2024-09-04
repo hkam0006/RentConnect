@@ -11,10 +11,12 @@ const ACCESS_TOKEN =
     "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ";
 const geocodingClient = mbxGeocoding({ accessToken: ACCESS_TOKEN });
 
+// returns a formatted string of the address
 const fullAddress = (number, name, type, suburb, state) => {
     return `${number} ${name} ${type}, ${suburb}, ${state}`;
 };
 
+// gets the coordinates of provided array and returns as array
 const getCoordinates = async (addresses) => {
     try {
         const coordinatePromises = addresses.map((address, index) =>
@@ -41,6 +43,13 @@ const getCoordinates = async (addresses) => {
     }
 };
 
+/**
+ * A component which shows a Mapbox which is centered and has a marker placed on the provided property.
+ *
+ * @param {Property} property the property to display on the map
+ * @returns the map to display
+ * @author Luke Phillips
+ */
 export default function MapShowingProperty({property}) {
     const address = [fullAddress(property[0].property_street_number, property[0].property_street_name, property[0].property_street_type, property[0].property_suburb, property[0].property_state)];
 

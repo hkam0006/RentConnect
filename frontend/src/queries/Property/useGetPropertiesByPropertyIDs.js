@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react';
  * Returns all properties matching the provided propertyIDs. Follows the order of the
  * IDs provided.
  *
- * @param property_ids array containing all propertyIDs
- * @return returns array containing properties and loading state
+ * @param {[String]} property_ids array containing all propertyIDs
+ * @return {Properties, boolean}  array containing properties
  * @author Luke Phillips
  */
 const useGetPropertiesByPropertyIDs = (property_ids) => {

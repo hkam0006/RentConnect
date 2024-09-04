@@ -194,6 +194,7 @@ export default function RenterApplicationDetails() {
  * A custom Chip which shows the application status. Required application status to be passed
  * as a parameter.
  *
+ *
  * @param appStatus string containing status of the application
  * @returns a customised Chip component
  * @author Luke Phillips
@@ -211,6 +212,7 @@ function ApplicationStatusChip(appStatus) {
 /**
  * Returns the most recent updated date of the application (or today's date if field is NULL)
  *
+ * @memberof RenterApplicationStatus
  * @param application the application we are checking
  * @returns a Date object with last updated Date or today's date
  * @author Luke Phillips
@@ -225,6 +227,7 @@ function applicationLastUpdated(application) {
 
 /**
  * A component which displays all applications the users has made at this property.
+ * @memberof RenterApplicationStatus
  * @param applications array containing all applications to show
  * @returns component to display
  * @author Luke Phillips

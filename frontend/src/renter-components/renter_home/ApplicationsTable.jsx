@@ -30,8 +30,8 @@ const fullAddress = (number, name, type, suburb, state) => {
  * A custom Chip which shows the application status. Required application status to be passed
  * as a parameter.
  *
- * @param appStatus string containing status of the application
- * @returns a customised Chip component
+ * @param {String} appStatus string containing status of the application
+ * @returns {Chip} a customised Chip component
  * @author Luke Phillips
  */
 function ApplicationStatusChip(appStatus) {
