@@ -32,6 +32,11 @@ import ImgElement from "../../manager-components/property_page/ImgElement";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import {styled} from "@mui/material/styles";
 
+/**
+ * A page which shows a property and its information; and all applications made by the signed-in renter at this
+ * property. The property to display can be found by the propertyID found in the params of the URL.
+ * @author Luke Phillips
+ */
 export default function RenterApplicationDetails() {
 
     // Cuncomment below to view the table
@@ -71,13 +76,13 @@ export default function RenterApplicationDetails() {
         handleInspectionRequestClose();
     };
 
+    // returns loading icon if still loading, or says no property found if none could be found
     if (propertyLoading || applicationLoading) return <AppLoader />
     if (!property) {
         return <Typography>No property found.</Typography>
     }
 
     let prop = property[0];
-
     return <>
         {inspectionRequestOpen && (
             <InspectionRequestModal
@@ -185,6 +190,14 @@ export default function RenterApplicationDetails() {
     </>
 }
 
+/**
+ * A custom Chip which shows the application status. Required application status to be passed
+ * as a parameter.
+ *
+ * @param appStatus string containing status of the application
+ * @returns a customised Chip component
+ * @author Luke Phillips
+ */
 function ApplicationStatusChip(appStatus) {
     if (appStatus.appStatus === "approved") {
         return <Chip label="Approved" color="success"/>
@@ -195,6 +208,13 @@ function ApplicationStatusChip(appStatus) {
     }
 }
 
+/**
+ * Returns the most recent updated date of the application (or today's date if field is NULL)
+ *
+ * @param application the application we are checking
+ * @returns a Date object with last updated Date or today's date
+ * @author Luke Phillips
+ */
 function applicationLastUpdated(application) {
     if (application.application_status_finalised_date) {
         return new Date(application.application_status_finalised_date).toLocaleDateString('en-GB')
@@ -203,6 +223,12 @@ function applicationLastUpdated(application) {
     }
 }
 
+/**
+ * A component which displays all applications the users has made at this property.
+ * @param applications array containing all applications to show
+ * @returns component to display
+ * @author Luke Phillips
+ */
 function PropertyApplicationsTable({applications}) {
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {

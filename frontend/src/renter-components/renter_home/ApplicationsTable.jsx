@@ -26,19 +26,14 @@ const fullAddress = (number, name, type, suburb, state) => {
     return `${number} ${name} ${type}, ${suburb}, ${state}`
 }
 
-// for testing use
-function createData(id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager, applicationStatus) {
-    return { id, address, vacancy, attendees, applications, listingImage, type, price, available, bedrooms, bathrooms, car_spaces, propManager, applicationStatus };
-}
-
-// for testing use
-const defaultRows = [
-    createData(crypto.randomUUID(), '1702/655 Chapel Street, South Yarra 3141', 25, 31, 15, ListingImage, "Apartment", "750 per week", "31st March 2024", 3, 3, 2, "Jensen Huang", "approved"),
-    createData(crypto.randomUUID(), '123 Fake Street, Melbourne 3000', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 3, 2, 1, "Jensen Huang", "progress"),
-    createData(crypto.randomUUID(), '52 Aperture Way, Eltham 3095', 30, 10, 13, ListingImage, "House", "800 per week", "31st Feb 2024", 1, 1, 0, "Elon Musk", "rejected"),
-];
-
-
+/**
+ * A custom Chip which shows the application status. Required application status to be passed
+ * as a parameter.
+ *
+ * @param appStatus string containing status of the application
+ * @returns a customised Chip component
+ * @author Luke Phillips
+ */
 function ApplicationStatusChip(appStatus) {
     if (appStatus.appStatus === "approved") {
         return <Chip label="Approved" color="success"/>
@@ -49,6 +44,13 @@ function ApplicationStatusChip(appStatus) {
     }
 }
 
+/**
+ * Table containing information about all applications made by a renter. Requires application
+ * data to be passed as a parameter.
+ *
+ * @param applications an array containing all applications made by a renter
+ * @author Luke Phillips
+ */
 export default function ApplicationsTable(applications) {
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
@@ -62,24 +64,11 @@ export default function ApplicationsTable(applications) {
     const navigate = useNavigate();
 
     // get all property IDs for all applications
-    let propertyIDs = [];
-    for (let i = 0; i < applications.applications.length; i++) {
-        propertyIDs.push(applications.applications[i].property_id);
-    }
+    //const [propertyIDs, setPropertyIDs] = useState([]);
+    const propertyIDs = applications.applications.map(application => application.property_id);
 
     // get all relevant properties from DB and store in properties array
-    const [properties, setProperties] = React.useState([]);
-    const { fetchProperties } = useGetPropertiesByPropertyIDs(propertyIDs)
-    const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(true)
-    useEffect(() => {
-        (async () => {
-            const {data, error} = await fetchProperties()
-            setProperties(data)
-            setError(error)
-            setLoading(false)
-        })();
-    }, [])
+    const {properties, loading} = useGetPropertiesByPropertyIDs(propertyIDs);
 
     if (loading) return <AppLoader />
 
