@@ -5,26 +5,16 @@ import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import CheckroomIcon from '@mui/icons-material/Checkroom';
-import DeckIcon from '@mui/icons-material/Deck';
-import { UpcomingViewingsTable } from './UpcomingViewingsTable';
 import InspectionRequestModal from './InspectionRequestModal';
 import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
-
-// Demo Images
-import ListingImage from '../../manager-components/property_page/listing.jpg'
-import ListingImageAppt from '../../manager-components/property_page/listing2.jpg'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 import AppLoader from "../../manager-components/property_page/AppLoader";
-import Carousel from "react-material-ui-carousel";
 import Paper from "@mui/material/Paper";
-import {supabase} from "../../supabase";
 import useGetUserID from "../../queries/useGetUserID";
 import useGetApplicationsByPropertyAndUserID from "../../queries/Application/useGetApplicationsByPropertyAndUserID";
-import {Close} from "@mui/icons-material";
+import MapShowingProperty from "../../public-components/MapShowingProperty";
 
 export default function RenterApplicationDetails() {
 
@@ -43,12 +33,11 @@ export default function RenterApplicationDetails() {
 
     // get applications from user at this property
     const { applications, loading: applicationLoading } = useGetApplicationsByPropertyAndUserID(propertyId, userID)
-    console.log(applications)
 
     // determine if there is an active application
     const [hasActiveApplication, setHasActiveApplication] = useState(false);
     for (let i=0; i<applications.length; i++) {
-        if (applications[i].application_status === 'approved' && !setHasActiveApplication) {
+        if (applications[i].application_status === "approved" && !hasActiveApplication) {
             setHasActiveApplication(true)
         }
     }
@@ -67,7 +56,6 @@ export default function RenterApplicationDetails() {
     };
 
     if (propertyLoading || applicationLoading) return <AppLoader />
-
     if (!property) {
         return <Typography>No property found.</Typography>
     }
@@ -99,7 +87,17 @@ export default function RenterApplicationDetails() {
                                     >
                                         Message the agent
                                     </Button>
-                                    <ApplicationButton hasActiveApplication={hasActiveApplication}/>
+                                    {hasActiveApplication ? null : (
+                                        <Button
+                                            xs={{ mt: 5, mr: 2 }}
+                                            variant='contained'
+                                            size='medium'
+                                            style={{ backgroundColor: 'green', colour: 'white' }}
+                                            endIcon={<OpenInNewIcon />}
+                                        >
+                                            Apply
+                                        </Button>
+                                    )}
                                 </Stack>
                             </Grid>
                             <Divider sx={{ mt: 2, mb: 2 }}/>
@@ -153,9 +151,7 @@ export default function RenterApplicationDetails() {
                                 </Grid>
                                 <Divider orientation='vertical' flexItem sx={{ mx: 2 }} />
                                 <Grid item xs={5}>
-                                        <Typography variant="h4">
-                                            Map goes here
-                                        </Typography>
+                                        <MapShowingProperty property={property} />
                                 </Grid>
                             </Grid>
                             <Divider sx={{ mb: 2 }}/>
@@ -181,37 +177,6 @@ export default function RenterApplicationDetails() {
                                         />
                                     </Box>
  */
-
-const ApplicationButton = ({hasActiveApplication}) => {
-    let button;
-
-    if (hasActiveApplication) {
-        button = (
-            <Button
-                xs={{ mt: 5, mr: 2 }}
-                variant='contained'
-                size='medium'
-                style={{ backgroundColor: 'red', colour: 'white' }}
-                startIcon={<Close />}
-            >
-                Cancel Application
-            </Button>
-        );
-    } else {
-        button = (
-            <Button
-                xs={{ mt: 5, mr: 2 }}
-                variant='contained'
-                size='medium'
-                style={{ backgroundColor: 'green', colour: 'white' }}
-                endIcon={<OpenInNewIcon />}
-            >
-                Apply
-            </Button>
-        );
-    }
-    return button;
-}
 
 // Function to display amenities of a property
 function AmenitiesList({ amenities }) {
