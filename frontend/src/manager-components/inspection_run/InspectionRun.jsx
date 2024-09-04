@@ -12,10 +12,7 @@ import {
 } from "@mui/material";
 import { supabase } from "../../supabase";
 import { styled } from "@mui/material/styles";
-import MapComponent from "./MapNav";
-
-const ACCESS_TOKEN =
-  "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ";
+import MapComponent from "./MapNav"; // Ensure the updated MapNav component is used
 
 const InspectionRun = () => {
   const [activeSection, setActiveSection] = useState("inspection");
@@ -45,17 +42,15 @@ const InspectionRun = () => {
           throw propertiesError;
         }
 
-        const { data: propertyManager, error: propertyManagerError } = await supabase
-          .from("PROPERTY MANAGER")
-          .select("*");
+        const { data: propertyManager, error: propertyManagerError } =
+          await supabase.from("PROPERTY MANAGER").select("*");
 
         if (propertyManagerError) {
           throw propertyManagerError;
         }
 
-        const { data: inspectionRuns, error: inspectionRunsError } = await supabase
-          .from("INSPECTION RUN")
-          .select("*");
+        const { data: inspectionRuns, error: inspectionRunsError } =
+          await supabase.from("INSPECTION RUN").select("*");
 
         if (inspectionRunsError) {
           throw inspectionRunsError;
@@ -73,7 +68,8 @@ const InspectionRun = () => {
           const propertyManagerData = inspectionRun
             ? propertyManager.find(
                 (manager) =>
-                  manager.property_manager_id === inspectionRun.property_manager_id
+                  manager.property_manager_id ===
+                  inspectionRun.property_manager_id
               )
             : null;
 
@@ -107,30 +103,16 @@ const InspectionRun = () => {
     return `${number} ${name} ${type}, ${suburb}, ${state}`;
   };
 
+  // Updated handleShowRoute to accommodate flexible origin/destination
   const handleShowRoute = (propertyManagerId) => {
     const filteredInspections = inspectionsData.filter(
       (inspection) =>
-        inspection.propertyManagerData.property_manager_id === propertyManagerId
+        inspection.propertyManagerData.property_manager_id ===
+        propertyManagerId
     );
 
     if (filteredInspections.length >= 2) {
-      const origin = fullAddress(
-        filteredInspections[0].propertyData.property_street_number,
-        filteredInspections[0].propertyData.property_street_name,
-        filteredInspections[0].propertyData.property_type,
-        filteredInspections[0].propertyData.property_suburb,
-        filteredInspections[0].propertyData.property_state
-      );
-
-      const destination = fullAddress(
-        filteredInspections[filteredInspections.length - 1].propertyData.property_street_number,
-        filteredInspections[filteredInspections.length - 1].propertyData.property_street_name,
-        filteredInspections[filteredInspections.length - 1].propertyData.property_type,
-        filteredInspections[filteredInspections.length - 1].propertyData.property_suburb,
-        filteredInspections[filteredInspections.length - 1].propertyData.property_state
-      );
-
-      const waypoints = filteredInspections.slice(1, -1).map((inspection) =>
+      const addresses = filteredInspections.map((inspection) =>
         fullAddress(
           inspection.propertyData.property_street_number,
           inspection.propertyData.property_street_name,
@@ -139,10 +121,16 @@ const InspectionRun = () => {
           inspection.propertyData.property_state
         )
       );
+
+      // Dynamic assignment of origin, destination, and waypoints
+      const origin = addresses[0];
+      const destination = addresses[addresses.length - 1];
+      const waypoints = addresses.slice(1, -1);
+
       setMapData({ origin, destination, waypoints });
-      console.log(destination)
-      console.log(origin)
-      console.log(waypoints)
+      console.log("Origin:", origin);
+      console.log("Destination:", destination);
+      console.log("Waypoints:", waypoints);
     }
   };
 
@@ -159,7 +147,11 @@ const InspectionRun = () => {
           {activeSection === "inspection" && (
             <Typography variant="h5">Inspections Runs</Typography>
           )}
-          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="Table of properties">
+          <Table
+            stickyHeader
+            sx={{ minWidth: 650 }}
+            aria-label="Table of properties"
+          >
             <TableHead>
               <TableRow>
                 <StyledTableCell>
@@ -197,8 +189,14 @@ const InspectionRun = () => {
                 >
                   <TableCell>
                     <Typography variant="body" fontWeight={700}>
-                      {inspection.propertyManagerData.property_manager_first_name}{" "}
-                      {inspection.propertyManagerData.property_manager_last_name}
+                      {
+                        inspection.propertyManagerData
+                          .property_manager_first_name
+                      }{" "}
+                      {
+                        inspection.propertyManagerData
+                          .property_manager_last_name
+                      }
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
@@ -226,7 +224,9 @@ const InspectionRun = () => {
                   <TableCell align="right">
                     <button
                       onClick={() =>
-                        handleShowRoute(inspection.propertyManagerData.property_manager_id)
+                        handleShowRoute(
+                          inspection.propertyManagerData.property_manager_id
+                        )
                       }
                     >
                       Show Route
@@ -237,6 +237,7 @@ const InspectionRun = () => {
             </TableBody>
           </Table>
         </div>
+        {/* Pass the updated mapData to the MapComponent */}
         <MapComponent
           origin={mapData.origin}
           destination={mapData.destination}

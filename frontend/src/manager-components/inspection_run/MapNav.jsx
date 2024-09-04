@@ -6,39 +6,32 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import mbxGeocoding from "@mapbox/mapbox-sdk/services/geocoding";
 import DrivingInstructionsBox from "./DrivingInstructionsBox";
 
-const ACCESS_TOKEN = "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ";
+const ACCESS_TOKEN =
+  "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ";
 
 const geocodingClient = mbxGeocoding({ accessToken: ACCESS_TOKEN });
 
+// Updated getCoordinates function to return index along with coordinates
 const getCoordinates = async (addresses) => {
   try {
-    const coordinatePromises = addresses.map((address) =>
+    const coordinatePromises = addresses.map((address, index) =>
       geocodingClient
         .forwardGeocode({
           query: address,
           limit: 1,
         })
         .send()
+        .then((response) => ({
+          index, // Capture the original index
+          coordinates:
+            response.body.features.length > 0
+              ? response.body.features[0].geometry.coordinates
+              : null,
+        }))
     );
 
     const responses = await Promise.all(coordinatePromises);
-
-    const coordinates = responses
-      .map((response) => {
-        if (
-          response &&
-          response.body &&
-          response.body.features &&
-          response.body.features.length > 0
-        ) {
-          return response.body.features[0].geometry.coordinates;
-        } else {
-          console.error("Geocoding failed for an address");
-          return null;
-        }
-      })
-      .filter((coord) => coord !== null);
-
+    const coordinates = responses.filter((response) => response.coordinates);
     console.log("Coordinates:", coordinates);
     return coordinates;
   } catch (error) {
@@ -47,19 +40,57 @@ const getCoordinates = async (addresses) => {
   }
 };
 
+// New optimizeRoute function to reorder coordinates
+const optimizeRoute = async (coords) => {
+  const coordinatesStr = coords.map((c) => c.coordinates.join(",")).join(";");
+  const url = `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinatesStr}?access_token=${ACCESS_TOKEN}&source=first&destination=last`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.code === "Ok" && data.trips && data.trips.length > 0) {
+      // Reorder waypoints based on the optimization results
+      const waypoints = data.waypoints.map(
+        (wp) => coords[wp.waypoint_index]
+      );
+      console.log("Optimized waypoints:", waypoints);
+      return waypoints;
+    } else {
+      console.error("Route optimization failed:", data.message);
+    }
+  } catch (error) {
+    console.error("Error optimizing route:", error);
+  }
+
+  return coords; // Return original if optimization fails
+};
+
 const MapComponent = ({ origin, destination, waypoints }) => {
   const [coords, setCoords] = useState([]);
   const [instructions, setInstructions] = useState("");
 
+  // Updated useEffect to fetch and optimize coordinates
   useEffect(() => {
-    const fetchCoordinates = async () => {
-      const coordinates = await getCoordinates([origin, ...waypoints, destination]);
-      setCoords(coordinates);
+    const fetchAndOptimizeCoordinates = async () => {
+      const rawCoords = await getCoordinates([origin, ...waypoints, destination]);
+      if (rawCoords.length < 2) {
+        setCoords([]);
+        return;
+      }
+
+      // Optimize the order of the coordinates
+      const optimizedCoords = await optimizeRoute(rawCoords);
+
+      // Extract only the coordinates for the map
+      const orderedCoords = optimizedCoords.map((item) => item.coordinates);
+      setCoords(orderedCoords);
     };
 
-    fetchCoordinates();
+    fetchAndOptimizeCoordinates();
   }, [origin, destination, waypoints]);
 
+  // Directions setup with optimized coordinates
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: "map",
