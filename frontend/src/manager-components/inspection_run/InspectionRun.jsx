@@ -1,6 +1,6 @@
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import React, { useEffect, useState } from "react";
-import { Typography, Grid } from "@mui/material";
+import { Typography, Grid, Box, Modal } from "@mui/material";
 import {
   Table,
   TableBody,
@@ -22,6 +22,7 @@ const InspectionRun = () => {
     destination: "",
     waypoints: [],
   });
+  const [openModal, setOpenModal] = useState(false); // State to control modal visibility
 
   useEffect(() => {
     const fetchInspectionsData = async () => {
@@ -67,10 +68,10 @@ const InspectionRun = () => {
           );
           const propertyManagerData = inspectionRun
             ? propertyManager.find(
-                (manager) =>
-                  manager.property_manager_id ===
-                  inspectionRun.property_manager_id
-              )
+              (manager) =>
+                manager.property_manager_id ===
+                inspectionRun.property_manager_id
+            )
             : null;
 
           return {
@@ -126,12 +127,16 @@ const InspectionRun = () => {
       const origin = addresses[0];
       const destination = addresses[addresses.length - 1];
       const waypoints = addresses.slice(1, -1);
-
+      setMapData({ origin, destination, waypoints });
+      setOpenModal(true); // Open the modal when the route is set
       setMapData({ origin, destination, waypoints });
       console.log("Origin:", origin);
       console.log("Destination:", destination);
       console.log("Waypoints:", waypoints);
     }
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false); // Close the modal when user clicks outside or on close button
   };
 
   return (
@@ -237,12 +242,28 @@ const InspectionRun = () => {
             </TableBody>
           </Table>
         </div>
-        {/* Pass the updated mapData to the MapComponent */}
-        <MapComponent
-          origin={mapData.origin}
-          destination={mapData.destination}
-          waypoints={mapData.waypoints}
-        />
+        {/* MUI Modal for displaying the map */}
+        <Modal open={openModal} onClose={handleCloseModal}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "80%",
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
+            <MapComponent
+              origin={mapData.origin}
+              destination={mapData.destination}
+              waypoints={mapData.waypoints}
+            />
+          </Box>
+        </Modal>
       </NavigationMenu>
     </div>
   );
