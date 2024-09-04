@@ -13,18 +13,16 @@ function BuildRentalProfile() {
     const [userID, setUserID] = useState(null)
     
     useEffect(() => {
-        // TODO: set this back to getting user id when login is workingPr
         async function getUserID() {
           const { data, error } = await supabase.auth.getUser()
           if (error) {
             console.error('Error getting user:', error)
           }
           if (data?.user) {
-            //setUserID(data.user.id)
+            setUserID(data.user.id)
           }
         }
         getUserID()
-        setUserID('c779fb8e-674f-46da-ba91-47cc5f2f269d')
     }, [])
 
     return (

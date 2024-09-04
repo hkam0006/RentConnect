@@ -1,11 +1,11 @@
-import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID'
+import useGetOnlyPropertyByPropertyID from '../../queries/Property/useGetOnlyPropertyByPropertyID'
 import { Box, Typography, Button, Card, CardMedia } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
 
 function ApplicationCard({ application }) {
     const navigate = useNavigate()
-    const { property, loading } = useGetPropertyByPropertyID(application.property_id)?.[0] || null
+    const property = useGetOnlyPropertyByPropertyID(application.property_id)?.[0] || null
 
     const applicationStatusColour = (status) => {
         switch (status) {

@@ -12,7 +12,7 @@ import useCheckRenterAddressHistoryByRenterID from '../../queries/Previous Tenan
 import useCheckRenterEmploymentByRenterID from '../../queries/Renter Employment/useCheckRenterEmploymentByRenterID'
 import useCheckRenterSupportingDocumentsByRenterID from '../../queries/Application Supporting Document/useCheckRenterSupportingDocumentsByRenterID'
 
-import useGetApplicationsByRenterID from '../../queries/Application/useGetApplicationsByRenterID'
+import useGetOnlyApplicationsByRenterID from '../../queries/Application/useGetOnlyApplicationsByRenterID'
 
 function RentalProfile () {
     const navigate = useNavigate()
@@ -23,21 +23,19 @@ function RentalProfile () {
     const hasSupportingDocuments = useCheckRenterSupportingDocumentsByRenterID(userID)
     const [profileCompletionScore, setProfileCompletionScore] = useState(25)
 
-    const {appliedProperties, loading} = useGetApplicationsByRenterID(userID)
-
+    const appliedProperties = useGetOnlyApplicationsByRenterID(userID)
+    
     useEffect(() => {
-        // TODO: set this back to getting user id when login is working
         async function getUserID() {
           const { data, error } = await supabase.auth.getUser()
           if (error) {
             console.error('Error getting user:', error)
           }
           if (data?.user) {
-            //setUserID(data.user.id)
+            setUserID(data.user.id)
           }
         }
         getUserID()
-        setUserID('c779fb8e-674f-46da-ba91-47cc5f2f269d')
     }, [])
     
     useEffect(() => {

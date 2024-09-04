@@ -49,7 +49,8 @@ function App() {
             <Route path='/property/:propertyId' element={<PropertyDetails />} />
             <Route path='/contacts' element={<Contacts />}/>
             <Route path='/dashboard' element={<ManagerRoute Component={Dashboard} />}/>
-            <Route path='/RentalProfile' element={<RenterRoute Component={RentalProfile} />}></Route>
+            <Route path='/RentalProfile' element={<RenterRoute Component={RentalProfile} />} />
+            <Route path='/BuildRentalProfile' element={<RenterRoute Component={BuildRentalProfile} />} />
             <Route path='/tenant/property/:propertyId' element={<RenterRoute Component={PropertyDetailsTenant} />} />
             <Route path='/application/:propertyId' element={<RenterRoute Component={RenterApplicationDetails} />} />
             <Route path='/renterapplication' element={<RenterRoute Component={RenterApplication} />} />

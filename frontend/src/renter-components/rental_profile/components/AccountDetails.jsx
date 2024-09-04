@@ -1,9 +1,9 @@
 import { Paper, Typography, Button } from '@mui/material'
 
-import useGetRenterByRenterID from '../../../queries/Renter/useGetRenterByRenterID'
+import useGetOnlyRenterByRenterID from '../../../queries/Renter/useGetOnlyRenterByRenterID'
 
 function AccountDetails({ userID }) {
-    const renter = useGetRenterByRenterID(userID)[0] || null
+    const renter = useGetOnlyRenterByRenterID(userID)[0] || null
 
     return (
         <Paper sx={{ padding: '3% 10%', marginTop: '30px' }}>
