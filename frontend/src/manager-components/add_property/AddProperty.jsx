@@ -38,7 +38,7 @@ const AddProp = () => {
     vacancy: "",
     attendees: 0,
     applications: 0,
-    listingImages: [ListingImage],
+    listingImages: [],
     propertyType: "",
     rent: "",
     payFreq: "",
@@ -98,7 +98,7 @@ const AddProp = () => {
       vacancy: "",
       attendees: 0,
       applications: 0,
-      listingImages: [ListingImage],
+      listingImages: [],
       propertyType: "",
       rent: "",
       payFreq: "",
@@ -140,7 +140,7 @@ const AddProp = () => {
       newProp.footprint, 
       newProp.description, 
       newProp.amenities, 
-      newProp.listingImages, 
+      newProp.listingImages,
       newProp.payFreq, 
       'fc8e3cf4-cbbc-4557-b303-7aa028c616eb',       // Hardcoded Property Manager ID
       null, 
@@ -155,7 +155,12 @@ const AddProp = () => {
   const handlePhotosChange = (event) => {
     const files = Array.from(event.target.files);
     setPhotos(files);
+    setNewProp((prevState) => ({
+      ...prevState,
+      listingImages: files
+    }));
   };
+  
 
   const formErrors = {
     'streetNumber': 'The street number',
@@ -192,7 +197,7 @@ const AddProp = () => {
       'rent',
       'leaseStartDate',
       'propertyType',
-      'propManager',
+      // 'propManager',
       'payFreq'
     ];
   
@@ -509,20 +514,63 @@ const AddProp = () => {
             helperText={errors.leaseStartDate}  // Display the error message
         />
         <Box>
-          {/* THIS IS NOT WORKING AS OF YET */}
             <Typography variant="h6" gutterBottom>    
-              Upload Photos (NOT WORKING)
+              Upload Photos
             </Typography>
-            <input
-              accept="image/*"
-              type="file"
-              multiple
-              onChange={handlePhotosChange}
-              value={newProp.listingImage}
-              style={{ display: 'block', margin: '10px 0' }}
-            />
+            <Button
+              variant="contained"
+              component="label"
+              sx={{ 
+                display: 'block', 
+                margin: '10px 0',
+                width: {
+                  xs: '50%',
+                  sm: '30%',
+                  md: '30%',
+                  lg: '20%',
+                },
+              }}
+            >
+              Select Photos
+              <input
+                accept="image/*"
+                type="file"
+                multiple
+                onChange={handlePhotosChange}
+                hidden
+              />
+            </Button>
+            {photos.length > 0 && (
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                gap: '10px',
+                marginTop: '20px',
+              }}
+            >
+              {photos.map((photo, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    width: '100px',
+                    height: '100px',
+                    overflow: 'hidden',
+                    borderRadius: '8px',
+                    border: '1px solid #ccc',
+                  }}
+                >
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt={`uploaded-${index}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          )}
           </Box>
-        <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+        <Stack direction="row" spacing={2} sx={{ mt: 12 }}>
           <Button variant="contained" color="primary" type="submit" onClick={(e) => confirmPressed(e)}>
             Add Property
           </Button>
