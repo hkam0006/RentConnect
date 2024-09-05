@@ -1,33 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Typography,
-  Button,
-  Grid,
-  Paper,
-  Stack,
-  IconButton,
-  Badge,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
+import { Typography, Button, Grid, Paper, Stack } from "@mui/material";
 import { supabase } from "../../supabase";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
-import InspectionTable from "./InspectionTable";
-import HistoryTable from "./HistoryTable";
+import InspectionTableRenter from "./InspectionTableRenter";
+import HistoryTableRenter from "./HistoryTableRenter";
 
-const Inspection = () => {
+const InspectionRenter = () => {
   const [activeSection, setActiveSection] = useState("inspection");
   const [inspectionsData, setInspectionsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userID, setUserID] = useState(null);
   const [accountType, setAccountType] = useState(null);
-  const [unreadMessages, setUnreadMessages] = useState(false);
-  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
-  const [messageContent, setMessageContent] = useState(null);
 
   useEffect(() => {
     async function getUserID() {
@@ -108,46 +92,10 @@ const Inspection = () => {
       }
     };
 
-    if (accountType === "PROPERTY MANAGER") {
+    if (accountType === "RENTER") {
       fetchInspectionsData();
     }
   }, [accountType]);
-
-  // Listener for renter_msg changes
-  useEffect(() => {
-    const channel = supabase
-      .channel("renter-msg-changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "INSPECTION",
-          filter: "renter_msg=neq.NULL",
-        },
-        (payload) => {
-          setUnreadMessages(true);
-          setMessageContent({
-            property: payload.new.property_id,
-            message: payload.new.renter_msg,
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const handleMailboxClick = () => {
-    setMessageDialogOpen(true);
-    setUnreadMessages(false); // Reset red dot once opened
-  };
-
-  const handleDialogClose = () => {
-    setMessageDialogOpen(false);
-  };
 
   const renderContent = () => {
     if (loading) {
@@ -173,7 +121,7 @@ const Inspection = () => {
     if (activeSection === "inspection") {
       if (pendingInspections.length > 0) {
         return (
-          <InspectionTable
+          <InspectionTableRenter
             inspectionsData={inspectionsData}
             setInspections={setInspectionsData}
           />
@@ -192,7 +140,7 @@ const Inspection = () => {
     if (activeSection === "history") {
       if (inspectionsData.length > 0) {
         return (
-          <HistoryTable
+          <HistoryTableRenter
             inspectionsData={inspectionsData}
             setInspections={setInspectionsData}
           />
@@ -215,66 +163,54 @@ const Inspection = () => {
     (inspection) => inspection.inspection_type === "pending"
   );
 
-  return (
-    <NavigationMenu>
-      <Grid
-        container
-        spacing={2}
-        style={{ padding: "30px", paddingTop: "110px" }}
-        justifyContent="flex-start"
-      >
-        <Button
-          variant={activeSection === "inspection" ? "contained" : "outlined"}
-          onClick={() => setActiveSection("inspection")}
-          style={{ margin: "10px", fontSize: "150%" }}
+  if (accountType == null) {
+    return (
+      <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+        <Stack textAlign="center">
+          <Typography variant="h6">
+            You do not have access to this content.
+          </Typography>
+        </Stack>
+      </Paper>
+    );
+  } else if (accountType === "PROPERTY MANAGER") {
+    return (
+      <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
+        <Stack textAlign="center">
+          <Typography variant="h6">
+            Property Managers do not have access to this content.
+          </Typography>
+        </Stack>
+      </Paper>
+    );
+  } else if (accountType === "RENTER") {
+    return (
+      <NavigationMenu>
+        <Grid
+          container
+          spacing={2}
+          style={{ padding: "30px", paddingTop: "110px" }}
+          justifyContent="flex-start"
         >
-          Inspection
-        </Button>
+          <Button
+            variant={activeSection === "inspection" ? "contained" : "outlined"}
+            onClick={() => setActiveSection("inspection")}
+            style={{ margin: "10px", fontSize: "150%" }}
+          >
+            Inspection
+          </Button>
 
-        <Button
-          variant={activeSection === "history" ? "contained" : "outlined"}
-          onClick={() => setActiveSection("history")}
-          style={{ margin: "10px", fontSize: "150%" }}
-        >
-          History
-        </Button>
-
-        {/* Mailbox Icon */}
-        <IconButton
-          color="primary"
-          aria-label="mailbox"
-          style={{ marginLeft: "auto" }}
-          onClick={handleMailboxClick}
-        >
-          <Badge color="error" variant="dot" invisible={!unreadMessages}>
-            <MailOutlineIcon fontSize="large" />
-          </Badge>
-        </IconButton>
-      </Grid>
-
-      <div style={{ padding: "20px" }}>{renderContent()}</div>
-
-      {/* Dialog for renter_msg */}
-      <Dialog open={messageDialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>New Message</DialogTitle>
-        <DialogContent>
-          {messageContent && (
-            <>
-              <img
-                src={`path_to_property_thumbnails/${messageContent.property}.jpg`}
-                alt="Property Thumbnail"
-                style={{ width: "100%", marginBottom: "20px" }}
-              />
-              <Typography>{messageContent.message}</Typography>
-            </>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
-    </NavigationMenu>
-  );
+          <Button
+            variant={activeSection === "history" ? "contained" : "outlined"}
+            onClick={() => setActiveSection("history")}
+            style={{ margin: "10px", fontSize: "150%" }}
+          >
+            History
+          </Button>
+        </Grid>
+        <div style={{ padding: "20px" }}>{renderContent()}</div>
+      </NavigationMenu>
+    );
+  }
 };
-
-export default Inspection;
+export default InspectionRenter;

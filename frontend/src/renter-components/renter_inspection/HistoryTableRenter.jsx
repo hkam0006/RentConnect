@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { tableCellClasses } from "@mui/material";
-import Image from "./Image";
+import Image from "./ImageRenter";
 import { supabase } from "../../supabase";
 
 const fullAddress = (number, name, suburb, state) => {
@@ -38,7 +38,7 @@ const formatDateTime = (dateTime) => {
   return `${formattedDate} at ${formattedTime}`;
 };
 
-const HistoryTable = ({ inspectionsData, setInspections }) => {
+const HistoryTableRenter = ({ inspectionsData, setInspections }) => {
   const historyInspections = inspectionsData.filter(
     (inspection) =>
       inspection.inspection_type === "completed" ||
@@ -129,7 +129,7 @@ const HistoryTable = ({ inspectionsData, setInspections }) => {
                 {inspection.inspection_type}
               </TableCell>
               <TableCell align="right" sx={{ flexGrow: 1 }}>
-                {inspection.inspection_type === "unapproved" && (
+                {inspection.inspection_type === "cancelled" && (
                   <Button
                     variant="contained"
                     color="primary"
@@ -150,4 +150,4 @@ const HistoryTable = ({ inspectionsData, setInspections }) => {
   );
 };
 
-export default HistoryTable;
+export default HistoryTableRenter;

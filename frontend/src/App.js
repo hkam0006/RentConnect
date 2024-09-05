@@ -34,6 +34,7 @@ import BuildRentalProfile from './renter-components/rental_profile/BuildRentalPr
 import SavedProperties from './renter-components/property_page/SaveProperties';
 import Rprofile from './manager-components/profile_page/Rprofile';
 import PMprofile from './manager-components/profile_page/PMprofile';
+import InspectionRenter from './renter-components/renter_inspection/InspectionRenter';
 
 function App() {
   useAuthListener()
@@ -56,7 +57,8 @@ function App() {
             <Route path='/renterapplication' element={<RenterRoute Component={RenterApplication} />} />
             <Route path='/MyApplication' element={<RenterRoute Component={ReceivedApplication} />} />
             <Route path='/LogIn' element={<LogIn/>} />
-            <Route path='/Inspection' element={<Inspection/>} />
+            <Route path='/Inspection' element={<ManagerRoute Component={Inspection} />} />
+            <Route path='/InspectionRenter' element={<RenterRoute Component={InspectionRenter} />} />
             <Route path='/messages' element={<Messaging/>} />
             <Route path='/messages/:directMessageUserID' element={<Messaging/>} />
             <Route path='/keys' element={<ManagerRoute Component={Keys}/>} />

@@ -45,7 +45,7 @@ const formatDateTime = (dateTime) => {
   return { formattedDate, formattedTime };
 };
 
-const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
+const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
   const [userID, setUserID] = useState(null);
   useEffect(() => {
     async function getUserID() {
@@ -62,6 +62,35 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
   const [selectedInspection, setSelectedInspection] = useState(null);
   const [newDateTime, setNewDateTime] = useState("");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [openCancelBtn, setOpenCancelBtn] = useState(false);
+
+  const handleClickOpenCancelBtn = () => {
+    setOpenCancelBtn(true);
+  };
+
+  const handleCloseCancelBtn = () => {
+    setOpenCancelBtn(false);
+  };
+
+  const handleSubmitReason = async (inspection) => {
+    try {
+      const { error } = await supabase
+        .from("INSPECTION")
+        .update({ renter_msg: message })
+        .eq("inspection_id", inspection.inspection_id);
+
+      if (error) {
+        console.error("Error updating message:", error);
+      } else {
+        console.log("Message updated successfully");
+      }
+      updateType(inspection.inspection_id, "cancelled");
+      setOpenCancelBtn(false);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const handleClickOpen = (inspection) => {
     setSelectedInspection(inspection);
@@ -101,51 +130,6 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
     }
   };
 
-  const addToRun = async (inspectionId, newType) => {
-    try {
-      const { data: inspectionData, error: fetchError } = await supabase
-        .from("INSPECTION")
-        .select("*")
-        .eq("inspection_id", inspectionId)
-        .single();
-
-      if (fetchError) throw fetchError;
-
-      const { data: runData, error: insertError } = await supabase
-        .from("INSPECTION RUN")
-        .insert([
-          {
-            inspection_run_default_buffer: inspectionData.inspection_buffer,
-            company_id: inspectionData.company_id,
-            inspection_run_date: new Date().toISOString().split("T")[0],
-            property_manager_id: userID,
-            inspection_run_transportation: "Car",
-          },
-        ]);
-
-      if (insertError) throw insertError;
-
-      const { error: updateError } = await supabase
-        .from("INSPECTION")
-        .update({ inspection_type: newType })
-        .eq("inspection_id", inspectionId);
-
-      if (updateError) throw updateError;
-
-      setInspections((prevInspections) =>
-        prevInspections.map((inspection) =>
-          inspection.inspection_id === inspectionId
-            ? { ...inspection, inspection_type: newType }
-            : inspection
-        )
-      );
-
-      console.log("Inspection added to run and status updated to confirmed");
-    } catch (error) {
-      console.log("Error in addToRun:", error.message);
-    }
-  };
-
   const updateType = async (inspectionId, type) => {
     try {
       const { error } = await supabase
@@ -169,17 +153,6 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
     (inspection) => inspection.inspection_type === "pending"
   );
 
-  const getRenterInitials = (renter) => {
-    if (!renter || !renter.renter_first_name || !renter.renter_last_name) {
-      return "N/A";
-    }
-
-    const firstInitial = renter.renter_first_name.charAt(0).toUpperCase();
-    const lastInitial = renter.renter_last_name.charAt(0).toUpperCase();
-
-    return firstInitial + lastInitial;
-  };
-
   return (
     <>
       <TableContainer sx={{ borderRadius: 3, height: "700px" }}>
@@ -198,6 +171,11 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
               <StyledTableCell align="left" sx={{ flexGrow: 1 }}>
                 <Typography fontWeight={700} fontSize={"12px"}>
                   Date and Time
+                </Typography>
+              </StyledTableCell>
+              <StyledTableCell align="left" sx={{ flexGrow: 1 }}>
+                <Typography fontWeight={700} fontSize={"12px"}>
+                  Status
                 </Typography>
               </StyledTableCell>
 
@@ -241,6 +219,9 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
                     <Typography>{formattedDate}</Typography>
                     <Typography>{formattedTime}</Typography>
                   </TableCell>
+                  <TableCell align="left" sx={{ flexGrow: 1 }}>
+                    <Typography>{inspection.inspection_type}</Typography>
+                  </TableCell>
 
                   <TableCell align="left" sx={{ width: "150px" }}>
                     <Stack direction="column" spacing={1} alignItems="center">
@@ -253,18 +234,49 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
                       >
                         Edit
                       </Button>
-
                       <Button
                         variant="outlined"
-                        color="error"
+                        color="success"
                         size="small"
                         sx={{ width: "80px" }}
-                        onClick={() =>
-                          updateType(inspection.inspection_id, "unapproved")
-                        }
+                        onClick={handleClickOpenCancelBtn}
                       >
                         Cancel
                       </Button>
+                      <Dialog
+                        open={openCancelBtn}
+                        onClose={handleCloseCancelBtn}
+                      >
+                        <DialogTitle>Cancel Inspection</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            Please leave a reason for the cancellation.
+                          </DialogContentText>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            label="Reason for cancellation"
+                            type="text"
+                            fullWidth
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={handleCloseCancelBtn}
+                            color="primary"
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            onClick={() => handleSubmitReason(inspection)}
+                            color="success"
+                          >
+                            Submit
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -289,6 +301,12 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
             variant="outlined"
             value={newDateTime}
             onChange={(e) => setNewDateTime(e.target.value)}
+            // Prevent selecting the current day and time by setting min to tomorrow's date
+            inputProps={{
+              min: new Date(new Date().setDate(new Date().getDate() + 1))
+                .toISOString()
+                .slice(0, 16),
+            }}
           />
         </DialogContent>
         <DialogActions>
@@ -308,4 +326,4 @@ const RenterInspectionTable = ({ inspectionsData, setInspections }) => {
   );
 };
 
-export default RenterInspectionTable;
+export default InspectionTableRenter;

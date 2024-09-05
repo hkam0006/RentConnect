@@ -62,6 +62,35 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
   const [selectedInspection, setSelectedInspection] = useState(null);
   const [newDateTime, setNewDateTime] = useState("");
   const [loading, setLoading] = useState(false);
+  const [openCancelBtn, setOpenCancelBtn] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleClickOpenCancelBtn = () => {
+    setOpenCancelBtn(true);
+  };
+
+  const handleCloseCancelBtn = () => {
+    setOpenCancelBtn(false);
+  };
+
+  const handleSubmitReason = async (inspection) => {
+    try {
+      const { error } = await supabase
+        .from("INSPECTION")
+        .update({ pm_msg: message })
+        .eq("inspection_id", inspection.inspection_id);
+
+      if (error) {
+        console.error("Error updating message:", error);
+      } else {
+        console.log("Message updated successfully");
+      }
+      updateType(inspection.inspection_id, "unapproved");
+      setOpenCancelBtn(false);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const handleClickOpen = (inspection) => {
     setSelectedInspection(inspection);
@@ -278,12 +307,44 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
                         color="error"
                         size="small"
                         sx={{ width: "80px" }}
-                        onClick={() =>
-                          updateType(inspection.inspection_id, "unapproved")
-                        }
+                        onClick={handleClickOpenCancelBtn}
                       >
                         Unapprove
                       </Button>
+                      <Dialog
+                        open={openCancelBtn}
+                        onClose={handleCloseCancelBtn}
+                      >
+                        <DialogTitle>Cancel Inspection</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            Please leave a reason to renter.
+                          </DialogContentText>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            label="Reason for unapproval"
+                            type="text"
+                            fullWidth
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={handleCloseCancelBtn}
+                            color="primary"
+                          >
+                            Close
+                          </Button>
+                          <Button
+                            onClick={() => handleSubmitReason(inspection)}
+                            color="success"
+                          >
+                            Submit
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </Stack>
                   </TableCell>
                 </TableRow>
@@ -308,6 +369,12 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
             variant="outlined"
             value={newDateTime}
             onChange={(e) => setNewDateTime(e.target.value)}
+            // Prevent selecting the current day and time by setting min to tomorrow's date
+            inputProps={{
+              min: new Date(new Date().setDate(new Date().getDate() + 1))
+                .toISOString()
+                .slice(0, 16),
+            }}
           />
         </DialogContent>
         <DialogActions>

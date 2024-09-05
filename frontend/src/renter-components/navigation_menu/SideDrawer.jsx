@@ -19,14 +19,14 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import KeysIcon from "@mui/icons-material/VpnKey";
 import AddPropertyIcon from "@mui/icons-material/Add";
 import HelpIcon from "@mui/icons-material/Help";
-import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 const drawerWidth = 200;
 
 export default function SideDrawer() {
   return (
     <Drawer
       variant="permanent"
-      anchor='left'
+      anchor="left"
       sx={{
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
@@ -41,12 +41,16 @@ export default function SideDrawer() {
           {[
             { text: "Dashboard", icon: <HomeIcon />, link: "/RenterHome" },
             { text: "Messages", icon: <ChatIcon />, link: "/messages" },
-            { text: "Rental Profile", icon: <PermContactCalendarIcon />, link: "/RentalProfile" },
-            {text: "Properties", icon: <PropertiesIcon />, link: "/property",},
             {
-              text: "Inspections",
+              text: "Rental Profile",
+              icon: <PermContactCalendarIcon />,
+              link: "/RentalProfile",
+            },
+            { text: "Properties", icon: <PropertiesIcon />, link: "/property" },
+            {
+              text: "Inspections Apply",
               icon: <InspectionIcon />,
-              link: "/inspection",
+              link: "/InspectionRenter",
             },
 
             {
@@ -70,6 +74,6 @@ export default function SideDrawer() {
           ))}
         </List>
       </Box>
-    </Drawer >
+    </Drawer>
   );
 }
