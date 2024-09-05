@@ -17,7 +17,7 @@ import ListingImage from '../property_page/listing.jpg'
 import useAddProperty from "../../mutators/Property/useAddProperty";
 import { v4 as uuidv4 } from 'uuid';
 
-const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";
+const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";         // Hardcoded, is to be the super admin's company
 
 const AddProp = () => {
   const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
@@ -113,7 +113,8 @@ const AddProp = () => {
       status: "Active",
       isAppliedFor: false
     });
-  
+    
+    setPhotos([]);
     setErrors({});  // Clear all errors as well
   };
 
@@ -197,7 +198,7 @@ const AddProp = () => {
       'rent',
       'leaseStartDate',
       'propertyType',
-      // 'propManager',
+      'propManager',
       'payFreq'
     ];
   
@@ -237,7 +238,21 @@ const AddProp = () => {
 
   return (
     <NavigationMenu>
-    <Box sx={{ mt: "70px", padding: "20px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+    <Box sx={{ mt: "70px", padding: "30px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+    <Box
+      sx={{
+        padding: "20px",
+        width: "100%",
+        maxWidth: "700px",
+        backgroundColor: "white",  // Makes the tile white to pop from background
+        borderRadius: "10px",      // Rounded corners for the "file" effect
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column"
+      }}
+    >
       <Typography variant="h4" gutterBottom>
         Add Property Listing
       </Typography>
@@ -578,6 +593,7 @@ const AddProp = () => {
             Clear
           </Button>
         </Stack>
+      </Box>
       </Box>
     </Box>
   </NavigationMenu>
