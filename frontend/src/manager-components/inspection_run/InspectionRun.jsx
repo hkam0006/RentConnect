@@ -137,7 +137,6 @@ const InspectionRun = () => {
       );
 
       setMapData({ origin, destination, waypoints });
-      setOpenModal(false); // Close the modal after setting the route
     }
   };
 
