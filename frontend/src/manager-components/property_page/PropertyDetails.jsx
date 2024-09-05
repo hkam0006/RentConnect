@@ -54,12 +54,12 @@ export default function PropertyDetails() {
         handleClose();
     };
 
+    
+    let prop = property[0];
+    
     if (!prop) {
         return <Typography>No property found.</Typography>
     }
-
-    let prop = property[0];
-
     return <>
         {open && (
             <EditPropertyModal
