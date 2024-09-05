@@ -7,16 +7,17 @@ import NavigationMenu from '../navigation_menu/NavigationMenus';
 import useGetPropetyManagersByCompanyID from '../../queries/Property Manager/useGetPropetyManagersByCompanyID';
 
 import AppLoader from './AppLoader';
-import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID';
+import { useSelector } from 'react-redux';
+import uesGetPropertiesWithApplicationByCompanyId from '../../queries/Property/useGetPropertiesWithApplicationByCompanyId';
 
-// this information will be queried from firebase
-
-// DEFAULT COMPANY ID NUMBER
-const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
+const getDOM = (listing_date) => {
+  return Math.round((new Date() - new Date(listing_date)) / (1000 * 3600 * 24))
+}
 
 export default function Properties() {
-  const { fetchProperties } = useGetPropertiesByCompanyID(TEST_COMPANY_ID);
-  const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
+  const company_id = useSelector((state) => state.user.currentUser.company_id)
+  const { fetchProperties } = uesGetPropertiesWithApplicationByCompanyId(company_id);
+  const propManagers = useGetPropetyManagersByCompanyID(company_id);
   const [properties, setProperties] = useState([]);
   const [unfiltered, setUnfiltered] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,15 +37,20 @@ export default function Properties() {
     })();
   }, [])
 
-  if (loading) return <AppLoader />
+  if (loading) return (
+    <NavigationMenu>
+      <AppLoader />
+    </NavigationMenu>
+  )
 
   return (
     <div>
       <NavigationMenu>
         <div style={{ padding: "20px", marginTop: "64px" }}>
           <PropertyStatCards
-            totalApplications={totalApplications}
-            avgDOM={dom}
+            company_id={company_id}
+            totalApplications={properties.reduce((total, curr) => total += curr.APPLICATION.length, 0)}
+            avgDOM={properties.reduce((total, curr) => total += getDOM(curr.property_listing_date), 0) / properties.length}
             totalLeased={leased}
           />
           <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>

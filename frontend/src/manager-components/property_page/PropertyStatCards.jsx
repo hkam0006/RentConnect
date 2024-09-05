@@ -4,9 +4,7 @@ import useGetCurrentRentalAgreementByCompanyID from '../../queries/Rental Agreem
 import useGetRentalAgreementByCompanyID from '../../queries/Rental Agreement/useGetRentalAgreementByCompanyID';
 import useGetApplicationsByCompanyID from '../../queries/Application/useGetApplicationsByCompanyID';
 
-const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
-
-export function PropertyStatCards() {
+export function PropertyStatCards({company_id, totalApplications, avgDOM}) {
   const [leasedTimeframe, setLeasedTimeframe] = useState("All Time");
   const [totalApplicationsTimeFrame, setTotalApplicationsTimeFrame] = useState("All Time");
 
@@ -18,8 +16,7 @@ export function PropertyStatCards() {
     setTotalApplicationsTimeFrame(event.target.value);
   };
 
-  const totalLeased = useGetRentalAgreementByCompanyID(TEST_COMPANY_ID).length;
-  const totalApplications = useGetApplicationsByCompanyID(TEST_COMPANY_ID).length;
+  const totalLeased = useGetRentalAgreementByCompanyID(company_id).length;
 
   return <>
     {/* Total Property Leased Card */}
@@ -93,7 +90,7 @@ export function PropertyStatCards() {
               </FormControl>
             </Stack>
             <Stack textAlign={"center"}>
-              <Typography variant='h3' fontWeight={700} color={"primary"}>{0}</Typography>
+              <Typography variant='h3' fontWeight={700} color={"primary"}>{avgDOM.toFixed(1)}</Typography>
             </Stack>
           </CardContent>
         </Card>

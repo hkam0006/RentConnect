@@ -17,6 +17,10 @@ const fullAddress = (number, name, type, suburb, state) => {
   return `${number} ${name} ${type}, ${suburb}, ${state}`
 }
 
+const getDOM = (listing_date) => {
+  return Math.round((new Date() - new Date(listing_date)) / (1000 * 3600 * 24))
+}
+
 export function PropertiesTable({ properties, handleAddProperties, propManagers, setProperties }) {
 
   const [open, setOpen] = useState(false);
@@ -88,7 +92,6 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
     setSnackbarOpen(false);
   };
 
-
   return <>
     {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
     {/* Snackbar for showing "Property already saved" message */}
@@ -154,9 +157,9 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
                 </Stack>
                 {/* </Card> */}
               </TableCell>
-              <TableCell align="right"><Typography variant='h6'>{Math.round((new Date() - new Date(row.property_listing_date)) / (1000 * 3600 * 24))}</Typography></TableCell>
+              <TableCell align="right"><Typography variant='h6'>{getDOM(row.property_listing_date)}</Typography></TableCell>
               <TableCell align="right"><Typography variant='h6'> {row.property_attendees}</Typography></TableCell>
-              <TableCell align="right"><Typography variant='h6'>{row.application_count}</Typography></TableCell>
+              <TableCell align="right"><Typography variant='h6'>{row.APPLICATION.length}</Typography></TableCell>
               <TableCell align="right">
                 <Stack spacing={1}>
                   <Button variant='contained' onClick={() => navigate(`/property/${row.property_id}`)}>View</Button>
