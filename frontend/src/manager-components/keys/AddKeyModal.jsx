@@ -7,7 +7,7 @@ import React, { useState } from 'react'
 const TEST_PROPERTY_MANAGER_ID = "fc8e3cf4-cbbc-4557-b303-7aa028c616eb";
 const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
 
-const AddKeyModal = ({ OnClose, properties, propManagers }) => {
+const AddKeyModal = ({ OnClose, properties, propManagers, keySetList }) => {
   const [value, setValue] = useState(dayjs('2022-04-17'));
   const [newKey, setNewKey] = useState({
     property_id: null,
@@ -26,9 +26,18 @@ const AddKeyModal = ({ OnClose, properties, propManagers }) => {
     p: 4,
   };
 
+  const [keySetError, setKeySetError] = useState(null)
 
   const handleChange = e => {
     const { name, value } = e.target;
+    const keySetExists = Boolean(keySetList.find((keyset) => keyset === value))
+    if (name === "key_set" ){
+      if (keySetExists){
+        setKeySetError("Key set already exists. Try another key set")
+      } else {
+        setKeySetError(null)
+      }
+    }
     setNewKey(prevState => ({
       ...prevState,
       [name]: value
@@ -113,10 +122,13 @@ const AddKeyModal = ({ OnClose, properties, propManagers }) => {
                 ))}
               </Select>
             </FormControl>
-            <TextField label='Key Set' required name='key_set' value={newKey.key_set} onChange={handleChange} />
+            <FormControl>
+              <TextField label='Key Set' required name='key_set' value={newKey.key_set} onChange={handleChange} />
+              <Box sx={{color: 'error.main', display: Boolean(keySetError) ? "show" : "none"}} >{keySetError}</Box>
+            </FormControl>
             <Button
               variant='contained'
-              disabled={!newKey.property_manager_id || !newKey.property_id || !newKey.key_set}
+              disabled={!newKey.property_manager_id || !newKey.property_id || !newKey.key_set || Boolean(keySetError)}
               onClick={(e) => handleSubmit(e)}
             >
               Add

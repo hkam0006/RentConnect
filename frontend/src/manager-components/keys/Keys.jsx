@@ -201,6 +201,7 @@ const Keys = () => {
           OnClose={handleClose}
           properties={properties}
           propManagers={propManagers}
+          keySetList={keys.map((key) => {return key.key_set})}
         />
       )}
       {!!openCheckout && (

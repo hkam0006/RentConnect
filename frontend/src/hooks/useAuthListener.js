@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../supabase";
 import { setUser, logout, setManager, setRenter } from '../utils/UserSlice';
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,6 @@ const useAuthListener = () => {
       if ((event === 'SIGNED_IN' || event === "INITIAL_SESSION") && session) {
         const user = session.user;
         // Example role-checking logic
-        
         isPropertyManager(user.id).then((data) => {
           if (data.length > 0) {
             dispatch(setManager())
