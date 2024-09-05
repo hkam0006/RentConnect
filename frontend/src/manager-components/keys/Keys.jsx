@@ -24,6 +24,7 @@ import useDeleteMultipleKeys from "../../mutators/Keys/useDeleteMultipleKeys";
 import useUpdateKeyStatus from "../../mutators/Keys/useUpdateKeyStatus";
 import AppLoader from "../property_page/AppLoader";
 import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
+import { useSelector } from "react-redux";
 
 const rowHeading = [
   "",
@@ -45,12 +46,11 @@ const chipColour = {
 
 const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
-const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";
-
 const Keys = () => {
-  const { fetchKeys } = useGetKeyByCompanyID(TEST_COMPANY_ID);
-  const { fetchProperties } = useGetPropertiesByCompanyID(TEST_COMPANY_ID);
-  const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
+  const company_id = useSelector((state) => state.user.currentUser.company_id)
+  const { fetchKeys } = useGetKeyByCompanyID(company_id);
+  const { fetchProperties } = useGetPropertiesByCompanyID(company_id);
+  const propManagers = useGetPropetyManagersByCompanyID(company_id);
   const deleteKeys = useDeleteMultipleKeys();
   const { checkInKey } = useUpdateKeyStatus();
   const [keys, setKeys] = useState([]);
@@ -190,7 +190,7 @@ const Keys = () => {
   }
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
-  useSubscribeKeysByCompanyID(TEST_COMPANY_ID, handleKeyChanges);
+  useSubscribeKeysByCompanyID(company_id, handleKeyChanges);
 
   if (loading) return <AppLoader />;
 

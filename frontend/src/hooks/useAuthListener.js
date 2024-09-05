@@ -23,6 +23,17 @@ const isRenter =  async (userId) => {
 }
 
 const useAuthListener = () => {
+  // Example currentUser object
+  // 
+  // propertyManager: {
+  //    property_manager_id: string,
+  //    company_id: string
+  // } 
+  //
+  // tenant: {
+  //    renter_id: string,
+  // }
+  //
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
