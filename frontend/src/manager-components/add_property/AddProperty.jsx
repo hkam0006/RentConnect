@@ -17,7 +17,7 @@ import ListingImage from '../property_page/listing.jpg'
 import useAddProperty from "../../mutators/Property/useAddProperty";
 import { v4 as uuidv4 } from 'uuid';
 
-const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";
+const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";         // Hardcoded, is to be the super admin's company
 
 const AddProp = () => {
   const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
@@ -38,7 +38,7 @@ const AddProp = () => {
     vacancy: "",
     attendees: 0,
     applications: 0,
-    listingImages: [ListingImage],
+    listingImages: [],
     propertyType: "",
     rent: "",
     payFreq: "",
@@ -98,7 +98,7 @@ const AddProp = () => {
       vacancy: "",
       attendees: 0,
       applications: 0,
-      listingImages: [ListingImage],
+      listingImages: [],
       propertyType: "",
       rent: "",
       payFreq: "",
@@ -113,7 +113,8 @@ const AddProp = () => {
       status: "Active",
       isAppliedFor: false
     });
-  
+    
+    setPhotos([]);
     setErrors({});  // Clear all errors as well
   };
 
@@ -140,7 +141,7 @@ const AddProp = () => {
       newProp.footprint, 
       newProp.description, 
       newProp.amenities, 
-      newProp.listingImages, 
+      newProp.listingImages,
       newProp.payFreq, 
       'fc8e3cf4-cbbc-4557-b303-7aa028c616eb',       // Hardcoded Property Manager ID
       null, 
@@ -155,7 +156,12 @@ const AddProp = () => {
   const handlePhotosChange = (event) => {
     const files = Array.from(event.target.files);
     setPhotos(files);
+    setNewProp((prevState) => ({
+      ...prevState,
+      listingImages: files
+    }));
   };
+  
 
   const formErrors = {
     'streetNumber': 'The street number',
@@ -232,7 +238,21 @@ const AddProp = () => {
 
   return (
     <NavigationMenu>
-    <Box sx={{ mt: "70px", padding: "20px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+    <Box sx={{ mt: "70px", padding: "30px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+    <Box
+      sx={{
+        padding: "20px",
+        width: "100%",
+        maxWidth: "700px",
+        backgroundColor: "white",  // Makes the tile white to pop from background
+        borderRadius: "10px",      // Rounded corners for the "file" effect
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column"
+      }}
+    >
       <Typography variant="h4" gutterBottom>
         Add Property Listing
       </Typography>
@@ -509,20 +529,63 @@ const AddProp = () => {
             helperText={errors.leaseStartDate}  // Display the error message
         />
         <Box>
-          {/* THIS IS NOT WORKING AS OF YET */}
             <Typography variant="h6" gutterBottom>    
-              Upload Photos (NOT WORKING)
+              Upload Photos
             </Typography>
-            <input
-              accept="image/*"
-              type="file"
-              multiple
-              onChange={handlePhotosChange}
-              value={newProp.listingImage}
-              style={{ display: 'block', margin: '10px 0' }}
-            />
+            <Button
+              variant="contained"
+              component="label"
+              sx={{ 
+                display: 'block', 
+                margin: '10px 0',
+                width: {
+                  xs: '50%',
+                  sm: '30%',
+                  md: '30%',
+                  lg: '20%',
+                },
+              }}
+            >
+              Select Photos
+              <input
+                accept="image/*"
+                type="file"
+                multiple
+                onChange={handlePhotosChange}
+                hidden
+              />
+            </Button>
+            {photos.length > 0 && (
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
+                gap: '10px',
+                marginTop: '20px',
+              }}
+            >
+              {photos.map((photo, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    width: '100px',
+                    height: '100px',
+                    overflow: 'hidden',
+                    borderRadius: '8px',
+                    border: '1px solid #ccc',
+                  }}
+                >
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt={`uploaded-${index}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          )}
           </Box>
-        <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+        <Stack direction="row" spacing={2} sx={{ mt: 12 }}>
           <Button variant="contained" color="primary" type="submit" onClick={(e) => confirmPressed(e)}>
             Add Property
           </Button>
@@ -530,6 +593,7 @@ const AddProp = () => {
             Clear
           </Button>
         </Stack>
+      </Box>
       </Box>
     </Box>
   </NavigationMenu>

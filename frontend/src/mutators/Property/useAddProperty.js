@@ -6,6 +6,28 @@ const useAddProperty = () => {
     propertyBathroomCount, propertyCarSpotCount, propertyType, propertyRent, propertyFootprint, propertyDescription, propertyAmenities, propertyPictures, propertyRentFrequency,
     propertyManagerID, propertyApplied, propertyListingDate, propertyAttendees, propertyLeaseStart, propertyUnitNumber, propertyPostcode ) => {
     try {
+      // Upload property images in to images bucket
+      const uploadedPhotoUrls = [];
+
+      for (const file of propertyPictures) {
+        const { data, error: uploadError } = await supabase.storage
+          .from('property_images')
+          .upload(`properties/${propertyID}/${file.name}`, file)
+        
+
+        if (uploadError) throw uploadError;
+
+        // Get the public URL of the uploaded file
+        const { data: publicUrlData } = supabase.storage
+          .from('property_images')
+          .getPublicUrl(`properties/${propertyID}/${file.name}`);
+      
+        console.log(publicUrlData);
+        uploadedPhotoUrls.push(publicUrlData.publicUrl);
+
+      }
+      
+
         const { data, error } = await supabase
             .from("PROPERTY")
             .insert([{
@@ -23,7 +45,7 @@ const useAddProperty = () => {
                 property_footprint: propertyFootprint,
                 property_description: propertyDescription,
                 property_amenities: propertyAmenities,
-                property_pictures: propertyPictures,
+                property_pictures: uploadedPhotoUrls,
                 property_rent_frequency: propertyRentFrequency,
                 property_manager_id: propertyManagerID,
                 property_applied: propertyApplied,
