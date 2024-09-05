@@ -1,6 +1,13 @@
 import { supabase } from "../../supabase";
 import { useState, useEffect } from 'react';
 
+/**
+ * Returns all applications made by the renter, identified by the provided ID.
+ *
+ * @param renter_id the unique ID of the renter
+ * @return returns array containing all applications made by renter, and loading state
+ * @author Luke Phillips
+ */
 const useGetApplicationsByRenterID = (renter_id) => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);

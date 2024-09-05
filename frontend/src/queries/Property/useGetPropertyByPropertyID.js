@@ -1,6 +1,12 @@
 import { supabase } from "../../supabase";
 import { useState, useEffect } from 'react';
 
+/**
+ * Returns the property in the DB matching the provided property ID.
+ *
+ * @param property_id array containing matching property
+ * @return returns array with property and loading state
+ */
 const useGetPropertyByPropertyID = (property_id) => {
     const [property, setProperty] = useState([]);
     const [loading, setLoading] = useState(true);

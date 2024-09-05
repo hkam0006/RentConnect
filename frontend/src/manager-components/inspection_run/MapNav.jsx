@@ -22,7 +22,8 @@ const getCoordinates = async (addresses) => {
         })
         .send()
         .then((response) => ({
-          index, // Capture the original index
+          index,
+          address, // Include the original address string
           coordinates:
             response.body.features.length > 0
               ? response.body.features[0].geometry.coordinates
@@ -32,7 +33,7 @@ const getCoordinates = async (addresses) => {
 
     const responses = await Promise.all(coordinatePromises);
     const coordinates = responses.filter((response) => response.coordinates);
-    console.log("Coordinates:", coordinates);
+    console.log("Coordinates with Addresses:", coordinates);
     return coordinates;
   } catch (error) {
     console.error("Geocoding failed:", error);
@@ -41,6 +42,7 @@ const getCoordinates = async (addresses) => {
 };
 
 // New optimizeRoute function to reorder coordinates
+// Updated optimizeRoute function to retain addresses
 const optimizeRoute = async (coords) => {
   const coordinatesStr = coords.map((c) => c.coordinates.join(",")).join(";");
   const url = `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinatesStr}?access_token=${ACCESS_TOKEN}&source=first&destination=last`;
@@ -50,11 +52,8 @@ const optimizeRoute = async (coords) => {
     const data = await response.json();
 
     if (data.code === "Ok" && data.trips && data.trips.length > 0) {
-      // Reorder waypoints based on the optimization results
-      const waypoints = data.waypoints.map(
-        (wp) => coords[wp.waypoint_index]
-      );
-      console.log("Optimized waypoints:", waypoints);
+      const waypoints = data.waypoints.map((wp) => coords[wp.waypoint_index]);
+      console.log("Optimized waypoints with addresses:", waypoints);
       return waypoints;
     } else {
       console.error("Route optimization failed:", data.message);
@@ -68,7 +67,7 @@ const optimizeRoute = async (coords) => {
 
 const MapComponent = ({ origin, destination, waypoints }) => {
   const [coords, setCoords] = useState([]);
-  const [instructions, setInstructions] = useState("");
+  const [itinerary, setItinerary] = useState([]); // State for the itinerary
 
   // Updated useEffect to fetch and optimize coordinates
   useEffect(() => {
@@ -85,6 +84,10 @@ const MapComponent = ({ origin, destination, waypoints }) => {
       // Extract only the coordinates for the map
       const orderedCoords = optimizedCoords.map((item) => item.coordinates);
       setCoords(orderedCoords);
+    // Extract the addresses to display in the itinerary
+    const itineraryList = optimizedCoords.map((item) => item.address);
+    console.log("Itinerary List:", itineraryList);
+    setItinerary(itineraryList);
     };
 
     fetchAndOptimizeCoordinates();
@@ -120,31 +123,6 @@ const MapComponent = ({ origin, destination, waypoints }) => {
       }
     }
 
-    directions.on("route", (e) => {
-      if (e.route && e.route.length > 0) {
-        const route = e.route[0];
-        let instructionsText = "";
-
-        route.legs.forEach((leg, legIndex) => {
-          instructionsText += `<strong>Route ${legIndex + 1}:</strong><br/>`;
-          leg.steps.forEach((step, stepIndex) => {
-            instructionsText += `${stepIndex + 1}. ${step.maneuver.instruction}<br/>`;
-          });
-          if (legIndex < route.legs.length - 1) {
-            instructionsText += "<hr/>";
-          }
-        });
-
-        setInstructions(instructionsText);
-      } else {
-        setInstructions("No route found.");
-      }
-    });
-
-    directions.on("error", (e) => {
-      setInstructions(`Directions error: ${e.error}`);
-    });
-
     return () => map.remove();
   }, [coords]);
 
@@ -168,7 +146,7 @@ const MapComponent = ({ origin, destination, waypoints }) => {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
       />
-      <DrivingInstructionsBox instructions={instructions} />
+      <DrivingInstructionsBox itinerary={itinerary} />
     </div>
   );
 };
