@@ -66,7 +66,7 @@ function AccountSetUpR(){
         if (!anyError){
             await deleteAccountSetUp(user.id);
             await addRenter(user.id, user.email, fname, lname, phoneNum);
-            navigate('/dashboard');
+            navigate('/RenterHome');
         }
     }
 

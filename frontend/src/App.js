@@ -67,8 +67,8 @@ function App() {
             <Route path='/RenterHome' element={<RenterRoute Component={RenterHome}/>} />
             <Route path='/Landing' element={<LandingPage/>} />
             <Route path='/LandingSearch' element={<PublicPropertyPage />}/>
-            <Route path='/AccountSetUpPM' element={<ManagerRoute Component={AccountSetUpPM}/>} />
-            <Route path='/AccountSetUpR' element={<RenterRoute Component={AccountSetUpR}/>} />
+            <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
+            <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<ManagerRoute Component={AddProp}/>} />
             <Route path='/Rprofile/:rID' element={<ManagerRoute Component={Rprofile}/>} />
             <Route path='/PMprofile/:pmID' element={<ManagerRoute Component={PMprofile}/>} />

@@ -1,10 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Lock from '@mui/icons-material/Lock';
-import { Button} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Button, Grid, Typography, Avatar, Paper}  from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { Link } from 'react-router-dom';
 import { supabase } from "../supabase";
 import { useState} from 'react';
 import useAddAccountSetUp from '../mutators/Account SetUp/useAddAccountSetUp';
@@ -41,7 +40,7 @@ function SignUp(){
         setAccountTypeChosen(true);
     }
 
-    const handleAccountCreation = () => {
+    const handleAccountCreation = async () => {
         if (password !== passwordConf){   
             setErrorText('Passwords must match')
             setErrorTextFlag(true);
@@ -84,69 +83,158 @@ function SignUp(){
             return;
         }
         else{
-            supabase.auth.signUp({
+            const {data,error} =  await supabase.auth.signUp({
                 email: email,
-                password: password,
-              }).then(data=> {
-                if (!data.error){
-                    addAccountSetUp(data.data.user.id, accountType); 
-                    setSignUpComplete(true);
-                }
-                else{
-                    setErrorText('Account already exists')
-                    setErrorTextFlag(true);
-                    setPassword('');
-                    setPasswordConf('');
-                }
-            })
-            .catch(error => {
-                setErrorText(`Unhandled error: ${error}`)
+                password: password
+            });
+            if (error){
+                setErrorText('Account already exists')
                 setErrorTextFlag(true);
                 setPassword('');
                 setPasswordConf('');
-                console.log(error);
-            })
+            }
+            else{
+                addAccountSetUp(data.user.id, accountType); 
+                setSignUpComplete(true);
+            }
         }
     }
+    function Copyright(props) {
+        return (
+          <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://mui.com/">
+              RentConnect
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+          </Typography>
+        );
+      }
   return (
-    <Box sx={{ml: '35%', mt: '10%', backgroundColor: 'white', width: '30%', mb: '10%', borderRadius: 2}}>
-        <br/>{!signUpComplete?<Box>
-            <Box sx={{fontSize: '220%', fontWeight: 'bold', textAlign: 'center'}}>Sign Up</Box>
-            {!accountTypeChosen?
-            <Box sx={{display: 'flex', flexDirection: 'column', mt: '5%'}}>
-                <Button variant="contained" disableElevation sx={{ ml: '10%', mr: '10%'}} onClick={handleSelectR}>
-                    Renter
-                </Button>
-                <br/>
-                <Button variant="contained" disableElevation sx={{ ml: '10%', mr: '10%'}} onClick={handleSelectPM}>
+    <Box>
+        <Grid container component="main" sx={{ height: '100vh' }}>
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={6}
+          sx={{
+            backgroundColor: "#4158D0",
+            backgroundImage: "linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%)",
+          }}
+        />
+        <Grid item xs={12} sm={8} md={6} component={Paper} elevation={6} square>
+            <Box
+              sx={{
+                my: 8,
+                mx: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                height: "80%",
+                justifyContent: "center"
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign up
+              </Typography>
+              {signUpComplete? 
+              <Box>
+                <Typography variant='h2'>
+                    Please Confirm Email
+                </Typography>
+                <Typography variant='h6' sx={{textAlign:'center'}}>
+                    We sent an email to your inbox
+                </Typography>
+
+              </Box>
+              :
+              <Box>
+                {!accountTypeChosen?
+                <Box sx={{ mt: 1 }}>
+                    <Typography component="h2" variant="h6" sx={{textAlign:'center'}}>
+                        Select Account Type
+                    </Typography>
+                    <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleSelectPM}
+                    >
                     Property Manager
-                </Button>
+                    </Button>
+                    <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleSelectR}
+                    >
+                    Renter
+                    </Button>
+                </Box>
+                :
+                <Box sx={{ mt: 1 }} >
+                    <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                    value={email}
+                    error={errorTextFlag}
+                    onChange={handleEmailChange}
+                    />
+                    <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    value={password}
+                    error={errorTextFlag}
+                    helperText={errorTextFlag?errorText:''}
+                    onChange={handlePasswordChange}
+                    />
+                    <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="passwordConf"
+                    label="Confirm Password"
+                    type="password"
+                    id="passwordConf"
+                    autoComplete="current-password"
+                    value={passwordConf}
+                    error={errorTextFlag}
+                    onChange={handlePasswordConfChange}
+                    />
+                    <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                    onClick={handleAccountCreation}
+                    >
+                    Create Account
+                    </Button>
+                </Box>}
+              </Box>}
+              <Copyright sx={{ mt: 5 }} />
             </Box>
-            :<Box>
-                <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-                    <AccountCircle sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-                    <TextField id='Email' value={email} onChange={handleEmailChange} label='Email' variant='standard' sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
-                </Box>
-                <br/>
-                <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-                    <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-                    <TextField id='Password' value={password} onChange={handlePasswordChange} label='Password' variant='standard' type='password' error={errorTextFlag} helperText={errorTextFlag?errorText:''} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
-                </Box>
-                <br/>
-                <Box sx={{ display: 'flex', alignItems: 'flex-end', ml: "5%"}}>
-                    <Lock sx={{ color: 'action.active', mr: 1, my: 0.5, alignSelf: 'bottom', height: '35px', width: '35px'}} />
-                    <TextField id='PasswordConf' value={passwordConf} onChange={handlePasswordConfChange} label='Confirm Password' variant='standard' type='password' error={errorTextFlag} sx={{width: '80%'}} inputProps={{sx: {height: '15%', fontSize: '130%'}}} InputLabelProps={{sx: {fontSize: '130%'}}}/>
-                </Box>
-                <br/>
-                <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                    <Button variant="contained" onClick={handleAccountCreation}>Create Account</Button>
-                </Box>
-            </Box>}</Box>:
-            <Box>
-                <Box sx={{fontSize: '220%', fontWeight: 'bold', textAlign: 'center'}}>Please Confirm Email</Box>
-            </Box>}
-        
-        <br/>
+        </Grid>
+      </Grid>
     </Box>
   );
 }
