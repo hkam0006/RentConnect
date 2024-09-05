@@ -6,18 +6,12 @@ import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import EditIcon from '@mui/icons-material/Edit';
-import ImgElement from './ImgElement'
 import { PropertyApplicationsTable } from './PropertyApplicationsTable';
-import Icon from '@mui/material/Icon'
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import DeckIcon from '@mui/icons-material/Deck';
 import EditPropertyModal from './EditPropertyModal';
 import ImageCarousel from './ImageCarousel';
-
-// Demo Images
-import ListingImage from './listing.jpg'
-import ListingImageAppt from './listing2.jpg'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
@@ -104,7 +98,7 @@ export default function PropertyDetails() {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            <Grid item xs={6} id="photos">
+                            <Grid item xs={6} id="photos" sx={{ height: '400px', width: '600px' }}>
                                 <ImageCarousel images={prop.property_pictures} />
                             </Grid>
                         </Grid>
