@@ -1,6 +1,5 @@
-import NavigationMenu from "../navigation_menu/NavigationMenus";
 import React, { useEffect, useState } from "react";
-import { Typography, Grid, Box, Modal } from "@mui/material";
+import { Typography, Grid, Box, Modal, Button } from "@mui/material";
 import {
   Table,
   TableBody,
@@ -12,7 +11,8 @@ import {
 } from "@mui/material";
 import { supabase } from "../../supabase";
 import { styled } from "@mui/material/styles";
-import MapComponent from "./MapNav"; // Ensure the updated MapNav component is used
+import NavigationMenu from "../navigation_menu/NavigationMenus";
+import MapComponent from "./MapNav";
 
 const InspectionRun = () => {
   const [activeSection, setActiveSection] = useState("inspection");
@@ -22,7 +22,10 @@ const InspectionRun = () => {
     destination: "",
     waypoints: [],
   });
-  const [openModal, setOpenModal] = useState(false); // State to control modal visibility
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedPropertyManagerId, setSelectedPropertyManagerId] = useState("");
+  const [selectedOrigin, setSelectedOrigin] = useState("");
+  const [selectedDestination, setSelectedDestination] = useState("");
 
   useEffect(() => {
     const fetchInspectionsData = async () => {
@@ -104,15 +107,19 @@ const InspectionRun = () => {
     return `${number} ${name} ${type}, ${suburb}, ${state}`;
   };
 
-  // Updated handleShowRoute to accommodate flexible origin/destination
   const handleShowRoute = (propertyManagerId) => {
-    const filteredInspections = inspectionsData.filter(
-      (inspection) =>
-        inspection.propertyManagerData.property_manager_id ===
-        propertyManagerId
-    );
+    setSelectedPropertyManagerId(propertyManagerId);
+    setOpenModal(true);
+  };
 
-    if (filteredInspections.length >= 2) {
+  const handleSaveRoute = () => {
+    if (selectedPropertyManagerId) {
+      const filteredInspections = inspectionsData.filter(
+        (inspection) =>
+          inspection.propertyManagerData.property_manager_id ===
+          selectedPropertyManagerId
+      );
+
       const addresses = filteredInspections.map((inspection) =>
         fullAddress(
           inspection.propertyData.property_street_number,
@@ -123,21 +130,27 @@ const InspectionRun = () => {
         )
       );
 
-      // Dynamic assignment of origin, destination, and waypoints
-      const origin = addresses[0];
-      const destination = addresses[addresses.length - 1];
-      const waypoints = addresses.slice(1, -1);
+      const origin = selectedOrigin || addresses[0];
+      const destination = selectedDestination || addresses[addresses.length - 1];
+      const waypoints = addresses.filter(
+        (address) => address !== origin && address !== destination
+      );
+
       setMapData({ origin, destination, waypoints });
-      setOpenModal(true); // Open the modal when the route is set
-      setMapData({ origin, destination, waypoints });
-      console.log("Origin:", origin);
-      console.log("Destination:", destination);
-      console.log("Waypoints:", waypoints);
+      setOpenModal(false); // Close the modal after setting the route
     }
   };
+
   const handleCloseModal = () => {
     setOpenModal(false); // Close the modal when user clicks outside or on close button
   };
+
+  // Filter inspections based on selectedPropertyManagerId
+  const filteredInspections = inspectionsData.filter(
+    (inspection) =>
+      inspection.propertyManagerData.property_manager_id ===
+      selectedPropertyManagerId
+  );
 
   return (
     <div>
@@ -227,7 +240,8 @@ const InspectionRun = () => {
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <button
+                    <Button
+                      variant="contained"
                       onClick={() =>
                         handleShowRoute(
                           inspection.propertyManagerData.property_manager_id
@@ -235,7 +249,7 @@ const InspectionRun = () => {
                       }
                     >
                       Show Route
-                    </button>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -257,6 +271,71 @@ const InspectionRun = () => {
               p: 4,
             }}
           >
+            <div>
+              <Typography variant="subtitle1">Select Origin:</Typography>
+              <select
+                value={selectedOrigin}
+                onChange={(e) => setSelectedOrigin(e.target.value)}
+              >
+                <option value="">--Select Origin--</option>
+                {filteredInspections.map((inspection) => (
+                  <option
+                    key={inspection.id}
+                    value={fullAddress(
+                      inspection.propertyData.property_street_number,
+                      inspection.propertyData.property_street_name,
+                      inspection.propertyData.property_type,
+                      inspection.propertyData.property_suburb,
+                      inspection.propertyData.property_state
+                    )}
+                  >
+                    {fullAddress(
+                      inspection.propertyData.property_street_number,
+                      inspection.propertyData.property_street_name,
+                      inspection.propertyData.property_type,
+                      inspection.propertyData.property_suburb,
+                      inspection.propertyData.property_state
+                    )}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Typography variant="subtitle1">Select Destination:</Typography>
+              <select
+                value={selectedDestination}
+                onChange={(e) => setSelectedDestination(e.target.value)}
+              >
+                <option value="">--Select Destination--</option>
+                {filteredInspections.map((inspection) => (
+                  <option
+                    key={inspection.id}
+                    value={fullAddress(
+                      inspection.propertyData.property_street_number,
+                      inspection.propertyData.property_street_name,
+                      inspection.propertyData.property_type,
+                      inspection.propertyData.property_suburb,
+                      inspection.propertyData.property_state
+                    )}
+                  >
+                    {fullAddress(
+                      inspection.propertyData.property_street_number,
+                      inspection.propertyData.property_street_name,
+                      inspection.propertyData.property_type,
+                      inspection.propertyData.property_suburb,
+                      inspection.propertyData.property_state
+                    )}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button
+              variant="contained"
+              onClick={handleSaveRoute}
+              style={{ marginTop: '20px' }}
+            >
+              Show Route on Map
+            </Button>
             <MapComponent
               origin={mapData.origin}
               destination={mapData.destination}
