@@ -109,7 +109,20 @@ const InspectionRun = () => {
 
   const handleShowRoute = (propertyManagerId) => {
     setSelectedPropertyManagerId(propertyManagerId);
+     // Filter inspections based on the selected property manager ID
+  const filteredInspections = inspectionsData.filter(
+    (inspection) =>
+      inspection.propertyManagerData.property_manager_id ===
+      propertyManagerId
+  );
+
+  // Open the modal only if there is more than 1 inspection
+  if (filteredInspections.length > 1) {
     setOpenModal(true);
+  } else {
+    console.log("Not enough inspections to show the route.");
+  }
+    
   };
 
   const handleSaveRoute = () => {
