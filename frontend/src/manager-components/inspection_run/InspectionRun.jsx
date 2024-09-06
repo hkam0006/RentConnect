@@ -109,20 +109,28 @@ const InspectionRun = () => {
 
   const handleShowRoute = (propertyManagerId) => {
     setSelectedPropertyManagerId(propertyManagerId);
-     // Filter inspections based on the selected property manager ID
-  const filteredInspections = inspectionsData.filter(
-    (inspection) =>
-      inspection.propertyManagerData.property_manager_id ===
-      propertyManagerId
-  );
+    // Filter inspections based on the selected property manager ID
+    const filteredInspections = inspectionsData.filter(
+      (inspection) =>
+        inspection.propertyManagerData.property_manager_id ===
+        propertyManagerId
+    );
+    // Function to check if the button should be disabled
 
-  // Open the modal only if there is more than 1 inspection
-  if (filteredInspections.length > 1) {
-    setOpenModal(true);
-  } else {
-    console.log("Not enough inspections to show the route.");
-  }
-    
+    // Open the modal only if there is more than 1 inspection
+    if (filteredInspections.length > 1) {
+      setOpenModal(true);
+    } else {
+      console.log("Not enough inspections to show the route.")
+    }
+
+  };
+  const isShowRouteDisabled = (propertyManagerId) => {
+    const filteredInspections = inspectionsData.filter(
+      (inspection) =>
+        inspection.propertyManagerData.property_manager_id === propertyManagerId
+    );
+    return filteredInspections.length <= 1;
   };
 
   const handleSaveRoute = () => {
@@ -259,6 +267,9 @@ const InspectionRun = () => {
                           inspection.propertyManagerData.property_manager_id
                         )
                       }
+                      disabled={isShowRouteDisabled(
+                        inspection.propertyManagerData.property_manager_id
+                      )}
                     >
                       Show Route
                     </Button>

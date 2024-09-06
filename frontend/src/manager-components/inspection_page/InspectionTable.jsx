@@ -65,7 +65,8 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
   const [openCancelBtn, setOpenCancelBtn] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleClickOpenCancelBtn = () => {
+  const handleClickOpenCancelBtn = (inspection) => {
+    setSelectedInspection(inspection);
     setOpenCancelBtn(true);
   };
 
@@ -73,19 +74,19 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
     setOpenCancelBtn(false);
   };
 
-  const handleSubmitReason = async (inspection) => {
+  const handleSubmitReason = async () => {
     try {
       const { error } = await supabase
         .from("INSPECTION")
         .update({ pm_msg: message })
-        .eq("inspection_id", inspection.inspection_id);
+        .eq("inspection_id", selectedInspection.inspection_id);
 
       if (error) {
         console.error("Error updating message:", error);
       } else {
         console.log("Message updated successfully");
       }
-      updateType(inspection.inspection_id, "unapproved");
+      updateType(selectedInspection.inspection_id, "unapproved");
       setOpenCancelBtn(false);
     } catch (error) {
       console.error("Error:", error);
@@ -307,7 +308,7 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
                         color="error"
                         size="small"
                         sx={{ width: "80px" }}
-                        onClick={handleClickOpenCancelBtn}
+                        onClick={() => handleClickOpenCancelBtn(inspection)}
                       >
                         Unapprove
                       </Button>
@@ -337,10 +338,7 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
                           >
                             Close
                           </Button>
-                          <Button
-                            onClick={() => handleSubmitReason(inspection)}
-                            color="success"
-                          >
+                          <Button onClick={handleSubmitReason} color="success">
                             Submit
                           </Button>
                         </DialogActions>
