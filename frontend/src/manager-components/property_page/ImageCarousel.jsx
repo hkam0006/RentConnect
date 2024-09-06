@@ -3,7 +3,7 @@ import { Box, IconButton } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-export default function ImageCarousel({ images }) {
+export default function ImageCarousel({ images, style_props }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const handleNext = () => {
@@ -24,7 +24,7 @@ export default function ImageCarousel({ images }) {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: '16px', // Rounded corners
-            backgroundColor: 'black'
+            backgroundColor: 'black',
         }}>
             {/* Back Arrow */}
             <IconButton 
@@ -48,6 +48,7 @@ export default function ImageCarousel({ images }) {
                     width: '100%', 
                     height: '100%', 
                     objectFit: 'contain', // Adjust to cover if you want the image to fill the area
+                    ...style_props
                 }}
             />
 

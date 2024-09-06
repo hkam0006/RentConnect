@@ -192,9 +192,11 @@ const Keys = () => {
   const isSelected = (id) => selected.indexOf(id) !== -1;
   useSubscribeKeysByCompanyID(company_id, handleKeyChanges);
 
-  if (loading) return (<NavigationMenu>
-    <AppLoader />
-  </NavigationMenu>);
+  if (loading) return (
+    <NavigationMenu>
+      <AppLoader />
+    </NavigationMenu>
+  );
 
   return (
     <NavigationMenu>
