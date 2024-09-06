@@ -17,23 +17,24 @@ export default function ImageCarousel({ images }) {
     return <>
         <Box sx={{
             position: 'relative', // Needed for absolute positioning of arrows
-            height: '100%',
-            width: '100%',
+            height: '100%',       // Fixed height
+            width: '100%',        // Fixed width
             overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: '16px', // Rounded corners
+            backgroundColor: 'black'
         }}>
             {/* Back Arrow */}
             <IconButton 
                 onClick={handleBack} 
                 disabled={images.length <= 1}
                 sx={{
-                position: 'absolute',
-                left: 16,
-                color: 'white', // Ensure visibility over images
-                zIndex: 2, // Ensure it's above the image
+                    position: 'absolute',
+                    left: 16,
+                    color: 'white', // Ensure visibility over images
+                    zIndex: 2, // Ensure it's above the image
                 }}
             >
                 <ArrowBackIosIcon />
@@ -55,10 +56,10 @@ export default function ImageCarousel({ images }) {
                 onClick={handleNext} 
                 disabled={images.length <= 1}
                 sx={{
-                position: 'absolute',
-                right: 16,
-                color: 'white', // Ensure visibility over images
-                zIndex: 2, // Ensure it's above the image
+                    position: 'absolute',
+                    right: 16,
+                    color: 'white', // Ensure visibility over images
+                    zIndex: 2, // Ensure it's above the image
                 }}
             >
                 <ArrowForwardIosIcon />

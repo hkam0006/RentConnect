@@ -253,7 +253,7 @@ const AddProp = () => {
         flexDirection: "column"
       }}
     >
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" fontWeight={600} gutterBottom>
         Add Property Listing
       </Typography>
       <Box
