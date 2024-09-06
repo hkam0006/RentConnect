@@ -52,6 +52,35 @@ export default function PMprofile() {
                     </CardContent>
                 </Card>
             </Container>
+            <Container sx={{mt:'1%', ml:'1%', display:'flex', flexDirection:'row'}}>
+                <Card sx={{width:'30%'}}>
+                    <CardContent>
+                        <img src={propertyManager.property_manager_dp} 
+                            style={{
+                            width: '100%', 
+                            height: '100%', 
+                            objectFit: 'cover'
+                        }}/>
+                    </CardContent>
+                </Card>
+                <Card sx={{width:'28%', ml:'1%'}}>
+                    <CardContent>
+                        <Typography sx={{fontWeight:'bold'}}>
+                            About me:
+                        </Typography>
+                        <Typography>
+                            {propertyManager.property_manager_about_me}
+                        </Typography>
+                    </CardContent>
+                </Card>
+                <Card sx={{width:'40%', ml:'1%'}}>
+                    <CardContent>
+                        <Typography sx={{fontWeight:'bold'}}>
+                        {propertyManager.property_manager_first_name} {propertyManager.property_manager_last_name}'s current listings:
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Container>
         </NavigationMenu>
     )
 }

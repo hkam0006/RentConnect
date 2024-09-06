@@ -27,6 +27,10 @@ export default function NavigationMenu({ children }) {
 
     const navigate = useNavigate();
 
+    const handleGoToProfile = () => {
+        navigate(`/PMprofile/${user.id}`)
+    };
+
     const handleLogOut = () => {
         supabase.auth.signOut().then(data=> {
             if (data.error){
@@ -101,7 +105,7 @@ export default function NavigationMenu({ children }) {
                                 open={Boolean(accountAnchorEl)}
                                 onClose={handleAccountClose}
                             >
-                                <MenuItem onClick={handleAccountClose}>My Account</MenuItem>
+                                <MenuItem onClick={() =>{handleGoToProfile()}}>My Account</MenuItem>
                                 <MenuItem onClick={() => {handleLogOut()}}>Log Out</MenuItem>
                             </Menu>
                         </Box>
