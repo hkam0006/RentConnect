@@ -297,11 +297,11 @@ const PublicPropertyPage = () => {
   useEffect(() => {
     setLoading(true)
     async function findProperties(queries){
+      const joint_q = queries.join(" ")
       const { data, error } = await supabase
-        .from('PROPERTY')  // Replace 'properties' with your table name
+        .from('PROPERTY') 
         .select('*')
-        .or(`property_suburb.in.(${queries.join(',')}), property_postcode.in.(${queries.join(',')}), property_state.in.(${queries.join(',')})`
-        )
+        .or(`property_suburb.ilike.%${joint_q}%, property_postcode.ilike.%${joint_q}%, property_state.ilike.%${joint_q}%`)
       if (error) {
         console.error('Error fetching data:', error)
         setLoading(false)
