@@ -11,6 +11,7 @@ import BathtubIcon from '@mui/icons-material/Bathtub';
 import KingBedIcon from '@mui/icons-material/KingBed';
 import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import CloseIcon from '@mui/icons-material/Close';
+import ImageCarousel from '../manager-components/property_page/ImageCarousel';
 
 const fullAddress = (p) => {
   return `${p.property_street_number} ${p.property_street_name}, ${p.property_suburb}, ${p.property_state} ${p.property_postcode}`;
@@ -18,7 +19,6 @@ const fullAddress = (p) => {
 
 const PropertyCard = ({loading, property, showModal}) => {
   const navigate = useNavigate();
-  console.log(property)
   return <>
     {!loading ? <Card sx={{ borderRadius: 0, boxShadow: 2 }}>
       <CardMedia
@@ -220,12 +220,13 @@ const PropertyDetailsModal = ({open, onClose}) => {
         </IconButton>
       </DialogTitle>
       <DialogContent dividers>
-        <CardMedia
+        {/* <CardMedia
           component="img"
           height="400"
           image={property.property_pictures[0]}
           alt={property.property_id}
-        />
+        /> */}
+        <ImageCarousel images={property.property_pictures} style_props={{height: "400px", objectFit: "cover"}}/>
         <Box sx={{ mt: 2 }}>
           <Typography variant="h6" color="text.secondary" gutterBottom>
             <LocationOnIcon sx={{ mr: 1 }} />
@@ -299,8 +300,7 @@ const PublicPropertyPage = () => {
       const { data, error } = await supabase
         .from('PROPERTY')  // Replace 'properties' with your table name
         .select('*')
-        .or(
-          `property_suburb.in.(${queries.join(',')}), property_postcode.in.(${queries.join(',')}), property_state.in.(${queries.join(',')})`
+        .or(`property_suburb.in.(${queries.join(',')}), property_postcode.in.(${queries.join(',')}), property_state.in.(${queries.join(',')})`
         )
       if (error) {
         console.error('Error fetching data:', error)
