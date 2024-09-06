@@ -65,7 +65,8 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
   const [message, setMessage] = useState("");
   const [openCancelBtn, setOpenCancelBtn] = useState(false);
 
-  const handleClickOpenCancelBtn = () => {
+  const handleClickOpenCancelBtn = (inspection) => {
+    setSelectedInspection(inspection);
     setOpenCancelBtn(true);
   };
 
@@ -73,19 +74,19 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
     setOpenCancelBtn(false);
   };
 
-  const handleSubmitReason = async (inspection) => {
+  const handleSubmitReason = async () => {
     try {
       const { error } = await supabase
         .from("INSPECTION")
-        .update({ renter_msg: message })
-        .eq("inspection_id", inspection.inspection_id);
+        .update({ pm_msg: message })
+        .eq("inspection_id", selectedInspection.inspection_id);
 
       if (error) {
         console.error("Error updating message:", error);
       } else {
         console.log("Message updated successfully");
       }
-      updateType(inspection.inspection_id, "cancelled");
+      updateType(selectedInspection.inspection_id, "unapproved");
       setOpenCancelBtn(false);
     } catch (error) {
       console.error("Error:", error);
@@ -236,12 +237,12 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
                       </Button>
                       <Button
                         variant="outlined"
-                        color="success"
+                        color="error"
                         size="small"
                         sx={{ width: "80px" }}
-                        onClick={handleClickOpenCancelBtn}
+                        onClick={() => handleClickOpenCancelBtn(inspection)} // Pass inspection here
                       >
-                        Cancel
+                        Unapprove
                       </Button>
                       <Dialog
                         open={openCancelBtn}
@@ -250,12 +251,12 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
                         <DialogTitle>Cancel Inspection</DialogTitle>
                         <DialogContent>
                           <DialogContentText>
-                            Please leave a reason for the cancellation.
+                            Please leave a reason to renter.
                           </DialogContentText>
                           <TextField
                             autoFocus
                             margin="dense"
-                            label="Reason for cancellation"
+                            label="Reason for unapproval"
                             type="text"
                             fullWidth
                             value={message}
@@ -269,10 +270,7 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
                           >
                             Close
                           </Button>
-                          <Button
-                            onClick={() => handleSubmitReason(inspection)}
-                            color="success"
-                          >
+                          <Button onClick={handleSubmitReason} color="success">
                             Submit
                           </Button>
                         </DialogActions>
