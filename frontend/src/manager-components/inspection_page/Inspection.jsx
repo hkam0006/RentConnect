@@ -123,26 +123,35 @@ const Inspection = () => {
           event: "UPDATE",
           schema: "public",
           table: "INSPECTION",
-          filter: "renter_msg=neq.NULL",
         },
         (payload) => {
-          setUnreadMessages(true);
-          setMessageContent({
-            property: payload.new.property_id,
-            message: payload.new.renter_msg,
-          });
+          console.log("Payload received from Supabase:", payload);
+
+          if (payload.new.renter_msg) {
+            setUnreadMessages(true);
+            setMessageContent({
+              property: payload.new.property_picture,
+              inspection: payload.new.inspection_id,
+              message: payload.new.renter_msg,
+            });
+          } else {
+            console.log("No renter_msg in the payload or message is null.");
+          }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
 
     return () => {
+      console.log("Removing channel subscription...");
       supabase.removeChannel(channel);
     };
   }, []);
 
   const handleMailboxClick = () => {
     setMessageDialogOpen(true);
-    setUnreadMessages(false); // Reset red dot once opened
+    setUnreadMessages(false);
   };
 
   const handleDialogClose = () => {
@@ -261,10 +270,11 @@ const Inspection = () => {
           {messageContent && (
             <>
               <img
-                src={`path_to_property_thumbnails/${messageContent.property}.jpg`}
+                src={`${messageContent.property}`}
                 alt="Property Thumbnail"
                 style={{ width: "100%", marginBottom: "20px" }}
               />
+              <Typography>{messageContent.inspection}</Typography>
               <Typography>{messageContent.message}</Typography>
             </>
           )}
