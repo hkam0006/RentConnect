@@ -60,11 +60,6 @@ export default function SideDrawer() {
               icon: <PropertiesIcon />,
               link: "/property",
             },
-            {
-              text: "References",
-              icon: <ReferencesIcon />,
-              link: "/references",
-            },
             { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
             { text: "Keys", icon: <KeysIcon />, link: "/keys" },
             {
