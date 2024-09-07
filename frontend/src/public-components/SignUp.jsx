@@ -164,18 +164,18 @@ function SignUp(){
                     fullWidth
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
-                    onClick={handleSelectPM}
+                    onClick={handleSelectR}
                     >
-                    Property Manager
+                    Renter
                     </Button>
                     <Button
                     type="submit"
                     fullWidth
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
-                    onClick={handleSelectR}
+                    onClick={handleSelectPM}
                     >
-                    Renter
+                    Property Manager
                     </Button>
                 </Box>
                 :
