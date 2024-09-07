@@ -35,6 +35,7 @@ import SavedProperties from './renter-components/property_page/SaveProperties';
 import Rprofile from './manager-components/profile_page/Rprofile';
 import PMprofile from './manager-components/profile_page/PMprofile';
 import InspectionRenter from './renter-components/renter_inspection/InspectionRenter';
+import TenantReferences from './renter-components/references/TenantReferences'
 
 function App() {
   useAuthListener()
@@ -44,6 +45,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='Application' element={<ManagerRoute Component={Application}/>} />
+            <Route path='/References' element={<TenantReferences />}/>
             <Route path='/ApplicationDetails/:companyId/:propertyId/:renterId' element={<ManagerRoute Component={ApplicationDetails}/>} />
             <Route path='/property' element={<ManagerRoute Component={Properties}/>} />
             <Route path='/savedproperties' element={<RenterRoute Component={SavedProperties}/>} />

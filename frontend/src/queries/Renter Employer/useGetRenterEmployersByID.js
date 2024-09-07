@@ -2,7 +2,7 @@ import { supabase } from "../../supabase";
 import { useState, useEffect } from 'react';
 
 
-const useGetRenterEmployersByID = (renter_id) =>{
+const useGetRenterEmployersByID = (renter_id, callback) =>{
     const [renter_employers, setRenterEmployers] = useState([]);
   
     useEffect(() => {
@@ -17,11 +17,15 @@ const useGetRenterEmployersByID = (renter_id) =>{
         } else {
           setRenterEmployers(data);
         }
+        if (Boolean(callback)){
+          callback()
+        }
       };
   
       fetchRenterEmployers();
     }, []);
-      return renter_employers;
+
+    return renter_employers;
     };
 
 export default useGetRenterEmployersByID;

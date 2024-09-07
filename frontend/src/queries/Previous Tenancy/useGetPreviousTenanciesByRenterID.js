@@ -2,7 +2,7 @@ import { supabase } from "../../supabase";
 import { useState, useEffect } from 'react';
 
 
-const useGetPreviousTenanciesByRenterID = (renter_id) =>{
+const useGetPreviousTenanciesByRenterID = (renter_id, callback) =>{
     const [previous_tenancies, setPreviousTenancies] = useState([]);
   
     useEffect(() => {
@@ -16,6 +16,9 @@ const useGetPreviousTenanciesByRenterID = (renter_id) =>{
           console.error("Error fetching previous tenancies:", error.message);
         } else {
             setPreviousTenancies(data);
+        }
+        if (Boolean(callback)){
+          callback()
         }
       };
   
