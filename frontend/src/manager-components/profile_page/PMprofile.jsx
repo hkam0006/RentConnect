@@ -99,6 +99,7 @@ export default function PMprofile() {
                         </Typography>
                         <Paper sx={{overflow:'hidden', boxShadow:'0'}}>
                             <TableContainer sx={{height:'55vh'}}>
+                                {properties.length > 0?
                                 <Table>
                                     <TableBody>
                                         {properties.map((property) => (
@@ -117,6 +118,7 @@ export default function PMprofile() {
                                         ))}
                                     </TableBody>
                                 </Table>
+                                :""}
                             </TableContainer>
                         </Paper>
                     </CardContent>
