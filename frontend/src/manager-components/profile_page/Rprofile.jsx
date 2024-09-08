@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, Divider, List, ListItem, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -9,6 +9,8 @@ import useGetRenterCommentsWithPMInfoByRenterID from '../../queries/Renter Comme
 import useAddRenterComment from '../../mutators/Renter Comment/useAddRenterComment';
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
 import { supabase } from '../../supabase';
+import useSubscribeRenterCommentByRenterID from '../../subscribers/Renter Comment/useSubscribeRenterCommentByRenterID';
+
 
 export default function Rprofile() {
     const { rID } = useParams()
@@ -24,7 +26,6 @@ export default function Rprofile() {
     const addComment = useAddRenterComment();
     const [property_manager, setPropertyManager] = useState({});
     const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
-    const [newCommentAdded, setNewCommentAdded] = useState(0);
 
     useEffect(() => {
         async function getRData() {
@@ -42,28 +43,34 @@ export default function Rprofile() {
                 setApplications(applicationsWithAddresses);
             }
         }
+
+        async function getComments() {
+            const comments = await fetchRenterComments(rID);
+            setRenterComments(comments.data);
+        }
+        
         async function getPMData(){
             const {data, error} = await supabase.auth.getUser();
             const property_manager = await fetchPropertyManager(data.user?.id);
             setPropertyManager(property_manager.data[0]);
         }
 
+        getComments();
         getPMData();
         getRData();
         getApplications();
+    }, [rID, fetchRenter, fetchApplications, fetchRenterComments, fetchProperty, fetchPropertyManager]);
+
+    const handleNewComment = useCallback((payload) => {
+        console.log('Subscription callback triggered:', payload); // Debugging log
+        setRenterComments(prevComments => [...prevComments, payload.new]);
     }, []);
 
-    useEffect(() => {
-        async function getComments() {
-            const comments = await fetchRenterComments(rID);
-            setRenterComments(comments.data);
-        }
-        getComments();
-    }, [newCommentAdded]);
+    useSubscribeRenterCommentByRenterID(rID, handleNewComment);
+
 
     function handleAddComment(commentContents) {
         addComment(property_manager.property_manager_id, rID, property_manager.company_id, commentContents);
-        setNewCommentAdded(newCommentAdded + 1);
     }
 
     const handleCloseAddComment = () => {
@@ -126,7 +133,7 @@ export default function Rprofile() {
                         <Typography sx={{fontWeight:'bold'}}>
                             Comments:
                         </Typography>
-                        <Paper sx={{overflow:'auto', boxShadow:'0'}}>
+                        <Paper sx={{overflow:'auto', boxShadow:'0',  height:'50vh'}}>
                             {renterComments.length > 0? 
                             <List sx={{height:'50vh'}}>
                                 {renterComments.map((comment) =>(
@@ -153,7 +160,7 @@ export default function Rprofile() {
                             </List>
                             :""} 
                         </Paper>
-                        <Box sx={{display:'flex', flexDirection:'row-reverse'}}>
+                        <Box sx={{display:'flex', flexDirection:'row-reverse', mt:'3%'}}>
                             <Button variant='contained' onClick={handleOpenAddComment}>Add Comment</Button>
                         </Box>
                     </CardContent>
