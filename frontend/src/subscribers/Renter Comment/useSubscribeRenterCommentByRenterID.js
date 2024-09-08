@@ -3,8 +3,6 @@ import { supabase } from "../../supabase";
 
 const useSubscribeRenterCommentByRenterID = (renterID, callback) => {
   useEffect(() => {
-    console.log('Setting up subscription for renterID:', renterID); // Debugging log
-
     const channel = supabase
       .channel("renter-comments-update")
       .on(
@@ -12,24 +10,16 @@ const useSubscribeRenterCommentByRenterID = (renterID, callback) => {
         {
           event: '*',
           schema: 'public',
-          table: "renter_comment", // Ensure the table name is correct
-          //filter: `renter_id=eq.${renterID}`
+          table: "renter_comment",
+          filter: `renter_id=eq.${renterID}`
         },
         (payload) => {
-          console.log('New comment payload:', payload); // Debugging log
           callback(payload);
         }
       )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('Subscription to renter_comment table successful');
-        } else {
-          console.error('Subscription error:', status);
-        }
-      });
+      .subscribe();
 
     return () => {
-      console.log('Removing subscription for renterID:', renterID); // Debugging log
       supabase.removeChannel(channel);
     };
   }, [renterID, callback]);

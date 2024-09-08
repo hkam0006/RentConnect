@@ -62,7 +62,6 @@ export default function Rprofile() {
     }, [rID, fetchRenter, fetchApplications, fetchRenterComments, fetchProperty, fetchPropertyManager]);
 
     const handleNewComment = useCallback((payload) => {
-        console.log('Subscription callback triggered:', payload); // Debugging log
         setRenterComments(prevComments => [...prevComments, payload.new]);
     }, []);
 
