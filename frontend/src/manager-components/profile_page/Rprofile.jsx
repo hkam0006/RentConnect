@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
-import { Box, Button, Card, CardContent, Container, Divider, List, ListItem, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, Divider, List, ListItem, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID';
 import useGetApplicationsByRenterID from '../../queries/Application/useGetApplicationsByRenterID';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 import useGetRenterCommentsWithPMInfoByRenterID from '../../queries/Renter Comment/useGetRenterCommentsWithPMInfoByRenterID';
+import useAddRenterComment from '../../mutators/Renter Comment/useAddRenterComment';
+import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
+import { supabase } from '../../supabase';
 
 export default function Rprofile() {
     const { rID } = useParams()
@@ -17,6 +20,11 @@ export default function Rprofile() {
     const fetchRenterComments = useGetRenterCommentsWithPMInfoByRenterID();
     const [renterComments, setRenterComments] = useState([{}]);
     const fetchProperty = useGetPropertyByPropertyID();
+    const [dialogueOpen, setDialogueOpen] = useState(false);
+    const addComment = useAddRenterComment();
+    const [property_manager, setPropertyManager] = useState({});
+    const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
+    const [newCommentAdded, setNewCommentAdded] = useState(0);
 
     useEffect(() => {
         async function getRData() {
@@ -34,18 +42,36 @@ export default function Rprofile() {
                 setApplications(applicationsWithAddresses);
             }
         }
+        async function getPMData(){
+            const {data, error} = await supabase.auth.getUser();
+            const property_manager = await fetchPropertyManager(data.user?.id);
+            setPropertyManager(property_manager.data[0]);
+        }
+
+        getPMData();
+        getRData();
+        getApplications();
+    }, []);
+
+    useEffect(() => {
         async function getComments() {
             const comments = await fetchRenterComments(rID);
             setRenterComments(comments.data);
         }
-
-        getRData();
-        getApplications();
         getComments();
-    }, []);
+    }, [newCommentAdded]);
 
-    function handleAddComment() {
-        
+    function handleAddComment(commentContents) {
+        addComment(property_manager.property_manager_id, rID, property_manager.company_id, commentContents);
+        setNewCommentAdded(newCommentAdded + 1);
+    }
+
+    const handleCloseAddComment = () => {
+        setDialogueOpen(false);
+    }
+
+    const handleOpenAddComment = () => {
+        setDialogueOpen(true);
     }
 
     return (
@@ -100,11 +126,11 @@ export default function Rprofile() {
                         <Typography sx={{fontWeight:'bold'}}>
                             Comments:
                         </Typography>
-                        <Paper sx={{overflow:'hidden', boxShadow:'0'}}>
+                        <Paper sx={{overflow:'auto', boxShadow:'0'}}>
                             {renterComments.length > 0? 
                             <List sx={{height:'50vh'}}>
                                 {renterComments.map((comment) =>(
-                                    <Box>
+                                    <React.Fragment>
                                     <ListItem alignItems="flex-start" key={comment.renter_comment_id}>
                                         <ListItemText
                                         primary= {comment.renter_comment_contents }
@@ -122,13 +148,13 @@ export default function Rprofile() {
                                         />
                                     </ListItem>
                                     <Divider component="li" sx={{mt:'-4%'}}/>
-                                    </Box>
+                                    </React.Fragment>
                                 ))} 
                             </List>
                             :""} 
                         </Paper>
                         <Box sx={{display:'flex', flexDirection:'row-reverse'}}>
-                            <Button variant='contained' onClick={handleAddComment}>Add Comment</Button>
+                            <Button variant='contained' onClick={handleOpenAddComment}>Add Comment</Button>
                         </Box>
                     </CardContent>
                 </Card>
@@ -170,6 +196,36 @@ export default function Rprofile() {
                     </CardContent>
                 </Card>
             </Container>
+            <Dialog
+        open={dialogueOpen}
+        onClose={handleCloseAddComment}
+        PaperProps={{
+          component: 'form',
+          onSubmit: (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const formJson = Object.fromEntries(formData.entries());
+            const commentContents = formJson.contents;
+            handleAddComment(commentContents);
+            handleCloseAddComment();
+          },
+        }}
+      >
+        <DialogContent sx={{width:'50vh'}}>
+          <TextField
+            required
+            name="contents"
+            fullWidth
+            variant="outlined"
+            multiline
+            rows={10}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAddComment}>Cancel</Button>
+          <Button type="submit" variant='contained'>Add Comment</Button>
+        </DialogActions>
+      </Dialog>
         </NavigationMenu>
     )
 }
