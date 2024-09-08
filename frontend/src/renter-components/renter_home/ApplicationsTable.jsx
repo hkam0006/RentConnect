@@ -65,7 +65,7 @@ export default function ApplicationsTable(applications) {
 
     // get all property IDs for all applications
     //const [propertyIDs, setPropertyIDs] = useState([]);
-    const propertyIDs = applications.applications.map(application => application.property_id);
+    const propertyIDs = applications.applications?.map(application => application.property_id);
 
     // get all relevant properties from DB and store in properties array
     const {properties, loading} = useGetPropertiesByPropertyIDs(propertyIDs);
@@ -82,7 +82,7 @@ export default function ApplicationsTable(applications) {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {applications.applications.map((row, index) => (
+                {applications.applications?.map((row, index) => (
                     <TableRow
                         key={index}
                         sx={{'&:last-child td, &:last-child th': {border: 0}}}

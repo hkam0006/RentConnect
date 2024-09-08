@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import NavigationMenu from '../navigation_menu/NavigationMenus';
-import { supabase } from '../../supabase';
 import { Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
 import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
 import { useNavigate, useParams } from 'react-router-dom';
 import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPropertiesByPropertyManagerID';
-import ImageCarousel from '../property_page/ImageCarousel';
+import NavigationMenu from '../navigation_menu/NavigationMenus';
+import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
 
-export default function PMprofileForPM() {
+export default function PMprofileForR() {
     const navigate = useNavigate();
     const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
     const [propertyManager, setPropertyManager] = useState({});

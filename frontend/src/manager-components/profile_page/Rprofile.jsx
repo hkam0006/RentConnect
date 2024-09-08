@@ -12,7 +12,7 @@ import { supabase } from '../../supabase';
 import useSubscribeRenterCommentByRenterID from '../../subscribers/Renter Comment/useSubscribeRenterCommentByRenterID';
 
 
-export default function Rprofile() {
+export default function RprofileForPM() {
     const { rID } = useParams()
     const navigate = useNavigate();
     const fetchRenter = useGetRenterByRenterID();

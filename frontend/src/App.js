@@ -32,10 +32,11 @@ import AccountSetUpR from './renter-components/account_setup/AccountSetUpR';
 import useAuthListener from './hooks/useAuthListener';import RentalProfile from './renter-components/rental_profile/RentalProfile';
 import BuildRentalProfile from './renter-components/rental_profile/BuildRentalProfile';
 import SavedProperties from './renter-components/property_page/SaveProperties';
-import Rprofile from './manager-components/profile_page/Rprofile';
-import PMprofile from './manager-components/profile_page/PMprofile';
+import RprofileForPM from './manager-components/profile_page/Rprofile';
+import PMprofileForPM from './manager-components/profile_page/PMprofile';
 import InspectionRenter from './renter-components/renter_inspection/InspectionRenter';
 import TenantReferences from './renter-components/references/TenantReferences'
+import PMprofileForR from './renter-components/profile_page/PMprofile';
 
 function App() {
   useAuthListener()
@@ -72,8 +73,9 @@ function App() {
             <Route path='/AccountSetUpPM' element={<AccountSetUpPM/>} />
             <Route path='/AccountSetUpR' element={<AccountSetUpR/>} />
             <Route path='add_property' element={<ManagerRoute Component={AddProp}/>} />
-            <Route path='/Rprofile/:rID' element={<ManagerRoute Component={Rprofile}/>} />
-            <Route path='/PMprofile/:pmID' element={<ManagerRoute Component={PMprofile}/>} />
+            <Route path='/Rprofile/:rID' element={<ManagerRoute Component={RprofileForPM}/>} />
+            <Route path='/PMprofile/:pmID' element={<ManagerRoute Component={PMprofileForPM}/>} />
+            <Route path='/PM/:pmID' element={<RenterRoute Component={PMprofileForR}/>} />
           </Routes>
     </ThemeProvider>
   )
