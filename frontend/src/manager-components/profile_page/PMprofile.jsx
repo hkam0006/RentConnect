@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { supabase } from '../../supabase';
-import { Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
 import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
 import { useNavigate, useParams } from 'react-router-dom';
 import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPropertiesByPropertyManagerID';
 import ImageCarousel from '../property_page/ImageCarousel';
+import useUpdatePropertyManager from '../../mutators/Property Manager/useUpdatePropertyManager';
 
 export default function PMprofileForPM() {
     const navigate = useNavigate();
@@ -17,6 +18,10 @@ export default function PMprofileForPM() {
     const { pmID } = useParams()
     const [properties, setProperties] = useState([{}])
     const fetchProperies = useGetPropertiesByPropertyManagerID();
+    const [user, setUser] = useState({});
+    const [editing, setEditing] = useState(false);
+    const updatePropertyManager = useUpdatePropertyManager();
+
     useEffect(() => {
         async function getPMData() {
             const pm = await fetchPropertyManager(pmID);
@@ -28,12 +33,62 @@ export default function PMprofileForPM() {
             const data = await fetchProperies(pmID)
             setProperties(data.data)
         }
-
+        async function getUserData() {
+            await supabase.auth.getUser().then((value) =>{
+                if (value.data?.user) {
+                    setUser(value.data.user);
+                }
+            })
+        }
+        
+        getUserData();
         getPMData();
         getPMProperties();
     }, []);
 
-   
+    const handleSaveChanges = () => {
+        var new_property_manager_data = propertyManager;
+        new_property_manager_data.property_manager_about_me = newAboutMe;
+        new_property_manager_data.property_manager_email = newEmail;
+        new_property_manager_data.property_manager_first_name = newFName;
+        new_property_manager_data.property_manager_last_name = newLName;
+        new_property_manager_data.property_manager_phone_number = newPhone;
+        setPropertyManager(new_property_manager_data);
+        updatePropertyManager(pmID, newFName, newLName, newPhone, newEmail, newAboutMe);
+        setEditing(false);
+    };
+
+    const handleStartEditing = () => {
+        setNewAboutMe(propertyManager.property_manager_about_me);
+        setNewEmail(propertyManager.property_manager_email);
+        setNewFname(propertyManager.property_manager_first_name);
+        setNewLname(propertyManager.property_manager_last_name);
+        setNewPhone(propertyManager.property_manager_phone_number);
+        setEditing(true);
+    };
+
+    const [newFName, setNewFname] = useState('');
+    const handleNewFnameChange = f => {
+        setNewFname(f.target.value);
+    };
+    const [newLName, setNewLname] = useState('');
+    const handleNewLnameChange = f => {
+        setNewLname(f.target.value);
+    };
+    const [newEmail, setNewEmail] = useState('');
+    const handleNewEmailChange = f => {
+        setNewEmail(f.target.value);
+    };
+    const [newPhone, setNewPhone] = useState('');
+    const handleNewPhoneChange = f => {
+        if (!Number.isNaN(Number(f.target.value))){
+            setNewPhone(f.target.value);
+        }
+    };
+    const [newAboutMe, setNewAboutMe] = useState('');
+    const handleNewAboutMeChange = f => {
+        setNewAboutMe(f.target.value);
+    };
 
     return (
         <NavigationMenu>
@@ -41,9 +96,19 @@ export default function PMprofileForPM() {
                 <Card>
                     <CardContent>
                         <Box sx={{display:'flex', justifyContent: 'space-between'}}>
+                            {!editing?
                             <Typography variant='h2'>
                                 {propertyManager.property_manager_first_name} {propertyManager.property_manager_last_name}
                             </Typography>
+                            :
+                            <Box sx={{display:'flex', alignItems:'center', flexDirection: 'row', justifyContent: 'space-between'}}>
+                                <Typography variant='h5' sx={{fontWeight:'bold'}}>Name:</Typography>
+                                <TextField id='new-fname' onChange={handleNewFnameChange} value={newFName} variant="outlined"/>
+                                <Typography variant='h5' sx={{fontWeight:'bold'}}>Surame:</Typography>
+                                <TextField id='new-lname' onChange={handleNewLnameChange} value={newLName} variant="outlined"/>
+                            </Box>}
+
+                            {!editing?
                             <Box sx={{display:'flex', justifyContent: 'flex-end', flexDirection: 'column'}}>
                                 <Typography variant='h5' sx={{textAlign: 'right'}}>
                                     {propertyManager.property_manager_email}
@@ -52,12 +117,28 @@ export default function PMprofileForPM() {
                                     {propertyManager.property_manager_phone_number}
                                 </Typography>
                             </Box>
+                            :
+                            <Box sx={{display:'flex', justifyContent: 'flex-end', flexDirection: 'row'}}>
+                                <Box sx={{display:'flex', alignItems:'center', justifyContent: 'flex-end', flexDirection: 'row'}}>
+                                    <Typography variant='h5' sx={{fontWeight:'bold'}}>Email: </Typography>
+                                    <TextField id='new-email' onChange={handleNewEmailChange} value={newEmail} variant="outlined"/>
+                                </Box>
+                                <Box sx={{display:'flex', alignItems:'center', justifyContent: 'flex-end', flexDirection: 'row'}}>
+                                    <Typography variant='h5' sx={{fontWeight:'bold'}}>Phone: </Typography>
+                                    <TextField id='new-phone' onChange={handleNewPhoneChange} value={newPhone} variant="outlined"/>
+                                </Box>
+                            </Box>}
                         </Box>
                         <Box sx={{display:'flex', justifyContent: 'space-between'}}>
                             <Typography variant='h5'>
                                 {pmCompany.company_name}
                             </Typography>
-                            <Button variant="contained" disableElevation onClick={() => navigate(`/messages/${propertyManager.property_manager_id}`)}>Message</Button>
+                            {user.id = pmID?
+                            <React.Fragment>{!editing?<Button variant="contained" disableElevation onClick={handleStartEditing}>Edit Profile</Button>
+                            :
+                            <Button variant="contained" disableElevation onClick={handleSaveChanges}>Save</Button>}</React.Fragment>
+                            :
+                            <Button variant="contained" disableElevation onClick={() => navigate(`/messages/${propertyManager.property_manager_id}`)}>Message</Button>}
                         </Box>
                     </CardContent>
                 </Card>
@@ -87,9 +168,20 @@ export default function PMprofileForPM() {
                         <Typography sx={{fontWeight:'bold'}}>
                             About me:
                         </Typography>
+                        {!editing?
                         <Typography>
                             {propertyManager.property_manager_about_me}
                         </Typography>
+                        :
+                        <TextField 
+                        id='new-about-me' 
+                        onChange={handleNewAboutMeChange} 
+                        value={newAboutMe} 
+                        variant="outlined"
+                        multiline
+                        sx={{height:'55vh'}}
+                        fullWidth/>}
+                        
                     </CardContent>
                 </Card>
                 <Card sx={{width:'40%', ml:'1%'}}>
