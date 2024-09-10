@@ -15,6 +15,7 @@ import ImageCarousel from './ImageCarousel';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID'
+import AppLoader from './AppLoader';
 
 export default function PropertyDetails() {
 
@@ -38,6 +39,7 @@ export default function PropertyDetails() {
     // For editting modal
     const [open, setOpen] = useState(false);
     const [data, setData] = useState(prop);
+    const [loading, setLoading] = useState(true)
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -54,8 +56,15 @@ export default function PropertyDetails() {
         const {data, error} = await fetchProperties(propertyId)
         console.error(error)
         setProp(data[0])
+        setLoading(false)
       })()
     }, [])
+
+    if (loading) return (
+      <NavigationMenu>
+        <AppLoader />
+      </NavigationMenu>
+    )
     
     if (!prop) {
         return <Typography>No property found.</Typography>
