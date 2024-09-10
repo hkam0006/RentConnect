@@ -130,7 +130,7 @@ const InspectionRun = () => {
       (inspection) =>
         inspection.propertyManagerData.property_manager_id === propertyManagerId
     );
-    return filteredInspections.length <= 1;
+    return filteredInspections.length == 1;
   };
 
   const handleSaveRoute = () => {
