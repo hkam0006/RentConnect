@@ -14,7 +14,7 @@ import EditPropertyModal from './EditPropertyModal';
 import ImageCarousel from './ImageCarousel';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
-import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
+import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID'
 
 export default function PropertyDetails() {
 
@@ -32,11 +32,12 @@ export default function PropertyDetails() {
 
     // property ID to query database.
     const { propertyId } = useParams()
-    const { property, loading } = useGetPropertyByPropertyID(propertyId)
+    const fetchProperties = useGetPropertyByPropertyID()
+    const [prop, setProp] = useState(null)
 
     // For editting modal
     const [open, setOpen] = useState(false);
-    const [data, setData] = useState(property[0]);
+    const [data, setData] = useState(prop);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -48,8 +49,13 @@ export default function PropertyDetails() {
         handleClose();
     };
 
-    
-    let prop = property[0];
+    useEffect(() => {
+      (async () => {
+        const {data, error} = await fetchProperties(propertyId)
+        console.error(error)
+        setProp(data[0])
+      })()
+    }, [])
     
     if (!prop) {
         return <Typography>No property found.</Typography>
