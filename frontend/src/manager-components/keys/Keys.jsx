@@ -98,9 +98,9 @@ const Keys = () => {
       setKeys(data);
       setFilteredKeys(data);
       setError(error);
+      setLoading(false)
     })();
 
-    setLoading(false);
   }, []);
 
   const handleSelectRow = (event, id) => {
