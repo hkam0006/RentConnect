@@ -13,9 +13,11 @@ import BathtubIcon from "@mui/icons-material/Bathtub";
 import BedIcon from "@mui/icons-material/Bed";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
+import AppLoader from "../property_page/AppLoader";
 
 const Application = () => {
   const [applicationsData, setApplicationsData] = useState([]);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchApplicationsData = async () => {
@@ -47,6 +49,7 @@ const Application = () => {
         });
 
         setApplicationsData(applicationsWithProperties);
+        setLoading(false)
       } catch (error) {
         console.error("Error fetching applications data:", error);
       }
@@ -54,6 +57,12 @@ const Application = () => {
 
     fetchApplicationsData();
   }, []);
+
+  if (loading) return (
+    <NavigationMenu>
+      <AppLoader />
+    </NavigationMenu>
+  )
 
   return (
     <div>
