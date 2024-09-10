@@ -13,9 +13,10 @@ import DeckIcon from '@mui/icons-material/Deck';
 import EditPropertyModal from './EditPropertyModal';
 import ImageCarousel from './ImageCarousel';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID'
 import AppLoader from './AppLoader';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function PropertyDetails() {
 
@@ -42,6 +43,7 @@ export default function PropertyDetails() {
     const [loading, setLoading] = useState(true)
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const navigate = useNavigate()
 
     // Edit modal submit functionality
     const handleSubmit = () => {
@@ -83,12 +85,13 @@ export default function PropertyDetails() {
             <Container style={{ padding: '80px' }}>
                 <Card>
                     <CardContent>
-                        <Grid container justifyContent='flex-end'>
+                        <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                            <Button variant='contained' onClick={() => navigate(-1)} startIcon={<ArrowBackIcon />}>Back</Button>
                             <Stack direction='row' spacing={1}>
                                 <Button xs={{ mt: 5, mr: 2 }} variant='outlined' size='medium' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                                 <Button onClick={() => handleOpen()} xs={{ mt: 5 }} variant='outlined' size='medium' endIcon={<EditIcon />}>Edit</Button>
                             </Stack>
-                        </Grid>
+                        </Box>
                         <Divider sx={{ mt: 2, mb: 2 }} />
                         <Grid container spacing={2} sx={{ height: '400px' }}>
                             <Grid item xs={6}>
