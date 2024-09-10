@@ -122,7 +122,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
               key={index}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell>
+              <TableCell sx={{width : "20%"}}>
                 <Typography variant='body' fontWeight={700}>
                   {fullAddress(
                     row.property_street_number,
@@ -171,11 +171,6 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
           ))}
         </TableBody>
       </Table>
-      <Stack sx={{ position: "sticky", bottom: "10px" }} alignItems="center">
-        <Fab color="primary" aria-label="add" onClick={() => handleOpen()} sx={{ boxShadow: 10 }}>
-          <AddIcon />
-        </Fab>
-      </Stack>
     </TableContainer> : <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
       <Stack textAlign='center'>
         <Typography variant='h6'>Looks like you don't have any properties yet.</Typography>
@@ -183,7 +178,7 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
         <Button
           sx={{ margin: "auto", mt: 2 }}
           variant='contained'
-          onClick={() => handleOpen()}
+          onClick={() => navigate('/add_property')}
           startIcon={<AddIcon />}
         >
           Add Property
