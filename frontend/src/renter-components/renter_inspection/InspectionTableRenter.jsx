@@ -86,7 +86,7 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
       } else {
         console.log("Message updated successfully");
       }
-      updateType(selectedInspection.inspection_id, "unapproved");
+      updateType(selectedInspection.inspection_id, "cancelled");
       setOpenCancelBtn(false);
     } catch (error) {
       console.error("Error:", error);
@@ -242,7 +242,7 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
                         sx={{ width: "80px" }}
                         onClick={() => handleClickOpenCancelBtn(inspection)} // Pass inspection here
                       >
-                        Unapprove
+                        Cancel
                       </Button>
                       <Dialog
                         open={openCancelBtn}
