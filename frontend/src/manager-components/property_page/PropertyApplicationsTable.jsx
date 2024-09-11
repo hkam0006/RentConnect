@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ImgElement from './ImgElement';
 import { Table, TableBody, Checkbox, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Box } from "@mui/material"
 import { styled } from '@mui/material/styles';
@@ -10,14 +10,12 @@ import AddIcon from '@mui/icons-material/Add';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import AddPropertyModal from './AddPropertyModal';
 import { green } from '@mui/material/colors';
+import { useNavigate } from 'react-router-dom';
+import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID';
+import RenterNameCell from './RenterNameCell';
 
 
 export function PropertyApplicationsTable({ applications }) {
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "white",
@@ -27,16 +25,18 @@ export function PropertyApplicationsTable({ applications }) {
     },
   }));
 
+  const navigate = useNavigate();
+
   return <>
     {applications.length > 0 ? <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3 }}>
       <Table stickyHeader sx={{ minWidth: 1000 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             {/* <StyledTableCell></StyledTableCell> */}
-            <StyledTableCell align="center"><Typography variant='h6'>Match Score</Typography></StyledTableCell>
+            <StyledTableCell align="center"><Typography variant='h6'>Applied On</Typography></StyledTableCell>
             <StyledTableCell align="left"><Typography variant='h6' >Name</Typography></StyledTableCell>
-            <StyledTableCell align="left"><Typography variant='h6' >Ratio</Typography></StyledTableCell>
-            <StyledTableCell align="left"><Typography variant='h6'>Inspected Date</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='h6' >Persons</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='h6'>Proposed Start Date</Typography></StyledTableCell>
             <StyledTableCell align="left"><Typography variant='h6'>Status</Typography></StyledTableCell>
             <StyledTableCell></StyledTableCell>
           </TableRow>
@@ -48,12 +48,14 @@ export function PropertyApplicationsTable({ applications }) {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               {/* <TableCell><Checkbox /></TableCell> */}
-              <TableCell align="center"><Typography>{row.matchScore}</Typography></TableCell>
-              <TableCell align="left"><Typography>{row.name}</Typography></TableCell>
-              <TableCell align="left"><Typography> {row.rentToIncomeRatio}</Typography></TableCell>
-              <TableCell align="left"><Typography>{row.inspectedDate}</Typography></TableCell>
-              <TableCell align="left"><Typography>{row.status}</Typography></TableCell>
-              <TableCell align="center"><Button variant='outlined' size='medium'>View</Button></TableCell>
+              <TableCell align="center"><Typography>{row.application_apply_date}</Typography></TableCell>
+              <TableCell align="left">
+                <RenterNameCell renterId={row.renter_id} />
+              </TableCell>
+              <TableCell align="left"><Typography> {row.application_adults_number}</Typography></TableCell>
+              <TableCell align="left"><Typography>{row.application_lease_start}</Typography></TableCell>
+              <TableCell align="left"><Typography>{row.application_status}</Typography></TableCell>
+              <TableCell align="center"><Button variant='outlined' size='medium' onClick={() => navigate(`/ApplicationDetails/${row.company_id}/${row.property_id}/${row.renter_id}`)}>View</Button></TableCell>
             </TableRow>
           ))}
         </TableBody>

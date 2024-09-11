@@ -11,6 +11,7 @@ import DeckIcon from '@mui/icons-material/Deck';
 import { UpcomingViewingsTable } from './UpcomingViewingsTable';
 import InspectionRequestModal from './InspectionRequestModal';
 import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
+import MapComponent from '../../manager-components/inspection_run/MapNav';
 
 // Demo Images
 import ListingImage from '../../manager-components/property_page/listing.jpg'
@@ -168,11 +169,13 @@ export default function PropertyDetailsTenant() {
                                 display="flex"
                                 // alignItems="center"
                                 justifyContent="center"
-                                style={{ height: '100vh' }} // This makes the Box take the full height of the viewport
+                                style={{ height: '100vh' }}
                             >
-                                <Typography variant="h4">
-                                    Map goes here
-                                </Typography>
+                                <MapComponent 
+                                    origin={`${prop.property_street_number} ${prop.property_street_name} ${prop.property_street_type}, ${prop.property_suburb}, ${prop.property_state}`}
+                                    destination=""
+                                    waypoints={[]}
+                                />
                             </Box>
                         </Grid>
                     </CardContent>
