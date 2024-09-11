@@ -130,6 +130,7 @@ const MapComponent = ({ origin, destination, waypoints }) => {
     <div
       style={{
         display: "flex",
+        flexGrow: 1,
         justifyContent: "center",
         alignItems: "flex-start",
         flexDirection: "row",
@@ -139,7 +140,7 @@ const MapComponent = ({ origin, destination, waypoints }) => {
       <div
         id="map"
         style={{
-          width: "60%",
+          width: "70%",
           height: "400px",
           border: "5px solid #4CAF50",
           borderRadius: "10px",

@@ -4,7 +4,10 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const DrivingInstructionsBox = ({ itinerary }) => {
   return (
-    <Accordion defaultExpanded>
+    <Accordion defaultExpanded
+    sx={{
+      width: "30%"
+    }}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
