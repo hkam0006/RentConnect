@@ -27,16 +27,16 @@ function Identity({ userID }) {
             <Divider/>
             <IdentityContentTitle title={'Drivers Licence'} addOnClick={() => addIdentity('Drivers Licence')} hasIdentity={driversLicence.length > 0} />
             {(driversLicence.length > 0) && (
-                driversLicence.map(document => (
-                <Typography>
+                driversLicence.map((document, index) => (
+                <Typography key={index}>
                     {document.application_supporting_document_link}
                 </Typography>
             )))}
             <Divider/>
             <IdentityContentTitle title={'Passport'} addOnClick={() => addIdentity('Passport')} hasIdentity={passport.length > 0} />
             {(passport.length > 0) && (
-                passport.map(document => (
-                <Typography>
+                passport.map((document, index) => (
+                <Typography key={index}>
                     {document.application_supporting_document_link}
                 </Typography>
             )))}

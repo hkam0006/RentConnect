@@ -13,8 +13,8 @@ function Pets({ userID }) {
         <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <ContentTitle title={'Pets'} addOnClick={addPet} />
             {pets && (
-                pets.map(pet => (
-                    <PetsCard key={pet.id} pet={pet} />
+                pets.map((pet, index) => (
+                    <PetsCard key={index} pet={pet} />
                 ))
             )}
         </Paper>
