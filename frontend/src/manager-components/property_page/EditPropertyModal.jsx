@@ -187,7 +187,7 @@ function EditPropertyModal({ property_id, open, handleClose, data, setData, hand
     );
 
     handleSubmit();
-    // window.location.reload();
+    window.location.reload();
   }
 
   const handlePhotosChange = (event) => {
@@ -592,6 +592,7 @@ function EditPropertyModal({ property_id, open, handleClose, data, setData, hand
                         md: '30%',
                         lg: '20%',
                       },
+                      textAlign: 'center', // Center align text
                     }}
                   >
                     Add Photos

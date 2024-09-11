@@ -154,13 +154,26 @@ const AddProp = () => {
   }
 
   const handlePhotosChange = (event) => {
-    const files = Array.from(event.target.files);
-    setPhotos(files);
+    const newFiles = Array.from(event.target.files);
+
+    //Append new files
+    setPhotos(prevPhotos => [...prevPhotos, ...newFiles]);
     setNewProp((prevState) => ({
       ...prevState,
-      listingImages: files
+      listingImages: [...prevState.listingImages, ...newFiles]
     }));
   };
+
+  // Function for handling deleting a photo
+  const handleDeletePhoto = (photo, index) => {
+    setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index));
+
+    // Also remove the photo from the `newProp.listingImages` array
+    setNewProp((prevState) => ({
+      ...prevState,
+      listingImages: prevState.listingImages.filter((_, i) => i !== index),
+    }));
+  }
   
 
   const formErrors = {
@@ -544,9 +557,10 @@ const AddProp = () => {
                   md: '30%',
                   lg: '20%',
                 },
+                textAlign: 'center',
               }}
             >
-              Select Photos
+              Add Photos
               <input
                 accept="image/*"
                 type="file"
@@ -570,9 +584,11 @@ const AddProp = () => {
                   sx={{
                     width: '100px',
                     height: '100px',
+                    position: 'relative',
                     overflow: 'hidden',
                     borderRadius: '8px',
                     border: '1px solid #ccc',
+                    '&:hover .delete-btn': { display: 'block' } // Show delete button on hover
                   }}
                 >
                   <img
@@ -580,6 +596,24 @@ const AddProp = () => {
                     alt={`uploaded-${index}`}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
+                  <Button
+                    className="delete-btn"
+                    sx={{
+                      display: 'none', // Hidden by default
+                      position: 'absolute',
+                      top: '5px',
+                      right: '5px',
+                      backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                      color: '#fff',
+                      borderRadius: '50%',
+                      minWidth: '30px',
+                      minHeight: '30px',
+                      zIndex: 1,
+                    }}
+                    onClick={() => handleDeletePhoto(photo, index)}
+                  >
+                    X
+                  </Button>
                 </Box>
               ))}
             </Box>
