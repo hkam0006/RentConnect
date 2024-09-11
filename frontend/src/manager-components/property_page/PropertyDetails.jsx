@@ -17,33 +17,20 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID'
 import AppLoader from './AppLoader';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import useGetApplicationsByPropertyID from '../../queries/Application/useGetApplicationsByPropertyID';
 
 export default function PropertyDetails() {
 
-    // Dummy application
-    const app1 = {
-        matchScore: '55',
-        name: "John Doe",
-        rentToIncomeRatio: '25%',
-        inspectedDate: '25 April 2024',
-        status: 'Shortlisted'
-    }
-    const applications = [
-        app1
-    ]
-
     // property ID to query database.
     const { propertyId } = useParams()
-    const fetchProperties = useGetPropertyByPropertyID()
-    const [prop, setProp] = useState(null)
+    const { property, loading } = useGetPropertyByPropertyID(propertyId)
+    const { applications, applicationsLoading } = useGetApplicationsByPropertyID(propertyId)
 
     // For editting modal
     const [open, setOpen] = useState(false);
-    const [data, setData] = useState(prop);
-    const [loading, setLoading] = useState(true)
+    const [data, setData] = useState(null);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const navigate = useNavigate()
 
     // Edit modal submit functionality
     const handleSubmit = () => {
@@ -53,24 +40,28 @@ export default function PropertyDetails() {
         handleClose();
     };
 
+    // Set the property data when it is available
     useEffect(() => {
-      (async () => {
-        const {data, error} = await fetchProperties(propertyId)
-        console.error(error)
-        setProp(data[0])
-        setLoading(false)
-      })()
-    }, [])
+        if (property && property[0]) {
+            setData(property[0]);
+        }
+    }, [property]);
 
-    if (loading) return (
-      <NavigationMenu>
-        <AppLoader />
-      </NavigationMenu>
-    )
-    
-    if (!prop) {
-        return <Typography>No property found.</Typography>
+    // Display loader or error if needed
+    if (loading) {
+        return (
+            <NavigationMenu>
+                <Typography>Loading...</Typography>
+            </NavigationMenu>
+        );
     }
+
+    // Ensure property data exists before accessing it
+    let prop = property ? property[0] : null;
+    if (!prop) {
+        return <Typography>No property found.</Typography>;
+    }
+    
     return <>
         {open && (
             <EditPropertyModal
@@ -85,13 +76,12 @@ export default function PropertyDetails() {
             <Container style={{ padding: '80px' }}>
                 <Card>
                     <CardContent>
-                        <Box sx={{display: "flex", justifyContent: "space-between"}}>
-                            <Button variant='contained' onClick={() => navigate(-1)} startIcon={<ArrowBackIcon />}>Back</Button>
+                        <Grid container justifyContent='flex-end'>
                             <Stack direction='row' spacing={1}>
                                 <Button xs={{ mt: 5, mr: 2 }} variant='outlined' size='medium' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                                 <Button onClick={() => handleOpen()} xs={{ mt: 5 }} variant='outlined' size='medium' endIcon={<EditIcon />}>Edit</Button>
                             </Stack>
-                        </Box>
+                        </Grid>
                         <Divider sx={{ mt: 2, mb: 2 }} />
                         <Grid container spacing={2} sx={{ height: '400px' }}>
                             <Grid item xs={6}>
@@ -147,9 +137,13 @@ export default function PropertyDetails() {
                                     <Typography variant="h4">
                                         Applications
                                     </Typography>
-                                    <PropertyApplicationsTable
-                                        applications={applications}
-                                    />
+                                    {applications.length === 0 ? (
+                                        <Typography>There are no applications for this property.</Typography>
+                                    ) : (
+                                        <PropertyApplicationsTable
+                                            applications={applications}
+                                        />
+                                    )}
                                 </Box>
                             </Grid>
                         </Grid>
