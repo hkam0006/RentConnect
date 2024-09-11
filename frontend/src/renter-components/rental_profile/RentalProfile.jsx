@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { supabase } from "../../supabase"
 
 import { Typography, Grid, Paper, Button, Box } from '@mui/material'
 import { LinearProgress } from '@mui/material'
@@ -24,24 +23,6 @@ function RentalProfile () {
     const [profileCompletionScore, setProfileCompletionScore] = useState(25)
     const {applications: appliedProperties, loading: propLoading} = useGetApplicationsByRenterID(userID)
 
-    /*
-    useEffect(() => {
-        // TODO: set this back to getting user id when login is working
-        async function getUserID() {
-          const { data, error } = await supabase.auth.getUser()
-          if (error) {
-            console.error('Error getting user:', error)
-          }
-          if (data?.user) {
-            //setUserID(data.user.id)
-          }
-        }
-        getUserID()
-        setUserID('c779fb8e-674f-46da-ba91-47cc5f2f269d')
-    }, [])
-
-     */
-    
     useEffect(() => {
         let score = 25
         if (hasAddressHistory) {
