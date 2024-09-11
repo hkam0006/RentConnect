@@ -130,7 +130,7 @@ const InspectionRun = () => {
       (inspection) =>
         inspection.propertyManagerData.property_manager_id === propertyManagerId
     );
-    return filteredInspections.length <= 1;
+    return filteredInspections.length == 1;
   };
 
   const handleSaveRoute = () => {
@@ -294,6 +294,8 @@ const InspectionRun = () => {
               p: 4,
             }}
           >
+            <div style={{display:"flex", gap:"20px"}}>
+            <div>
             <div>
               <Typography variant="subtitle1">Select Origin:</Typography>
               <select
@@ -359,11 +361,13 @@ const InspectionRun = () => {
             >
               Show Route on Map
             </Button>
+            </div>
             <MapComponent
               origin={mapData.origin}
               destination={mapData.destination}
               waypoints={mapData.waypoints}
             />
+            </div>
           </Box>
         </Modal>
       </NavigationMenu>

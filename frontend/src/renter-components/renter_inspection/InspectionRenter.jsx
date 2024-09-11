@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Grid, Paper, Stack } from "@mui/material";
+import {
+  Typography,
+  Button,
+  Grid,
+  Paper,
+  Stack,
+  IconButton,
+  Badge,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
+import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import { supabase } from "../../supabase";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import InspectionTableRenter from "./InspectionTableRenter";
@@ -12,6 +25,9 @@ const InspectionRenter = () => {
   const [error, setError] = useState(null);
   const [userID, setUserID] = useState(null);
   const [accountType, setAccountType] = useState(null);
+  const [unreadMessages, setUnreadMessages] = useState(false);
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [messageContent, setMessageContent] = useState(null);
 
   useEffect(() => {
     async function getUserID() {
@@ -96,6 +112,50 @@ const InspectionRenter = () => {
       fetchInspectionsData();
     }
   }, [accountType]);
+
+  const handleMailboxClick = () => {
+    setMessageDialogOpen(true);
+    setUnreadMessages(false);
+  };
+
+  const handleDialogClose = () => {
+    setMessageDialogOpen(false);
+  };
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("pm-msg-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "INSPECTION",
+        },
+        (payload) => {
+          console.log("Payload received from Supabase:", payload);
+
+          if (payload.new.renter_msg) {
+            setUnreadMessages(true);
+            setMessageContent({
+              property: payload.new.property_picture,
+              inspection: payload.new.inspection_id,
+              message: payload.new.renter_msg,
+            });
+          } else {
+            console.log("No pm_msg in the payload or message is null.");
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
+
+    return () => {
+      console.log("Removing channel subscription...");
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const renderContent = () => {
     if (loading) {
@@ -207,7 +267,42 @@ const InspectionRenter = () => {
           >
             History
           </Button>
+
+          {/* Mailbox Icon */}
+          <IconButton
+            color="primary"
+            aria-label="mailbox"
+            style={{ marginLeft: "auto" }}
+            onClick={handleMailboxClick}
+          >
+            <Badge color="error" variant="dot" invisible={!unreadMessages}>
+              <MailOutlineIcon fontSize="large" />
+            </Badge>
+          </IconButton>
         </Grid>
+
+        <div style={{ padding: "20px" }}>{renderContent()}</div>
+
+        {/* Dialog for renter_msg */}
+        <Dialog open={messageDialogOpen} onClose={handleDialogClose}>
+          <DialogTitle>New Message</DialogTitle>
+          <DialogContent>
+            {messageContent && (
+              <>
+                <img
+                  src={`${messageContent.property}`}
+                  alt="Property Thumbnail"
+                  style={{ width: "100%", marginBottom: "20px" }}
+                />
+                <Typography>{messageContent.inspection}</Typography>
+                <Typography>{messageContent.message}</Typography>
+              </>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose}>Close</Button>
+          </DialogActions>
+        </Dialog>
         <div style={{ padding: "20px" }}>{renderContent()}</div>
       </NavigationMenu>
     );

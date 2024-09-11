@@ -5,31 +5,12 @@ import useGetPreviousTenanciesByRenterID from '../../queries/Previous Tenancy/us
 import { useSelector } from 'react-redux';
 import AppLoader from '../../manager-components/property_page/AppLoader';
 import useGetRenterEmployersByID from '../../queries/Renter Employer/useGetRenterEmployersByID';
+import ReferenceModal from './ReferenceModal';
 
 const TenantReferences = () => {
-  // const employerReferences = [
-  //   {
-  //     id: 1,
-  //     name: 'Jane Smith',
-  //     relationship: 'Employer',
-  //     contact: 'jane.smith@company.com',
-  //     phone: '098-765-4321',
-  //     letter: 'Jane has been employed with our company for 5 years and is a responsible and reliable employee.'
-  //   }
-  // ];
-
-  // const rentalHistoryReferences = [
-  //   {
-  //     previous_tenancy_id: 1,
-  //     previous_tenancy_contact_name: 'John Doe',
-  //     relationship: 'Previous Landlord',
-  //     previous_tenancy_contact_email: 'john.doe@gmail.com',
-  //     previous_tenancy_contact_phone: '123-456-7890',
-  //   }
-  // ];
-
-  const renterId = useSelector(state => state.user.currentUser.renter_id)
+  const renterId = useSelector(state => state.user.currentUser?.renter_id)
   const [loading, setLoading] = useState(true)
+  const [editModal, setEditModal] = useState({})
 
   const loadingCallback = () => {
     if (loading){
@@ -45,6 +26,7 @@ const TenantReferences = () => {
 
   return (
     <NavigationMenu>
+      {Boolean(editModal) && <ReferenceModal onClose={() => setEditModal(null)}/>}
       <div style={{ padding: "20px", marginTop: "64px" }}>
           <Stack direction='row' gap={2} sx={{alignItems: "center"}}>
             <Typography variant="h4" component="h1">

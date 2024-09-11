@@ -1,5 +1,5 @@
 import * as React from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link, NavLink } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -20,9 +20,11 @@ import KeysIcon from "@mui/icons-material/VpnKey";
 import AddPropertyIcon from "@mui/icons-material/Add";
 import HelpIcon from "@mui/icons-material/Help";
 import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
+import { useTheme } from "@mui/material";
 const drawerWidth = 200;
 
 export default function SideDrawer() {
+  const theme = useTheme()
   return (
     <Drawer
       variant="permanent"
@@ -63,12 +65,23 @@ export default function SideDrawer() {
           ].map((item) => (
             <ListItem key={item.text} disablePadding>
               <ListItemButton
-                component={Link}
-                to={item.link}
+                // component={Link}
+                // to={item.link}
                 sx={{ paddingRight: "8px" }}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
+                {/* <ListItemText primary={item.text} /> */}
+                <NavLink 
+                  to={item.link}
+                  style={({ isActive }) => ({
+                    color: isActive ? theme.primary : '#000000',
+                    fontWeight: isActive ? 700 : 400,
+                    textDecoration: 'none',
+                    padding: 2
+                  })}
+                >
+                  {item.text}
+                </NavLink>
               </ListItemButton>
             </ListItem>
           ))}
