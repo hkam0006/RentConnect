@@ -68,6 +68,7 @@ const optimizeRoute = async (coords) => {
 const MapComponent = ({ origin, destination, waypoints }) => {
   const [coords, setCoords] = useState([]);
   const [itinerary, setItinerary] = useState([]); // State for the itinerary
+  const [legDurations, setLegDurations] = useState([]); // State for the leg durations
 
   // Updated useEffect to fetch and optimize coordinates
   useEffect(() => {
@@ -122,6 +123,22 @@ const MapComponent = ({ origin, destination, waypoints }) => {
         new mapboxgl.Marker().setLngLat(coords[i]).addTo(map);
       }
     }
+    // Listen to the 'route' event to get the route details
+  directions.on("route", (event) => {
+    if (event.route && event.route.length > 0) {
+      const route = event.route[0]; // Assuming we're interested in the first route
+
+        // Extract leg durations
+        const legDurationsList = route.legs.map((leg, index) => ({
+          from: itinerary[index], // Origin address or previous waypoint
+          to: itinerary[index + 1], // Next waypoint or destination
+          duration: (leg.duration / 60).toFixed(2), // Convert seconds to minutes
+        }));
+
+        console.log("Leg Durations:", legDurationsList);
+        setLegDurations(legDurationsList); // Set leg durations in state
+    }
+  });
 
     return () => map.remove();
   }, [coords]);
@@ -147,7 +164,7 @@ const MapComponent = ({ origin, destination, waypoints }) => {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         }}
       />
-      <DrivingInstructionsBox itinerary={itinerary} />
+      <DrivingInstructionsBox itinerary={itinerary} legDurations={legDurations} />
     </div>
   );
 };
