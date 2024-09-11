@@ -10,7 +10,7 @@ import ReferenceModal from './ReferenceModal';
 const TenantReferences = () => {
   const renterId = useSelector(state => state.user.currentUser?.renter_id)
   const [loading, setLoading] = useState(true)
-  const [editModal, setEditModal] = useState({})
+  const [editModal, setEditModal] = useState()
 
   const loadingCallback = () => {
     if (loading){
@@ -26,7 +26,7 @@ const TenantReferences = () => {
 
   return (
     <NavigationMenu>
-      {Boolean(editModal) && <ReferenceModal onClose={() => setEditModal(null)}/>}
+      {Boolean(editModal) && <ReferenceModal onClose={() => setEditModal(null)} reference={editModal}/>}
       <div style={{ padding: "20px", marginTop: "64px" }}>
           <Stack direction='row' gap={2} sx={{alignItems: "center"}}>
             <Typography variant="h4" component="h1">
@@ -35,7 +35,7 @@ const TenantReferences = () => {
             <Button variant='contained'>Add References</Button>
           </Stack>
           <Typography variant="p" component="p" gutterBottom>
-            You must have this person’s consent to provide their personal information and be contacted by us and/or the relevant agency during business hours.
+            You must have this person’s consent to provide their personal information and be contacted by us during business hours.
           </Typography>
 
           {/* Employer References Section */}
@@ -69,7 +69,7 @@ const TenantReferences = () => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button variant='contained' color='primary'>Edit</Button>
+                    <Button variant='contained' color='primary' onClick={() => setEditModal({...reference, type: "employer"})}>Edit</Button>
                     <Button variant='contained' color='error'>Delete</Button>
                   </CardActions>
                 </Card>
@@ -108,7 +108,7 @@ const TenantReferences = () => {
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button variant='contained' color='primary'>Edit</Button>
+                    <Button variant='contained' color='primary' onClick={() => setEditModal({...reference, type: "rental"})}>Edit</Button>
                     <Button variant='contained' color='error'>Delete</Button>
                   </CardActions>
                 </Card>
