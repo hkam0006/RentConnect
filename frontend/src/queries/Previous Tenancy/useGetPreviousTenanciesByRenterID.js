@@ -8,7 +8,7 @@ const useGetPreviousTenanciesByRenterID = (renter_id, callback) =>{
     useEffect(() => {
       const fetchPreviousTenancies = async () => {
         const { data, error } = await supabase
-        .from("PREVIOUS TENANCY")
+        .from("PREVIOUSTENANCY")
         .select("*")
         .eq("renter_id", renter_id);
   
