@@ -20,6 +20,26 @@ import {
   import useAddProperty from "../../mutators/Property/useAddProperty";
   import useEditProperty from '../../mutators/Property/useEditProperty';
   import { v4 as uuidv4 } from 'uuid';
+  import { supabase } from '../../supabase';
+
+// Function for uploading photos to storage (you'll need your Supabase logic here)
+async function uploadPhotosToStorage(files) {
+  const uploadedUrls = [];
+  for (const file of files) {
+    const fileName = `${uuidv4()}-${file.name}`;
+    // Replace this with your actual Supabase upload logic
+    const { data, error } = await supabase.storage.from('property-photos').upload(fileName, file);
+    if (error) {
+      console.error('Error uploading file:', error.message);
+      continue;
+    }
+    const publicURL = supabase.storage.from('property-photos').getPublicUrl(fileName).publicURL;
+    if (publicURL) {
+      uploadedUrls.push(publicURL);
+    }
+  }
+  return uploadedUrls;
+}
 
 function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
   const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";         // Hardcoded, is to be the super admin's company
@@ -92,14 +112,6 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
     }
   }, [data]); // Trigger the effect when the 'data' prop changes
 
-
-  const handleInputChange = ({ target: { name, value } }) => {
-    setData({
-      ...data,
-      [name]: value
-    });
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -168,6 +180,10 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
       return;  // Stop submission if the form is not valid
     }
 
+    // Upload photos and get URLs
+    const uploadedPhotoUrls = await uploadPhotosToStorage(photos);
+    const allPhotos = [...newProp.listingImages, ...uploadedPhotoUrls]; // Combine new & existing photos
+
     // Call the editProperty function
     await editProperty(
       data.property_id,            // Existing property ID
@@ -184,7 +200,7 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
       newProp.footprint, 
       newProp.description, 
       newProp.amenities, 
-      newProp.listingImages,       // Include both existing and new images
+      allPhotos,       // Include both existing and new images
       newProp.payFreq, 
       newProp.propManager, 
       new Date(newProp.leaseStartDate), 
@@ -193,14 +209,17 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
     );
 
     handleSubmit();
+    window.location.reload();
   }
 
   const handlePhotosChange = (event) => {
-    const files = Array.from(event.target.files);
-    setPhotos(files);
+    const newFiles = Array.from(event.target.files);
+
+    //Append new files
+    setPhotos(prevPhotos => [...prevPhotos, ...newFiles]);
     setNewProp((prevState) => ({
       ...prevState,
-      listingImages: files
+      listingImages: [...prevState.listingImages, ...newFiles]
     }));
   };
 
@@ -276,24 +295,22 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth sx={{ top: '8%', margin: 'auto' }}>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth 
+        sx={{ 
+          top: '8%', 
+          position: 'absolute',
+          left: '15%',
+          margin: '0',
+          padding: 0,
+        }}
+      >
         <DialogContent sx={{ padding: 0 }}>
         <NavigationMenu>
-          <Box sx={{ mt: "70px", padding: "30px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-          {/* <Box
-            sx={{
-              padding: "20px",
-              width: "100%",
-              maxWidth: "700px",
-              backgroundColor: "white",  // Makes the tile white to pop from background
-              borderRadius: "10px",      // Rounded corners for the "file" effect
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column"
+          <Box 
+            sx={{ 
+              mt: '40px',
             }}
-          > */}
+          >
             <Typography variant="h4" fontWeight={600} gutterBottom>
               Edit Property Listing
             </Typography>
@@ -306,7 +323,7 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
               noValidate
               autoComplete="off"
             >
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ mt: '40px' }}>
                 Details
               </Typography>
               <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
@@ -587,7 +604,7 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
                       },
                     }}
                   >
-                    Select Photos
+                    Add Photos
                     <input
                       accept="image/*"
                       type="file"
@@ -628,7 +645,6 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
                 </Box>
             </Box>
             </Box>
-          {/* </Box> */}
         </NavigationMenu>
         </DialogContent>
         <DialogActions>
