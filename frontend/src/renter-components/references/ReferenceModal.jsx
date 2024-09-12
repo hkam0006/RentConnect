@@ -1,6 +1,8 @@
 import { Box, Fade, FormControl, InputLabel, Stack, Typography, Modal, TextField, Select, MenuItem, Button, IconButton } from '@mui/material'
 import Backdrop from '@mui/material/Backdrop';
 import React, { useState } from 'react'
+import useUpdatePreviousTenancy from '../../mutators/Previous Tenancy/useUpdatePreviousTenancyByID';
+import useUpdateRenterEmployer from '../../mutators/Renter Employer/useUpdateRenterEmployerByID';
 
 const style = {
   position: 'absolute',
@@ -24,6 +26,8 @@ const isNumericWithSigns = (str) => {
 }
 
 const ReferenceModal = ({onClose, reference}) => {
+  const updatePreviousTenancyDB = useUpdatePreviousTenancy()
+  const updateRenterEmployer = useUpdateRenterEmployer()
   const isRental = reference.type === "rental"
   const initialObject = (isRental) => {
     if (isRental) {
@@ -31,13 +35,19 @@ const ReferenceModal = ({onClose, reference}) => {
         name: reference.previous_tenancy_contact_name,
         email: reference.previous_tenancy_contact_email,
         phone: reference.previous_tenancy_contact_phone,
-        address: reference.previous_tenancy_address
+        address: reference.previous_tenancy_address,
+        previous_tenancy_id: reference.previous_tenancy_id,
+        renter_id: reference.renter_id,
+        type: reference.type
       }
     } 
     return {
       name: reference.renter_employer_name,
       email: reference.renter_employer_email,
       phone: reference.renter_employer_phone_number,
+      employer_id: reference.renter_employer_id,
+      renter_id: reference.renter_id,
+      type: reference.type
     }
   }
   const unchangedReference = initialObject(isRental)
@@ -46,6 +56,7 @@ const ReferenceModal = ({onClose, reference}) => {
     name: null,
     email: null,
     phone: null,
+    address: null,
   }
   const [errorInformation, setErrorInformation] = useState(noErrorObject)
   const [editMode, setEditMode] = useState(false)
@@ -66,7 +77,7 @@ const ReferenceModal = ({onClose, reference}) => {
         }
       }
       if (name === 'phone'){
-        if ( value.length === 0 && !isNumericWithSigns(value)){
+        if ( value.length === 0 || !isNumericWithSigns(value)){
           setErrorInformation((prev) => ({
             ...prev,
             phone: "Phone field cannot be empty and must be valid"
@@ -91,9 +102,22 @@ const ReferenceModal = ({onClose, reference}) => {
           }))
         }
       }
+      if (name === 'address'){
+        if (value.length === 0){
+          setErrorInformation((prev) => ({
+            ...prev,
+            address: "Address field cannot be empty"
+          }))
+        } else {
+          setErrorInformation((prev) => ({
+            ...prev,
+            address: null
+          }))
+        }
+      }
     }
-
   }
+
 
   const handleFormChange = (e, blur) => {
     const {name, value} = e.target
@@ -118,8 +142,43 @@ const ReferenceModal = ({onClose, reference}) => {
     validateForm("email", information.email, true)
     validateForm("name", information.name, true)
     validateForm("phone", information.phone, true)
-    setErrorInformation(noErrorObject)
-    setEditMode(false)
+
+    if (information.type === "rental"){
+      updatePreviousTenancyDB(
+        reference.previous_tenancy_id, 
+        reference.renter_id, 
+        information.address, 
+        information.name, 
+        information.email, 
+        information.phone
+      ).then(() => {
+        setErrorInformation(noErrorObject)
+        setEditMode(false)
+      }).catch(() => {
+        setErrorInformation((prev) => ({
+          ...prev,
+          'phone': "Failed to update reference."
+        }))
+      })
+    } else {
+      updateRenterEmployer(
+        reference.renter_id,
+        reference.renter_employer_id,
+        {
+          name: information.name,
+          address: information.address,
+          phone: information.phone
+        }
+      ).then(() => {
+        setErrorInformation(noErrorObject)
+        setEditMode(false)
+      }).catch(() => {
+        setErrorInformation((prev) => ({
+          ...prev,
+          'phone': "Failed to update reference."
+        }))
+      })
+    }
   }
 
   return (
@@ -143,16 +202,56 @@ const ReferenceModal = ({onClose, reference}) => {
             <IconButton onClick={onClose}>&times;</IconButton>
           </Stack>
           <Stack spacing={2} mt={2}>
+          <Stack sx={{display: !information.hasOwnProperty("address") ? 'none' : "show",}}>
+              <TextField 
+                onChange={(e) => handleFormChange(e, false)} 
+                onBlur={(e) => handleFormChange(e, true)}  
+                disabled={!editMode} 
+                label="Address" 
+                name='address' 
+                id="address" 
+                value={information.address} 
+                sx={disabled_text_sx}
+              />
+              <Box sx={{display: Boolean(errorInformation.address) ? "show" : "hidden" }} ><Typography color="error">{errorInformation.address}</Typography></Box>
+            </Stack>
             <Stack>
-              <TextField onChange={(e) => handleFormChange(e, false)} onBlur={(e) => handleFormChange(e, true)}  disabled={!editMode} label="Name" name='name' id="name" value={information.name} sx={disabled_text_sx}/>
+              <TextField 
+                onChange={(e) => handleFormChange(e, false)} 
+                onBlur={(e) => handleFormChange(e, true)}  
+                disabled={!editMode} 
+                label="Name" 
+                name='name' 
+                id="name" 
+                value={information.name} 
+                sx={disabled_text_sx}
+              />
               <Box sx={{display: Boolean(errorInformation.name) ? "show" : "hidden" }} ><Typography color="error">{errorInformation.name}</Typography></Box>
             </Stack>
             <Stack>
-              <TextField onChange={(e) => handleFormChange(e, false)} onBlur={(e) => handleFormChange(e, true)}  disabled={!editMode} label='Email' name='email' id="email"  sx={disabled_text_sx} value={information.email}/>
+              <TextField 
+                onChange={(e) => handleFormChange(e, false)} 
+                onBlur={(e) => handleFormChange(e, true)}  
+                disabled={!editMode} 
+                label='Email' 
+                name='email' 
+                id="email"  
+                sx={disabled_text_sx} 
+                value={information.email}
+              />
               <Box sx={{display: Boolean(errorInformation.email) ? "show" : "hidden" }} ><Typography color="error">{errorInformation.email}</Typography></Box>
             </Stack>
             <Stack>
-              <TextField onChange={(e) => handleFormChange(e, false)} onBlur={(e) => handleFormChange(e, true)}  disabled={!editMode} label='Phone' name='phone' id="phone" sx={disabled_text_sx} value={information.phone}/>
+              <TextField 
+              onChange={(e) => handleFormChange(e, false)} 
+              onBlur={(e) => handleFormChange(e, true)}  
+              disabled={!editMode} 
+              label='Phone' 
+              name='phone' 
+              id="phone" 
+              sx={disabled_text_sx} 
+              value={information.phone}
+            />
               <Box sx={{display: Boolean(errorInformation.email) ? "show" : "hidden" }} ><Typography color="error">{errorInformation.phone}</Typography></Box>
             </Stack>
             <Stack direction={'row'} spacing={2} sx={{justifyContent: "space-between"}}>
@@ -160,8 +259,9 @@ const ReferenceModal = ({onClose, reference}) => {
                 variant='contained' 
                 color={editMode ? 'success' : "primary"} 
                 onClick={handleSaveChanges}
+                disabled={Boolean(errorInformation.email) || Boolean(errorInformation.name) || Boolean(errorInformation.phone || Boolean(errorInformation.address))}
               >
-                {editMode ? "Save Changes" : "Edit"}
+                {editMode ? "Save" : "Edit"}
               </Button>
               <Button variant='outlined' disabled={!editMode} onClick={handleCancelChanges} color='error'>Cancel</Button>
             </Stack>

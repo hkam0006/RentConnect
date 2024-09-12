@@ -8,7 +8,7 @@ const useGetRenterEmployersByID = (renter_id, callback) =>{
     useEffect(() => {
       const fetchRenterEmployers = async () => {
         const { data, error } = await supabase
-        .from("RENTER EMPLOYER")
+        .from("RENTER-EMPLOYER")
         .select("*")
         .eq("renter_id", renter_id);
   

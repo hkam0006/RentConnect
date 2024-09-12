@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Container, Typography, Box, Card, CardContent, CardActions, Button, Grid, Avatar, Stack } from '@mui/material';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import useGetPreviousTenanciesByRenterID from '../../queries/Previous Tenancy/useGetPreviousTenanciesByRenterID';
@@ -6,19 +6,87 @@ import { useSelector } from 'react-redux';
 import AppLoader from '../../manager-components/property_page/AppLoader';
 import useGetRenterEmployersByID from '../../queries/Renter Employer/useGetRenterEmployersByID';
 import ReferenceModal from './ReferenceModal';
+import useSubscribeTableByRenterID from '../../subscribers/useSubscribeTableByRenterID';
+import useRemovePreviousTenancy from '../../mutators/Previous Tenancy/useRemovePreviousTenancyByID';
+import useRemoveRenterEmployer from '../../mutators/Renter Employer/useRemoveRenterEmployerbyID';
 
 const TenantReferences = () => {
   const renterId = useSelector(state => state.user.currentUser?.renter_id)
   const [loading, setLoading] = useState(true)
   const [editModal, setEditModal] = useState()
-
+  const [employerReferences, setEmployerReferences] = useState([])
+  const [rentalHistoryReferences, setRentalHistoryReferences] = useState([])
+  const removePreviousTenancy = useRemovePreviousTenancy();
+  const removeRenterEmployer = useRemoveRenterEmployer()
+  
   const loadingCallback = () => {
     if (loading){
       setLoading(false)
     }
   }
-  const employerReferences = useGetRenterEmployersByID(renterId, loadingCallback);
-  const rentalHistoryReferences = useGetPreviousTenanciesByRenterID(renterId, loadingCallback)
+
+  const fetchedEmployerReferences = useGetRenterEmployersByID(renterId, loadingCallback);
+  const fetchedPreviousTenancyReferences = useGetPreviousTenanciesByRenterID(renterId, loadingCallback)
+
+  useEffect(() => {
+    setEmployerReferences(fetchedEmployerReferences)
+    setRentalHistoryReferences(fetchedPreviousTenancyReferences)
+  }, [fetchedEmployerReferences, fetchedPreviousTenancyReferences])
+
+
+
+  const updateRental = useCallback((payload) => {
+    switch (payload.eventType){
+      case 'INSERT':
+        setRentalHistoryReferences([...rentalHistoryReferences, payload.new])
+        break
+      case 'UPDATE':
+        const updatedList = rentalHistoryReferences.map((rental) => {
+          if (rental.previous_tenancy_id === payload.new.previous_tenancy_id){
+            return payload.new
+          }
+          return rental
+        })
+        setRentalHistoryReferences(updatedList)
+        break
+      case 'DELETE':
+        const filteredList = rentalHistoryReferences.filter((rental) => rental.previous_tenancy_id !== payload.old.previous_tenancy_id)
+        setRentalHistoryReferences(filteredList)
+        break
+    }
+  })
+
+  const updateEmployer = useCallback((payload) => {
+    switch (payload.eventType){
+      case 'INSERT':
+        setEmployerReferences((prev) => [...prev, payload.new])
+        break
+      case 'UPDATE':
+        const updatedList = employerReferences.map((reference) => {
+          if (reference.previous_tenancy_id === payload.new.previous_tenancy_id){
+            return payload.new
+          }
+          return reference
+        })
+        setEmployerReferences(updatedList)
+        break
+      case 'DELETE':
+        const filteredList = employerReferences.filter((reference) => reference.previous_tenancy_id !== payload.old.previous_tenancy_id)
+        setEmployerReferences(filteredList)
+        break
+    }
+  })
+
+  const handleDelete = (type, reference) => {
+    if (type === 'rental'){
+      removePreviousTenancy(reference.previous_tenancy_id, renterId)
+    } else {
+      removeRenterEmployer(reference.renter_employment_id, renterId)
+    }
+  }
+
+  useSubscribeTableByRenterID('PREVIOUS-TENANCY', renterId, updateRental)
+  useSubscribeTableByRenterID('RENTER-EMPLOYER', renterId, updateEmployer)
 
   if (loading) return <NavigationMenu>
     <AppLoader />
@@ -49,7 +117,7 @@ const TenantReferences = () => {
           </Box>
           <Grid container spacing={4} sx={{width: "100%"}}>
             {employerReferences.map(reference => (
-              <Grid item xs={12} sm={12} md={6} xl={4} key={reference.renter_employer_id}>
+              <Grid item xs={12} sm={12} md={6} xl={4}key={reference.renter_employer_id}>
                 <Card>
                   <CardContent>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -70,7 +138,7 @@ const TenantReferences = () => {
                   </CardContent>
                   <CardActions>
                     <Button variant='contained' color='primary' onClick={() => setEditModal({...reference, type: "employer"})}>Edit</Button>
-                    <Button variant='contained' color='error'>Delete</Button>
+                    <Button variant='contained' color='error' onClick={() => handleDelete('employer', reference)}>Delete</Button>
                   </CardActions>
                 </Card>
               </Grid>
@@ -100,6 +168,9 @@ const TenantReferences = () => {
                         </Typography>
                       </Box>
                     </Box>
+                    <Typography variant="body2" >
+                      Address: {reference.previous_tenancy_address}
+                    </Typography>
                     <Typography variant="body2" color="textSecondary">
                       Contact: {reference.previous_tenancy_contact_email}
                     </Typography>
@@ -109,7 +180,7 @@ const TenantReferences = () => {
                   </CardContent>
                   <CardActions>
                     <Button variant='contained' color='primary' onClick={() => setEditModal({...reference, type: "rental"})}>Edit</Button>
-                    <Button variant='contained' color='error'>Delete</Button>
+                    <Button variant='contained' color='error' onClick={() => handleDelete('rental', reference)}>Delete</Button>
                   </CardActions>
                 </Card>
               </Grid>

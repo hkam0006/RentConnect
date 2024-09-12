@@ -5,7 +5,7 @@ const useUpdatePreviousTenancy = () => {
     const updatePreviousTenancy = useCallback(async (previous_tenancy_id, renter_id, previous_tenancy_address, previous_tenancy_contact_name, previous_tenancy_contact_email, previous_tenancy_contact_phone) => {
         if (previous_tenancy_id && renter_id && previous_tenancy_address && previous_tenancy_contact_name && previous_tenancy_contact_email && previous_tenancy_contact_phone) {
             const { data, error } = await supabase
-                .from('PREVIOUSTENANCY')
+                .from('PREVIOUS-TENANCY')
                 .update({
                     previous_tenancy_address,
                     previous_tenancy_contact_name,
