@@ -9,11 +9,13 @@ import ReferenceModal from './ReferenceModal';
 import useSubscribeTableByRenterID from '../../subscribers/useSubscribeTableByRenterID';
 import useRemovePreviousTenancy from '../../mutators/Previous Tenancy/useRemovePreviousTenancyByID';
 import useRemoveRenterEmployer from '../../mutators/Renter Employer/useRemoveRenterEmployerbyID';
+import AddReferenceModal from './AddReferenceModal';
 
 const TenantReferences = () => {
   const renterId = useSelector(state => state.user.currentUser?.renter_id)
   const [loading, setLoading] = useState(true)
   const [editModal, setEditModal] = useState()
+  const [addModal, setAddModal] = useState(false)
   const [employerReferences, setEmployerReferences] = useState([])
   const [rentalHistoryReferences, setRentalHistoryReferences] = useState([])
   const removePreviousTenancy = useRemovePreviousTenancy();
@@ -95,16 +97,14 @@ const TenantReferences = () => {
   return (
     <NavigationMenu>
       {Boolean(editModal) && <ReferenceModal onClose={() => setEditModal(null)} reference={editModal}/>}
+      {addModal && <AddReferenceModal onClose={() => setAddModal(false)}/>}
       <div style={{ padding: "20px", marginTop: "64px" }}>
           <Stack direction='row' gap={2} sx={{alignItems: "center"}}>
             <Typography variant="h4" component="h1">
               Tenant References
             </Typography>
-            <Button variant='contained'>Add References</Button>
+            <Button variant='contained' onClick={() => setAddModal(true)}>Add References</Button>
           </Stack>
-          <Typography variant="p" component="p" gutterBottom>
-            You must have this person’s consent to provide their personal information and be contacted by us during business hours.
-          </Typography>
 
           {/* Employer References Section */}
           <Box sx={{mb: 1}}>

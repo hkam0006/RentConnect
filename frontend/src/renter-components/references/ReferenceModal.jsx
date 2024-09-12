@@ -202,7 +202,7 @@ const ReferenceModal = ({onClose, reference}) => {
             <IconButton onClick={onClose}>&times;</IconButton>
           </Stack>
           <Stack spacing={2} mt={2}>
-          <Stack sx={{display: !information.hasOwnProperty("address") ? 'none' : "show",}}>
+            {information.hasOwnProperty("address") && <Stack>
               <TextField 
                 onChange={(e) => handleFormChange(e, false)} 
                 onBlur={(e) => handleFormChange(e, true)}  
@@ -214,7 +214,7 @@ const ReferenceModal = ({onClose, reference}) => {
                 sx={disabled_text_sx}
               />
               <Box sx={{display: Boolean(errorInformation.address) ? "show" : "hidden" }} ><Typography color="error">{errorInformation.address}</Typography></Box>
-            </Stack>
+            </Stack>}
             <Stack>
               <TextField 
                 onChange={(e) => handleFormChange(e, false)} 
