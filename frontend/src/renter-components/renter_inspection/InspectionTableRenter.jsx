@@ -15,7 +15,6 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
-  Avatar,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { tableCellClasses } from "@mui/material";
