@@ -21,7 +21,7 @@ import {
   import useEditProperty from '../../mutators/Property/useEditProperty';
   import { v4 as uuidv4 } from 'uuid';
 
-function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
+function EditPropertyModal({ property_id, open, handleClose, data, setData, handleSubmit }) {
   const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";         // Hardcoded, is to be the super admin's company
 
   const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
@@ -29,6 +29,7 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
   const [photos, setPhotos] = useState([]);
   const { addProperty } = useAddProperty();
   const { editProperty } = useEditProperty();
+  const [deletedPhotos, setDeletedPhotos] = useState([])
 
   const [newProp, setNewProp] = useState({
     streetNumber: "",
@@ -91,14 +92,6 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
       setPhotos(data.property_pictures || []);
     }
   }, [data]); // Trigger the effect when the 'data' prop changes
-
-
-  const handleInputChange = ({ target: { name, value } }) => {
-    setData({
-      ...data,
-      [name]: value
-    });
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -184,25 +177,41 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
       newProp.footprint, 
       newProp.description, 
       newProp.amenities, 
-      newProp.listingImages,       // Include both existing and new images
+      newProp.listingImages,
       newProp.payFreq, 
       newProp.propManager, 
       new Date(newProp.leaseStartDate), 
       newProp.unitNumber, 
-      newProp.postcode
+      newProp.postcode,
+      deletedPhotos
     );
 
     handleSubmit();
+    window.location.reload();
   }
 
   const handlePhotosChange = (event) => {
-    const files = Array.from(event.target.files);
-    setPhotos(files);
+    const newFiles = Array.from(event.target.files);
+
+    //Append new files
+    setPhotos(prevPhotos => [...prevPhotos, ...newFiles]);
     setNewProp((prevState) => ({
       ...prevState,
-      listingImages: files
+      listingImages: [...prevState.listingImages, ...newFiles]
     }));
   };
+
+  const handleDeletePhoto = (photo, index) => {
+    setDeletedPhotos(prev => [...prev, photo]);
+
+    setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index));
+
+    // Also remove the photo from the `newProp.listingImages` array
+    setNewProp((prevState) => ({
+      ...prevState,
+      listingImages: prevState.listingImages.filter((_, i) => i !== index),
+    }));
+  }
 
   const formErrors = {
     'streetNumber': 'The street number',
@@ -276,24 +285,22 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
 
   return (
     <div>
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth sx={{ top: '8%', margin: 'auto' }}>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth 
+        sx={{ 
+          top: '8%', 
+          position: 'absolute',
+          left: '15%',
+          margin: '0',
+          padding: 0,
+        }}
+      >
         <DialogContent sx={{ padding: 0 }}>
         <NavigationMenu>
-          <Box sx={{ mt: "70px", padding: "30px", width: "100%", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-          {/* <Box
-            sx={{
-              padding: "20px",
-              width: "100%",
-              maxWidth: "700px",
-              backgroundColor: "white",  // Makes the tile white to pop from background
-              borderRadius: "10px",      // Rounded corners for the "file" effect
-              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column"
+          <Box 
+            sx={{ 
+              mt: '40px',
             }}
-          > */}
+          >
             <Typography variant="h4" fontWeight={600} gutterBottom>
               Edit Property Listing
             </Typography>
@@ -306,7 +313,7 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
               noValidate
               autoComplete="off"
             >
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ mt: '40px' }}>
                 Details
               </Typography>
               <Box sx={{ display: 'flex', width: '100%', gap: 0 }}>
@@ -585,9 +592,10 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
                         md: '30%',
                         lg: '20%',
                       },
+                      textAlign: 'center', // Center align text
                     }}
                   >
-                    Select Photos
+                    Add Photos
                     <input
                       accept="image/*"
                       type="file"
@@ -611,9 +619,11 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
                         sx={{
                           width: '100px',
                           height: '100px',
+                          position: 'relative',
                           overflow: 'hidden',
                           borderRadius: '8px',
                           border: '1px solid #ccc',
+                          '&:hover .delete-btn': { display: 'block' } // Show delete button on hover
                         }}
                       >
                         <img
@@ -621,6 +631,24 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
                           alt={`uploaded-${index}`}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
+                        <Button
+                          className="delete-btn"
+                          sx={{
+                            display: 'none', // Hidden by default
+                            position: 'absolute',
+                            top: '5px',
+                            right: '5px',
+                            backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            minWidth: '30px',
+                            minHeight: '30px',
+                            zIndex: 1,
+                          }}
+                          onClick={() => handleDeletePhoto(photo, index)}
+                        >
+                          X
+                        </Button>
                       </Box>
                     ))}
                   </Box>
@@ -628,7 +656,6 @@ function EditPropertyModal({ open, handleClose, data, setData, handleSubmit }) {
                 </Box>
             </Box>
             </Box>
-          {/* </Box> */}
         </NavigationMenu>
         </DialogContent>
         <DialogActions>

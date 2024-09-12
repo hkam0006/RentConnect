@@ -1,4 +1,5 @@
 import { supabase } from "../../supabase";
+import { v4 as uuidv4 } from 'uuid';
 
 const useEditProperty = () => {
   const editProperty = async (
@@ -21,24 +22,44 @@ const useEditProperty = () => {
     propertyManagerID,
     propertyLeaseStart,
     propertyUnitNumber,
-    propertyPostcode
+    propertyPostcode,
+    deletedPhotos
   ) => {
     try {
+      // Handle deleted photos first
+      if (deletedPhotos.length > 0) {
+        const deletedFileNames = deletedPhotos.map((photoUrl) => {
+          const filePath = photoUrl.split('/storage/v1/object/public/')[1];
+          return filePath;
+        });
+
+        // Remove deleted files
+        const { error: deleteError } = await supabase.storage
+          .from("property_images")
+          .remove(deletedFileNames);
+
+        if (deleteError) throw deleteError
+      }
+
       // Handle image upload if necessary
       const uploadedPhotoUrls = [];
 
       for (const file of propertyPictures) {
+        console.log(file)
         if (typeof file !== 'string') {
+          // Generate a unique name for the file using uuid
+          const fileName = uuidv4();
+
           // Upload new photos
           const { data, error: uploadError } = await supabase.storage
             .from('property_images')
-            .upload(`properties/${propertyID}/${file.name}`, file);
+            .upload(`properties/${propertyID}/${fileName}`, file);
 
           if (uploadError) throw uploadError;
 
           const { data: publicUrlData } = supabase.storage
             .from('property_images')
-            .getPublicUrl(`properties/${propertyID}/${file.name}`);
+            .getPublicUrl(`properties/${propertyID}/${fileName}`);
           uploadedPhotoUrls.push(publicUrlData.publicUrl);
         } else {
           // Keep existing photo URLs
