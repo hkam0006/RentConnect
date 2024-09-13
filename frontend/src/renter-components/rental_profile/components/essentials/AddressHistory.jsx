@@ -44,8 +44,8 @@ function AddressHistory({ userID }) {
             default:
                 break
         }
-    })
-    useSubscribeTableByRenterID('PREVIOUSTENANCY', userID, updateAddressHistory)
+    }, [previousTenancies, setPreviousTenancies])
+    useSubscribeTableByRenterID('PREVIOUS-TENANCY', userID, updateAddressHistory)
     
     return (
         <>

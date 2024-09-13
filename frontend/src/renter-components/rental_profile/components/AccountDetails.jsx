@@ -20,7 +20,7 @@ function AccountDetails({ userID }) {
     const updateRenter = useCallback((payload) => {
         const newRenter = payload.new
         setRenter(newRenter)
-    }, [])
+    }, [setRenter])
     useSubscribeTableByRenterID('RENTER', userID, updateRenter)
 
     return (

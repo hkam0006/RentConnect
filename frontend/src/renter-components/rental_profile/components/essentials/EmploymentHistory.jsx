@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Paper } from '@mui/material'
 import useGetRenterEmploymentsByRenterID from '../../../../queries/Renter Employment/useGetRenterEmploymentsByRenterID'
 import EmploymentHistoryCard from './EmploymentHistoryCard'
 import ContentTitle from './ContentTitle'
 import EmploymentHistoryDialog from '../Dialogs/EmploymentHistoryDialog'
+import useSubscribeTableByRenterID from '../../../../subscribers/useSubscribeTableByRenterID'
 
 function EmploymentHistory({ userID }) {
     const [employmentHistories, setEmploymentHistories] = useState(null)
@@ -22,28 +23,47 @@ function EmploymentHistory({ userID }) {
         setIsDialogOpen(true)
     }
 
-    function addEmploymentHistory(newEmployment) {
-        // Append the new employment history
-        fetchedEmploymentHistories.push(newEmployment);
+    const updateEmploymentHistory = useCallback((payload) => {
+        let updatedEmployments
     
-        // Sort the array according to the desired rules
-        fetchedEmploymentHistories.sort((a, b) => {
-            // Sort by "renter_employment_end" with ascending order, nulls first
-            if (a.renter_employment_end === null && b.renter_employment_end !== null) return -1;
-            if (a.renter_employment_end !== null && b.renter_employment_end === null) return 1;
+        switch (payload.eventType) {
+            case 'INSERT':
+                updatedEmployments = [...employmentHistories, payload.new]
+                break
+            case 'UPDATE':
+                updatedEmployments = employmentHistories.map((employment) => 
+                    employment.renter_employment_id === payload.new.renter_employment_id
+                        ? payload.new
+                        : employment
+                )
+                break
+            case 'DELETE':
+                updatedEmployments = employmentHistories.filter(
+                    (employment) => employment.renter_employment_id !== payload.old.renter_employment_id
+                )
+                break
+            default:
+                updatedEmployments = [...employmentHistories]
+                break
+        }
+    
+        const sortedEmployments = updatedEmployments.sort((a, b) => {
+            if (a.renter_employment_end === null) return -1
+            if (b.renter_employment_end === null) return 1
             if (a.renter_employment_end !== b.renter_employment_end) {
-                return new Date(a.renter_employment_end) - new Date(b.renter_employment_end);
+                return new Date(a.renter_employment_end) - new Date(b.renter_employment_end)
             }
     
-            // Sort by "renter_employment_end" in descending order (if the first condition didn't fully apply)
             if (a.renter_employment_end !== b.renter_employment_end) {
-                return new Date(b.renter_employment_end) - new Date(a.renter_employment_end);
+                return new Date(b.renter_employment_end) - new Date(a.renter_employment_end)
             }
     
-            // Sort by "renter_employment_start" in descending order (if the previous conditions are tied)
-            return new Date(b.renter_employment_start) - new Date(a.renter_employment_start);
-        });
-    }
+            return new Date(b.renter_employment_start) - new Date(a.renter_employment_start)
+        })
+    
+        setEmploymentHistories(sortedEmployments)
+    }, [employmentHistories, setEmploymentHistories])
+    useSubscribeTableByRenterID('RENTER-EMPLOYMENT', userID, updateEmploymentHistory)
 
     return (
         <>
@@ -51,11 +71,11 @@ function EmploymentHistory({ userID }) {
                 <ContentTitle title={'Employment History'} addOnClick={addButton} />
                 {employmentHistories && (
                     employmentHistories.map((employment, index) => (
-                        <EmploymentHistoryCard key={index} initialEmployment={employment} />
+                        <EmploymentHistoryCard key={index} employment={employment} />
                     ))
                 )}
             </Paper>
-            {isDialogOpen && <EmploymentHistoryDialog employment={{renter_id: userID}} closeDialog={closeDialog} updateEmployment={addEmploymentHistory} isUpdate={false}/>}
+            {isDialogOpen && <EmploymentHistoryDialog employment={{renter_id: userID}} closeDialog={closeDialog} isUpdate={false}/>}
         </>
     )
 }

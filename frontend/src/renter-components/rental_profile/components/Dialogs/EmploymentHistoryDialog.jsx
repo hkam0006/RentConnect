@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Alert, CircularProgress, Snackbar, Backdrop, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material'
 import useUpdateRenterEmployment from '../../../../mutators/Renter Employment/useUpdateRenterEmploymentByID'
 import useAddRenterEmployment from '../../../../mutators/Renter Employment/useAddRenterEmployment'
@@ -9,7 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import dayjs from 'dayjs';
 
-function EmploymentHistoryDialog({ employment, closeDialog, updateEmployment, isUpdate }) {
+function EmploymentHistoryDialog({ employment, closeDialog, isUpdate }) {
     const [formData, setFormData] = useState({
         ...employment,
         renter_employment_start: employment.renter_employment_start ? dayjs(employment.renter_employment_start) : null,
@@ -64,16 +64,10 @@ function EmploymentHistoryDialog({ employment, closeDialog, updateEmployment, is
         if (isUpdate) {
             updateRenterEmployment(employment.renter_employment_id, employment.renter_id, formData.renter_employment_title, formData.renter_employment_type, formData.renter_employment_gross_income, formData.renter_employment_net_income,
                 start_date, end_date, formData.employer_name, formData.employer_phone, formData.employer_email, formData.renter_employment_location)
-                .then((response) => {
-                    if (response[0]) {
-                        setError('')
-                        closeDialog()
-                        setLoading(false)
-                        updateEmployment(response[0])
-                    } else {
-                        setError('Failed to add employment history details')
-                        setLoading(false)
-                    }
+                .then(() => {
+                    setError('')
+                    closeDialog()
+                    setLoading(false)
                 })
                 .catch(() => {
                     setError('Failed to update employment history details')
@@ -82,16 +76,10 @@ function EmploymentHistoryDialog({ employment, closeDialog, updateEmployment, is
         } else {
             addRenterEmployment(employment.renter_id, formData.renter_employment_title, formData.renter_employment_type, formData.renter_employment_gross_income, formData.renter_employment_net_income,
                 start_date, end_date , formData.employer_name, formData.employer_phone, formData.employer_email, formData.renter_employment_location)
-                .then((response) => {
-                    if (response[0]) {
-                        setError('')
-                        closeDialog()
-                        setLoading(false)
-                        updateEmployment(response[0])
-                    } else {
-                        setError('Failed to add address history details')
-                        setLoading(false)
-                    }
+                .then(() => {
+                    setError('')
+                    closeDialog()
+                    setLoading(false)
                 })
                 .catch(() => {
                     setError('Failed to add address history details')
@@ -109,7 +97,6 @@ function EmploymentHistoryDialog({ employment, closeDialog, updateEmployment, is
                 setError('')
                 closeDialog()
                 setLoading(false)
-                updateEmployment(null)
             })
             .catch(() => {
                 setError('Failed to remove address history')

@@ -3,16 +3,11 @@ import { Box, Typography, Grid, Button, Divider } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import EmploymentHistoryDialog from '../Dialogs/EmploymentHistoryDialog'
 
-function EmploymentHistoryCard({ initialEmployment }) {
-    const [employment, setEmployment] = useState(initialEmployment)
+function EmploymentHistoryCard({ employment }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
     function closeDialog() {
         setIsDialogOpen(false)
-    }
-
-    function updateEmployment(newEmployment) {
-        setEmployment(newEmployment)
     }
 
     function calculateTenure(startDate, endDate) {
@@ -85,7 +80,7 @@ function EmploymentHistoryCard({ initialEmployment }) {
                     </Grid>
                 </Grid>
             </Box>
-            {isDialogOpen && <EmploymentHistoryDialog employment={employment} closeDialog={closeDialog} updateEmployment={updateEmployment} isUpdate={true}/>}
+            {isDialogOpen && <EmploymentHistoryDialog employment={employment} closeDialog={closeDialog} isUpdate={true}/>}
         </>
     )
 }
