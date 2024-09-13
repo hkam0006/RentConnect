@@ -65,6 +65,7 @@ export default function PropertyDetails() {
     return <>
         {open && (
             <EditPropertyModal
+                property_id={propertyId}
                 open={open}
                 handleClose={handleClose}
                 data={prop}

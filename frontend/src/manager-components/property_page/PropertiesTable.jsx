@@ -163,8 +163,6 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
               <TableCell align="right">
                 <Stack spacing={1}>
                   <Button variant='contained' onClick={() => navigate(`/property/${row.property_id}`)}>View</Button>
-                  <Button variant='outlined'>More</Button>
-                  <Button variant='outlined' onClick={() => handleSaveProperty(row)}>Save</Button>
                 </Stack>
               </TableCell>
             </TableRow>

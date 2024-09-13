@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Grid, Box, Modal, Button } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
 import {
   Table,
   TableBody,
@@ -8,6 +9,7 @@ import {
   TableHead,
   TableRow,
   tableCellClasses,
+  Avatar
 } from "@mui/material";
 import { supabase } from "../../supabase";
 import { styled } from "@mui/material/styles";
@@ -226,16 +228,19 @@ const InspectionRun = () => {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell>
-                    <Typography variant="body" fontWeight={700}>
-                      {
-                        inspection.propertyManagerData
-                          .property_manager_first_name
-                      }{" "}
-                      {
-                        inspection.propertyManagerData
-                          .property_manager_last_name
-                      }
-                    </Typography>
+                    <Box sx={{ display: "flex" }}>
+                      <Avatar
+                        src={inspection.propertyManagerData.property_manager_dp || ""}
+                        alt="Property Manager"
+                        sx={{ width: 32, height: 32, marginRight: 1 }}
+                      >
+                        {!inspection.propertyManagerData.property_manager_dp && <PersonIcon />}
+                      </Avatar>
+                      <Typography variant="body" fontWeight={700}>
+                        {inspection.propertyManagerData.property_manager_first_name}{" "}
+                        {inspection.propertyManagerData.property_manager_last_name}
+                      </Typography>
+                    </Box>
                   </TableCell>
                   <TableCell align="right">
                     <Typography variant="body" fontWeight={700}>
@@ -294,79 +299,79 @@ const InspectionRun = () => {
               p: 4,
             }}
           >
-            <div style={{display:"flex", gap:"20px"}}>
-            <div>
-            <div>
-              <Typography variant="subtitle1">Select Origin:</Typography>
-              <select
-                value={selectedOrigin}
-                onChange={(e) => setSelectedOrigin(e.target.value)}
-              >
-                <option value="">--Select Origin--</option>
-                {filteredInspections.map((inspection) => (
-                  <option
-                    key={inspection.id}
-                    value={fullAddress(
-                      inspection.propertyData.property_street_number,
-                      inspection.propertyData.property_street_name,
-                      inspection.propertyData.property_type,
-                      inspection.propertyData.property_suburb,
-                      inspection.propertyData.property_state
-                    )}
+            <div style={{ display: "flex", gap: "20px" }}>
+              <div>
+                <div>
+                  <Typography variant="subtitle1">Select Origin:</Typography>
+                  <select
+                    value={selectedOrigin}
+                    onChange={(e) => setSelectedOrigin(e.target.value)}
                   >
-                    {fullAddress(
-                      inspection.propertyData.property_street_number,
-                      inspection.propertyData.property_street_name,
-                      inspection.propertyData.property_type,
-                      inspection.propertyData.property_suburb,
-                      inspection.propertyData.property_state
-                    )}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <Typography variant="subtitle1">Select Destination:</Typography>
-              <select
-                value={selectedDestination}
-                onChange={(e) => setSelectedDestination(e.target.value)}
-              >
-                <option value="">--Select Destination--</option>
-                {filteredInspections.map((inspection) => (
-                  <option
-                    key={inspection.id}
-                    value={fullAddress(
-                      inspection.propertyData.property_street_number,
-                      inspection.propertyData.property_street_name,
-                      inspection.propertyData.property_type,
-                      inspection.propertyData.property_suburb,
-                      inspection.propertyData.property_state
-                    )}
+                    <option value="">--Select Origin--</option>
+                    {filteredInspections.map((inspection) => (
+                      <option
+                        key={inspection.id}
+                        value={fullAddress(
+                          inspection.propertyData.property_street_number,
+                          inspection.propertyData.property_street_name,
+                          inspection.propertyData.property_type,
+                          inspection.propertyData.property_suburb,
+                          inspection.propertyData.property_state
+                        )}
+                      >
+                        {fullAddress(
+                          inspection.propertyData.property_street_number,
+                          inspection.propertyData.property_street_name,
+                          inspection.propertyData.property_type,
+                          inspection.propertyData.property_suburb,
+                          inspection.propertyData.property_state
+                        )}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Typography variant="subtitle1">Select Destination:</Typography>
+                  <select
+                    value={selectedDestination}
+                    onChange={(e) => setSelectedDestination(e.target.value)}
                   >
-                    {fullAddress(
-                      inspection.propertyData.property_street_number,
-                      inspection.propertyData.property_street_name,
-                      inspection.propertyData.property_type,
-                      inspection.propertyData.property_suburb,
-                      inspection.propertyData.property_state
-                    )}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Button
-              variant="contained"
-              onClick={handleSaveRoute}
-              style={{ marginTop: '20px' }}
-            >
-              Show Route on Map
-            </Button>
-            </div>
-            <MapComponent
-              origin={mapData.origin}
-              destination={mapData.destination}
-              waypoints={mapData.waypoints}
-            />
+                    <option value="">--Select Destination--</option>
+                    {filteredInspections.map((inspection) => (
+                      <option
+                        key={inspection.id}
+                        value={fullAddress(
+                          inspection.propertyData.property_street_number,
+                          inspection.propertyData.property_street_name,
+                          inspection.propertyData.property_type,
+                          inspection.propertyData.property_suburb,
+                          inspection.propertyData.property_state
+                        )}
+                      >
+                        {fullAddress(
+                          inspection.propertyData.property_street_number,
+                          inspection.propertyData.property_street_name,
+                          inspection.propertyData.property_type,
+                          inspection.propertyData.property_suburb,
+                          inspection.propertyData.property_state
+                        )}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <Button
+                  variant="contained"
+                  onClick={handleSaveRoute}
+                  style={{ marginTop: '20px' }}
+                >
+                  Show Route on Map
+                </Button>
+              </div>
+              <MapComponent
+                origin={mapData.origin}
+                destination={mapData.destination}
+                waypoints={mapData.waypoints}
+              />
             </div>
           </Box>
         </Modal>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import emailjs from "@emailjs/browser";
 import {
   Table,
   TableBody,
@@ -47,6 +48,7 @@ const formatDateTime = (dateTime) => {
 
 const InspectionTable = ({ inspectionsData, setInspections }) => {
   const [userID, setUserID] = useState(null);
+
   useEffect(() => {
     async function getUserID() {
       await supabase.auth.getUser().then((value) => {
@@ -85,6 +87,12 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
         console.error("Error updating message:", error);
       } else {
         console.log("Message updated successfully");
+        console.log(selectedInspection.renterData.renter_email);
+        sendEmail(
+          selectedInspection.renterData.renter_email,
+          "Inspection Cancelled",
+          `Your inspection has been cancelled. Reason: ${message}`
+        );
       }
       updateType(selectedInspection.inspection_id, "unapproved");
       setOpenCancelBtn(false);
@@ -115,7 +123,6 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
         console.log("Supabase update error:", error.message);
         return;
       }
-      console.log("Supabase update data:", data);
       setInspections((prevInspections) =>
         prevInspections.map((inspection) =>
           inspection.inspection_id === inspectionId
@@ -170,7 +177,11 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
         )
       );
 
-      console.log("Inspection added to run and status updated to confirmed");
+      sendEmail(
+        inspectionData.renterData.renter_email,
+        "Inspection Confirmed",
+        "Your inspection is confirmed for the scheduled time."
+      );
     } catch (error) {
       console.log("Error in addToRun:", error.message);
     }
@@ -210,6 +221,30 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
     return firstInitial + lastInitial;
   };
 
+  // Function to send an email directly
+  const sendEmail = (renterEmail, subject, message) => {
+    const templateParams = {
+      user_email: renterEmail,
+      subject: subject,
+      message: message,
+    };
+
+    emailjs
+      .send(
+        "service_uur4q0o",
+        "template_h8ads0m",
+        templateParams,
+        "AvP0neM1CNskMJv29"
+      )
+      .then(
+        (result) => {
+          console.log("Email sent successfully:", result.text);
+        },
+        (error) => {
+          console.log("Email sending failed:", error.text);
+        }
+      );
+  };
   return (
     <>
       <TableContainer sx={{ borderRadius: 3, height: "700px" }}>
