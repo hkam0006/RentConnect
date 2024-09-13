@@ -7,7 +7,7 @@ const useUpdateRenterEmployment = () => {
     if (renter_employment_id && renter_id && renter_employment_title && renter_employment_type && renter_employment_gross_income && renter_employment_net_income && 
         renter_employment_start && employer_name && employer_phone && employer_email && renter_employment_location) {
             const { data, error } = await supabase
-                .from('RENTER EMPLOYMENT')
+                .from('RENTER-EMPLOYMENT')
                 .update({
                     renter_employment_title, 
                     renter_employment_type, 
