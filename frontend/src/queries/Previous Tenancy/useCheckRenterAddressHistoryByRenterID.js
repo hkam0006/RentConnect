@@ -8,7 +8,7 @@ const useCheckRenterAddressHistoryByRenterID = (renter_id) => {
         const fetchData = async () => {
             if (renter_id) {
                 const { data, error } = await supabase
-                .from('PREVIOUSTENANCY')
+                .from('PREVIOUS-TENANCY')
                 .select('previous_tenancy_id')
                 .eq('renter_id', renter_id)
                 .limit(1)

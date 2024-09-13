@@ -8,7 +8,7 @@ const useCheckRenterEmploymentByRenterID = (renter_id) => {
         const fetchData = async () => {
             if (renter_id) {
                 const { data, error } = await supabase
-                .from('RENTER EMPLOYMENT')
+                .from('RENTER-EMPLOYMENT')
                 .select('renter_employment_id')
                 .eq('renter_id', renter_id)
                 .limit(1)
