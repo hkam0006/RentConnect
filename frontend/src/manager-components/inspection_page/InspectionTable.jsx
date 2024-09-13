@@ -87,6 +87,7 @@ const InspectionTable = ({ inspectionsData, setInspections }) => {
         console.error("Error updating message:", error);
       } else {
         console.log("Message updated successfully");
+        console.log(selectedInspection.renterData.renter_email);
         sendEmail(
           selectedInspection.renterData.renter_email,
           "Inspection Cancelled",
