@@ -8,7 +8,7 @@ const useGetApplicationSupportingDocumentsByID = (property_id, renter_id) =>{
     useEffect(() => {
       const fetchApplicationSupportingDocuments = async () => {
         const { data, error } = await supabase
-        .from("APPLICATION SUPPORTING DOCUMENT")
+        .from("APPLICATION-SUPPORTING-DOCUMENT")
         .select("*")
         .eq("property_id", property_id)
         .eq("renter_id", renter_id);

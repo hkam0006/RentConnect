@@ -8,7 +8,7 @@ const useGetApplicationSupportingDocumentsByRenterID = (renter_id) =>{
       const fetchApplicationSupportingDocuments = async () => {
         if (renter_id) {
           const { data, error } = await supabase
-          .from("APPLICATION SUPPORTING DOCUMENT")
+          .from("APPLICATION-SUPPORTING-DOCUMENT")
           .select("*")
           .eq("renter_id", renter_id);
     
