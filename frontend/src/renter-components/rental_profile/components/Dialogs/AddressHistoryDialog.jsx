@@ -126,9 +126,11 @@ function AddressHistoryDialog({ addressHistory, closeDialog, isUpdate }) {
                 </Box>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => remove()} color='warning'>
-                    Remove
-                </Button>
+                {isUpdate && (
+                    <Button onClick={() => remove()} color='warning'>
+                        Remove
+                    </Button>
+                )}
                 <Button onClick={() => closeDialog()} color='error'>
                     Cancel
                 </Button>
