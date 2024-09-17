@@ -17,14 +17,11 @@ import useGetUserID from "../../queries/useGetUserID";
 
 function RentalProfile () {
     const {userID, loading: userLoading} = useGetUserID()
-    console.log(userLoading)
     const hasAddressHistory = useCheckRenterAddressHistoryByRenterID(userID)
     const hasEmployment = useCheckRenterEmploymentByRenterID(userID)
     const hasSupportingDocuments = useCheckRenterSupportingDocumentsByRenterID(userID)
     const [profileCompletionScore, setProfileCompletionScore] = useState(25)
     const {applications: appliedProperties, loading: propLoading} = useGetApplicationsByRenterID(userID)
-    //console.log(propLoading)
-    //console.log(appliedProperties)
 
     useEffect(() => {
         let score = 25
