@@ -59,6 +59,8 @@ const PropertyMap = ({ point }) => {
 
   useEffect(() => {
     if (map.current || !rawCoords) return; // Initialize map only once and if coordinates are available
+    var popup = new mapboxgl.Popup({closeOnClick:false})
+        .setText(point);
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current, // Reference to the map container
@@ -68,7 +70,8 @@ const PropertyMap = ({ point }) => {
     });
 
     // Add a marker at the fetched coordinates
-    new mapboxgl.Marker().setLngLat(rawCoords).addTo(map.current);
+    new mapboxgl.Marker().setLngLat(rawCoords).setPopup(popup).addTo(map.current);
+    popup.addTo(map.current);
   }, [rawCoords]); // Re-run when rawCoords updates
 
   return <div ref={mapContainer} style={{ width: "100%", height: "200px" }} />;
