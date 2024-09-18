@@ -15,7 +15,7 @@ import BedIcon from "@mui/icons-material/Bed";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {styled} from "@mui/material/styles";
 import {useNavigate} from "react-router-dom";
 import useGetPropertyByPropertyID from "../../queries/Property/useGetPropertyByPropertyID";
@@ -65,11 +65,10 @@ export default function ApplicationsTable(applications) {
 
     // get all property IDs for all applications
     //const [propertyIDs, setPropertyIDs] = useState([]);
-    const propertyIDs = applications.applications?.map(application => application.property_id);
+    const propertyIDs = useMemo(() => applications.applications?.map(application => application.property_id), [applications]);
 
     // get all relevant properties from DB and store in properties array
     const {properties, loading} = useGetPropertiesByPropertyIDs(propertyIDs);
-    console.log(properties)
 
     if (loading) return <AppLoader />
 
