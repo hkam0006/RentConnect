@@ -264,6 +264,7 @@ const PropertyDetailsModal = ({open, onClose}) => {
                 <AspectRatioIcon sx={{ mr: 1 }} />
                 {property.property_footprint}
               </Typography>
+              <PropertyMap point={fullAddress(property)} />
             </Box>
           </Grid>
         </Grid>
