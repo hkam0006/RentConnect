@@ -12,6 +12,7 @@ import KingBedIcon from '@mui/icons-material/KingBed';
 import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import CloseIcon from '@mui/icons-material/Close';
 import ImageCarousel from '../manager-components/property_page/ImageCarousel';
+import PropertyMap from './PropertyMap';
 
 const fullAddress = (p) => {
   return `${p.property_street_number} ${p.property_street_name}, ${p.property_suburb}, ${p.property_state} ${p.property_postcode}`;
