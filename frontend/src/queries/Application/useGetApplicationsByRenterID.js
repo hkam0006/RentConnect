@@ -9,7 +9,6 @@ import {useEffect, useState} from "react";
 const useGetApplicationsByRenterID = (renter_id) => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
-    console.log("apps run")
 
     useEffect(() => {
         const fetchApplications = async () => {
@@ -24,7 +23,6 @@ const useGetApplicationsByRenterID = (renter_id) => {
                     console.error('Error finding applications:', error);
                     setApplications([]); // Handle the error case by setting applications to an empty array
                 } else {
-                    console.log(data)
                     setApplications(data || []); // Ensure data is always an array
                 }
                 setLoading(false);

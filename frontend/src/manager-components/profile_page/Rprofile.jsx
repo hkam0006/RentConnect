@@ -12,26 +12,19 @@ import { supabase } from '../../supabase';
 import useSubscribeRenterCommentByRenterID from '../../subscribers/Renter Comment/useSubscribeRenterCommentByRenterID';
 import useGetPropertiesByPropertyIDs from "../../queries/Property/useGetPropertiesByPropertyIDs";
 import AppLoader from "../property_page/AppLoader";
-
-// to stop linter
-async function fetchApplications(rID) {
-
-}
+import useGetUserID from "../../queries/useGetUserID";
 
 export default function RprofileForPM() {
     const { rID } = useParams()
+    const {userID, loading: userLoading} = useGetUserID();
     const navigate = useNavigate();
-    const fetchRenter = useGetRenterByRenterID();
-    const [renter, setRenter] = useState({});
-    //const [applications, setApplications] = useState([]);
+    const {renter: renterData, loading: renterLoading} = useGetRenterByRenterID(rID);
     const {applications: baseApplications, loading: appLoading} = useGetApplicationsByRenterID(rID);
-    const fetchRenterComments = useGetRenterCommentsWithPMInfoByRenterID();
-    const [renterComments, setRenterComments] = useState([{}]);
+    const {comments: commentData, loading: commentsLoading} = useGetRenterCommentsWithPMInfoByRenterID(rID);
     const fetchProperty = useGetPropertyByPropertyID();
     const [dialogueOpen, setDialogueOpen] = useState(false);
     const addComment = useAddRenterComment();
-    const [property_manager, setPropertyManager] = useState({});
-    const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
+    const {propertyManager: pmData, loading: pmLoading} = useGetPropertyManagerByPropertyManagerID(userID);
 
     // get all applications from renter
     // get the properties from applications
@@ -46,7 +39,24 @@ export default function RprofileForPM() {
             applications.push([app, address])
         })
     }
-    console.log(properties)
+
+    // get renter data
+    let renter = {}
+    if (!renterLoading) {
+        renter = renterData[0];
+    }
+
+    // get pm data
+    let property_manager = {};
+    if (!pmLoading) {
+        property_manager = pmData[0];
+    }
+
+    // setup comments
+    const [renterComments, setRenterComments] = useState([]);
+    if (!commentsLoading && renterComments.length === 0) {
+        setRenterComments(commentData);
+    }
 
     /*
     useEffect(() => {
@@ -104,7 +114,6 @@ export default function RprofileForPM() {
         setDialogueOpen(true);
     }
 
-    console.log(propLoading)
 
     return (
         <NavigationMenu>

@@ -12,7 +12,6 @@ import { useState, useEffect } from 'react';
 const useGetPropertiesByPropertyIDs = (property_ids) => {
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
-    console.log("props run")
 
     useEffect(() => {
         const fetchProperties = async () => {
