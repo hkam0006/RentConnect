@@ -27,7 +27,6 @@ const useGetRenterByRenterID = (renter_id) => {
         } else {
           setRenter(data || []);
         }
-
         setLoading(false);
       } else {
         setLoading(false);

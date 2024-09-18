@@ -24,7 +24,7 @@ export default function RenterHome() {
     return (
         <NavigationMenu>
             <div style={{padding: "20px", marginTop: "64px"}}>
-                <Typography variant='h4' fontWeight={700} color="text.primary">Welcome {renter[0].renter_first_name}!</Typography>
+                <Typography variant='h4' fontWeight={700} color="text.primary">Welcome {(renter.length > 0) ? renter[0].renter_first_name : 'User'}!</Typography>
                 <Typography variant='h6' fontWeight={700} color="text.secondary">You have 2 new messages.</Typography>
 
                 <Paper sx={{ mt: 2, borderRadius: 3 }} elevation={3}>
