@@ -69,6 +69,7 @@ export default function ApplicationsTable(applications) {
 
     // get all relevant properties from DB and store in properties array
     const {properties, loading} = useGetPropertiesByPropertyIDs(propertyIDs);
+    console.log(properties)
 
     if (loading) return <AppLoader />
 

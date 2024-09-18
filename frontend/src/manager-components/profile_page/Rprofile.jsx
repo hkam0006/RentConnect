@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, Divider, List, ListItem, ListItemText, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -10,15 +10,21 @@ import useAddRenterComment from '../../mutators/Renter Comment/useAddRenterComme
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
 import { supabase } from '../../supabase';
 import useSubscribeRenterCommentByRenterID from '../../subscribers/Renter Comment/useSubscribeRenterCommentByRenterID';
+import useGetPropertiesByPropertyIDs from "../../queries/Property/useGetPropertiesByPropertyIDs";
+import AppLoader from "../property_page/AppLoader";
 
+// to stop linter
+async function fetchApplications(rID) {
+
+}
 
 export default function RprofileForPM() {
     const { rID } = useParams()
     const navigate = useNavigate();
     const fetchRenter = useGetRenterByRenterID();
     const [renter, setRenter] = useState({});
-    const [applications, setApplications] = useState([{}])
-    const fetchApplications = useGetApplicationsByRenterID();
+    //const [applications, setApplications] = useState([]);
+    const {applications: baseApplications, loading: appLoading} = useGetApplicationsByRenterID(rID);
     const fetchRenterComments = useGetRenterCommentsWithPMInfoByRenterID();
     const [renterComments, setRenterComments] = useState([{}]);
     const fetchProperty = useGetPropertyByPropertyID();
@@ -27,6 +33,22 @@ export default function RprofileForPM() {
     const [property_manager, setPropertyManager] = useState({});
     const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
 
+    // get all applications from renter
+    // get the properties from applications
+    // create array containing applications, and addresses
+    const propertyIDs = useMemo(() => baseApplications.map(application => application.property_id), [baseApplications]);
+    const {properties, loading: propLoading} = useGetPropertiesByPropertyIDs(propertyIDs)
+    let applications = []
+    if (properties.length > 0) {
+        const applicationsWithAddresses = baseApplications.map((app, index) => {
+            let property = properties[index];
+            let address = `${property.property_unit_number ? `Unit ${property.property_unit_number}` : ''} ${property.property_street_number} ${property.property_street_name} ${property.property_street_type}, ${property.property_suburb} ${property.property_state}`
+            applications.push([app, address])
+        })
+    }
+    console.log(properties)
+
+    /*
     useEffect(() => {
         async function getRData() {
             const r = await fetchRenter(rID);
@@ -61,6 +83,8 @@ export default function RprofileForPM() {
         getApplications();
     }, [rID, fetchRenter, fetchApplications, fetchRenterComments, fetchProperty, fetchPropertyManager]);
 
+     */
+
     const handleNewComment = useCallback((payload) => {
         setRenterComments(prevComments => [...prevComments, payload.new]);
     }, []);
@@ -79,6 +103,8 @@ export default function RprofileForPM() {
     const handleOpenAddComment = () => {
         setDialogueOpen(true);
     }
+
+    console.log(propLoading)
 
     return (
         <NavigationMenu>
@@ -170,6 +196,7 @@ export default function RprofileForPM() {
                         {renter.renter_first_name} {renter.renter_last_name}'s current applications:
                         </Typography>
                         <Paper sx={{overflow:'hidden', boxShadow:'0'}}>
+                            {propLoading ? <AppLoader /> : (
                             <TableContainer sx={{height:'55vh'}}>
                                 <Table>
                                     <TableHead>
@@ -181,23 +208,24 @@ export default function RprofileForPM() {
                                     </TableHead>
                                     {applications.length > 0? 
                                     <TableBody>
-                                    {applications.map((application) => (
-                                        <TableRow key={application.property_id}>
+                                        {
+                                    applications.map((application) => (
+                                        <TableRow key={application[0].property_id}>
                                             <TableCell>
-                                                {application.address}
+                                                {application[1]}
                                             </TableCell>
                                             <TableCell>
-                                                {application.application_status}
+                                                {application[0].application_status}
                                             </TableCell>
                                             <TableCell>
-                                                <Button variant='contained' onClick={() => navigate(`/ApplicationDetails/${application.company_id}/${application.property_id}/${application.renter_id}`)}>View</Button>
+                                                <Button variant='contained' onClick={() => navigate(`/ApplicationDetails/${application[0].company_id}/${application[0].property_id}/${application[0].renter_id}`)}>View</Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
                                     :""}
                                 </Table>
-                            </TableContainer>
+                            </TableContainer>)}
                         </Paper>
                     </CardContent>
                 </Card>

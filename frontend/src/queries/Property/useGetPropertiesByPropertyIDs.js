@@ -6,12 +6,13 @@ import { useState, useEffect } from 'react';
  * IDs provided.
  *
  * @param {[String]} property_ids array containing all propertyIDs
- * @return {Properties, boolean}  array containing properties
+ * @return {{properties: [Property], loading: boolean}}  array containing properties
  * @author Luke Phillips
  */
 const useGetPropertiesByPropertyIDs = (property_ids) => {
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
+    console.log("props run")
 
     useEffect(() => {
         const fetchProperties = async () => {
@@ -41,7 +42,7 @@ const useGetPropertiesByPropertyIDs = (property_ids) => {
         };
 
         fetchProperties();
-    }, []);
+    }, [property_ids]);
 
     return { properties, loading };
 }
