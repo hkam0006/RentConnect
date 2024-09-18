@@ -18,6 +18,11 @@ import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByP
 import AppLoader from './AppLoader';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import useGetApplicationsByPropertyID from '../../queries/Application/useGetApplicationsByPropertyID';
+import PropertyMap from '../../public-components/PropertyMap';
+
+const fullAddress = (p) => {
+    return `${p.property_street_number} ${p.property_street_name}, ${p.property_suburb}, ${p.property_state} ${p.property_postcode}`;
+  };
 
 export default function PropertyDetails() {
 
@@ -131,6 +136,8 @@ export default function PropertyDetails() {
                                 </Typography>
                             </Grid>
                         </Grid>
+                        <Divider sx={{ mt: 2, mb: 2 }} />
+                        <PropertyMap point={fullAddress(prop)} />
                         <Divider sx={{ mt: 2, mb: 2 }} />
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
