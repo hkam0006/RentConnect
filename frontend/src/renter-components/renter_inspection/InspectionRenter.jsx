@@ -303,7 +303,6 @@ const InspectionRenter = () => {
             <Button onClick={handleDialogClose}>Close</Button>
           </DialogActions>
         </Dialog>
-        <div style={{ padding: "20px" }}>{renderContent()}</div>
       </NavigationMenu>
     );
   }

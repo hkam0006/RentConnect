@@ -51,13 +51,13 @@ const HistoryTableRenter = ({ inspectionsData, setInspections }) => {
     try {
       const { error } = await supabase
         .from("INSPECTION")
-        .update({ inspection_type: type })
+        .update({ inspection_type: type, renter_msg: null })
         .eq("inspection_id", inspectionId);
       if (error) throw error;
       setInspections((prevInspections) =>
         prevInspections.map((inspection) =>
           inspection.inspection_id === inspectionId
-            ? { ...inspection, inspection_type: type }
+            ? { ...inspection, inspection_type: type, renter_msg: null }
             : inspection
         )
       );
