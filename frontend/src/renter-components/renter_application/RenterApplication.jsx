@@ -13,7 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
 import NavigationMenu from "../navigation_menu/NavigationMenus";
-import {Card, CardContent, CardMedia, Grid, IconButton, TextField, Typography} from "@mui/material";
+import {Card, CardContent, CardMedia, FormHelperText, Grid, IconButton, TextField, Typography} from "@mui/material";
 import Paper from "@mui/material/Paper";
 import {styled} from "@mui/material/styles";
 import CardHeader from "@mui/material/CardHeader";
@@ -104,7 +104,7 @@ export default function RenterApplication() {
 
     function dataValidation() {
         switch (stepperValue) {
-            case 0: return personalInformationValidation(applicant)
+            case 0: return rentalInformationValidation(applicant)
             case 1: return IDDocumentsValidation(applicant)
             case 2: return employmentHistoryValidation(applicant)
             //case 3: return <SupportingDocuments />
@@ -156,11 +156,11 @@ export default function RenterApplication() {
     });
 
     const [applicant, setApplicant] = React.useState({
-        first_name: "John",
-        last_name: "Smith",
-        date_of_birth: "17/04/2002",
-        mobile: "0485767462",
-        email: "john.smith@example.com",
+        lease_duration: null,
+        lease_start_date: null,
+        adults: "",
+        kids: "",
+        pets: "",
         license_number: "05867462",
         license_expiry: "04/01/2034",
         industry: "",
@@ -172,12 +172,12 @@ export default function RenterApplication() {
         annual_income: null,
     });
 
-    const [personalInformationErrors, setPersonalInformationErrors] = React.useState({
-        first_name: false,
-        last_name: false,
-        date_of_birth: false,
-        mobile: false,
-        email: false,
+    const [renterInformationErrors, setRenterInformationErrors] = React.useState({
+        lease_duration: false,
+        lease_start_date: false,
+        adults: false,
+        kids: false,
+        pets: false,
     });
 
     const [IDDocumentErrors, setIDDocumentErrors] = React.useState({
@@ -197,7 +197,7 @@ export default function RenterApplication() {
 
     // stepper string values
     const steps = [
-        'Personal Information',
+        'Rental Information',
         'ID Documents',
         'Employment History',
         'Supporting Documents',
@@ -206,8 +206,8 @@ export default function RenterApplication() {
     function handleApplicantDataChange(newData, type) {
         setApplicant(newData);
 
-        if (type === "personal") {
-            personalInformationValidation(newData);
+        if (type === "rental") {
+            rentalInformationValidation(newData);
         } else if (type === "id") {
             IDDocumentsValidation(newData);
         } else if (type === "employment") {
@@ -216,44 +216,46 @@ export default function RenterApplication() {
     }
 
     // functions for personal information section
-    function PersonalInformation({formData, onFormChange, formErrors}) {
+    function RentalInformation({formData, onFormChange, formErrors}) {
         const handleChange = (e) => {
             const { name, value } = e.target;
             // Update form data
-            onFormChange({ ...formData, [name]: value }, "personal");
-            // run test
+            onFormChange({ ...formData, [name]: value }, "rental");
         };
 
         return (
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
                     <Grid container spacing={2} direction={"column"}>
-                        <Grid item xs={12}><Typography variant={"h5"}>To begin, tell us a bit about yourself.</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"h5"}>Let's start with some information about your application.</Typography></Grid>
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
                                 <Grid item xs={4}>
-                                    <TextField fullWidth required
-                                               name="first_name"
-                                               id="outlined-required"
-                                               label="First Name"
-                                               defaultValue={formData.first_name}
-                                               onBlur={handleChange}
-                                               error={formErrors.first_name}
-                                    />
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <TextField fullWidth required
-                                               name="last_name" id="outlined-required"
-                                               label="Last Name" defaultValue={formData.last_name}
-                                               onBlur={handleChange}
-                                               error={formErrors.last_name}
-                                    />
+                                    <FormControl required sx={{ width: '100%' }}>
+                                        <InputLabel id="demo-simple-select-required-label">Duration of Lease</InputLabel>
+                                        <Select
+                                            name="lease_duration"
+                                            labelId="demo-simple-select-required-label"
+                                            id="demo-simple-select-required"
+                                            label="Duration of Lease"
+                                            defaultValue={formData.lease_duration}
+                                            onBlur={handleChange}
+                                            error={formErrors.first_name}
+                                            MenuProps={{PaperProps: { style: { maxHeight: 300}}}}
+                                        >
+                                            {[...Array(48)].map((_, index) => (
+                                                <MenuItem key={index + 1} value={index + 1}>
+                                                    {index + 1} {index + 1 === 1 ? 'month' : 'months'}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DateField required
-                                                   name="date_of_birth" label="Date of Birth"
-                                                   defaultValue={dayjs(formData.date_of_birth,'DD/MM/YYYY')} format="DD/MM/YYYY"
+                                                   name="lease_start_date" label="Lease Start Date"
+                                                   defaultValue={dayjs(formData.lease_start_date,'DD/MM/YYYY')} format="DD/MM/YYYY"
                                                    onBlur={handleChange}
                                                    error={formErrors.date_of_birth}
                                         />
@@ -263,18 +265,26 @@ export default function RenterApplication() {
                         </Grid>
                         <Grid item xs={12}>
                             <Grid container spacing={2}>
-                                <Grid item xs={6}>
+                                <Grid item xs={2}>
                                     <TextField fullWidth required
-                                               name="mobile" id="outlined-required"
-                                               label="Mobile Number" defaultValue={formData.mobile}
+                                               name="adults" id="outlined-required"
+                                               label="Adults" defaultValue={formData.adults}
                                                onBlur={handleChange}
                                                error={formErrors.mobile}
                                     />
                                 </Grid>
-                                <Grid item xs={6}>
+                                <Grid item xs={2}>
                                     <TextField fullWidth required
-                                               name="email" id="outlined-required"
-                                               label="Email Address" defaultValue={formData.email}
+                                               name="kids" id="outlined-required"
+                                               label="Children" defaultValue={formData.kids}
+                                               onBlur={handleChange}
+                                               error={formErrors.email}
+                                    />
+                                </Grid>
+                                <Grid item xs={2}>
+                                    <TextField fullWidth required
+                                               name="pets" id="outlined-required"
+                                               label="Pets" defaultValue={formData.pets}
                                                onBlur={handleChange}
                                                error={formErrors.email}
                                     />
@@ -287,41 +297,41 @@ export default function RenterApplication() {
         );
     }
 
-    function personalInformationValidation(applicantData) {
+    function rentalInformationValidation(applicantData) {
         let failureFlag = false;
-        if (applicantData.first_name.trim() === "") {
-            personalInformationErrors.first_name = true;
+        if (!(/^\d+$/.test(applicantData.lease_duration))) {
+            renterInformationErrors.lease_duration = true;
             failureFlag = true;
         } else {
-            personalInformationErrors.first_name = false;
+            renterInformationErrors.lease_duration = false;
         }
 
-        if (applicantData.last_name.trim() === "") {
-            personalInformationErrors.last_name = true;
+        if (!(dayjs(applicantData.lease_start_date,'DD/MM/YYYY').isAfter(dayjs()))) {
+            renterInformationErrors.lease_start_date = true;
             failureFlag = true;
         } else {
-            personalInformationErrors.last_name = false;
+            renterInformationErrors.lease_start_date = false;
         }
 
-        if (!(dayjs(applicantData.date_of_birth,'DD/MM/YYYY').isBefore(dayjs()))) {
-            personalInformationErrors.date_of_birth = true;
+        if (!(/^\d+$/.test(applicantData.adults))) {
+            renterInformationErrors.adults = true;
             failureFlag = true;
         } else {
-            personalInformationErrors.date_of_birth = false;
+            renterInformationErrors.adults = false;
         }
 
-        if (!(/^04\d{8}$/.test(applicantData.mobile))) { // all numbers, starts with 04 and 10 characters long
-            personalInformationErrors.mobile = true;
+        if (!(/^\d+$/.test(applicantData.kids))) { // all numbers, starts with 04 and 10 characters long
+            renterInformationErrors.kids = true;
             failureFlag = true;
         } else {
-            personalInformationErrors.mobile = false;
+            renterInformationErrors.kids = false;
         }
 
-        if (applicantData.email.trim() === "") {
-            personalInformationErrors.email = true;
+        if (!(/^\d+$/.test(applicantData.pets))) {
+            renterInformationErrors.pets = true;
             failureFlag = true;
         } else {
-            personalInformationErrors.email = false;
+            renterInformationErrors.pets = false;
         }
 
         return !failureFlag;
@@ -634,7 +644,7 @@ export default function RenterApplication() {
                                 </Grid>
                                 <Grid item xs={4}>
                                     <TextField fullWidth required
-                                               id="outlined-required" label="Employer Number"
+                                               id="outlined-required" label="Employer Phone Number"
                                                name={"employer_contact"}
                                                defaultValue={formData.employer_contact}
                                                onBlur={handleChange}
@@ -786,11 +796,11 @@ export default function RenterApplication() {
 
     function ApplicationForm() {
         switch (stepperValue) {
-            case 0: return <PersonalInformation formData={applicant} onFormChange={handleApplicantDataChange} formErrors={personalInformationErrors} />
+            case 0: return <RentalInformation formData={applicant} onFormChange={handleApplicantDataChange} formErrors={renterInformationErrors} />
             case 1: return <IDDocuments formData={applicant} onFormChange={handleApplicantDataChange} formErrors={IDDocumentErrors} />
             case 2: return <EmploymentHistory formData={applicant} onFormChange={handleApplicantDataChange} formErrors={EmploymentDetailsErrors}/>
             case 3: return <SupportingDocuments />
-            default: return <PersonalInformation />
+            default: return <RentalInformation />
         }
     }
 
