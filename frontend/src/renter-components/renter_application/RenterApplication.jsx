@@ -54,7 +54,35 @@ function getPropertySecondLine(property) {
 const RenterApplication = forwardRef(({ providedProperty }, ref) => {
 
     // set up new property
+    const [property, setProperty] = useState({
+        house_number: providedProperty[0].property_street_number,
+        street_name: providedProperty[0].property_street_name + " " + providedProperty[0].property_street_type,
+        unit: "0",
+        suburb: providedProperty[0].property_suburb,
+        state: providedProperty[0].property_state,
+        postcode: providedProperty[0].property_postcode,
+        bedrooms: providedProperty[0].property_bedroom_count,
+        bathrooms: providedProperty[0].property_bathroom_count,
+        carSpots: providedProperty[0].property_car_spot_count,
+        squareMetres: providedProperty[0].property_footprint,
+        vacancy: null,
+        attendees: providedProperty[0].property_attendees,
+        applications: null,
+        listingImages: [
+            providedProperty[0].property_pictures[0]
+        ],
+        type: providedProperty[0].property_type,
+        price: providedProperty[0].property_rent,
+        available: providedProperty.property_lease_start,
+        description: providedProperty[0].property_description
+    })
+
     console.log(providedProperty);
+    property.house_number = providedProperty[0].property_street_number;
+    property.house_number = providedProperty[0].property_street_number;
+    property.house_number = providedProperty[0].property_street_number;
+
+
 
     // variables and methods for opening and closing dialog
     const [open, setOpen] = React.useState(false);
@@ -143,30 +171,6 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
             goBackApplication();
         }
     }
-
-    // Dummy property
-    const [property, setProperty] = useState({
-        house_number: "30",
-        street_name: 'Chapel Street',
-        unit: "52",
-        suburb: "Prahran",
-        state: 'VIC',
-        postcode: "3181",
-        bedrooms: 2,
-        bathrooms: 2,
-        carSpots: 1,
-        squareMetres: 285,
-        vacancy: 25,
-        attendees: 31,
-        applications: 15,
-        listingImages: [
-            defaultImageUrl
-        ],
-        type: "Townhouse",
-        price: "750",
-        available: "31st March 2024",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    });
 
     const [applicant, setApplicant] = React.useState({
         lease_duration: null,
@@ -847,7 +851,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                             <CardMedia
                                                 component="img"
                                                 height="100"
-                                                image={defaultImageUrl}
+                                                image={property.listingImages}
                                                 alt="House Appointment"
                                             />
                                             <CardContent>
