@@ -819,14 +819,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
 
     return (
         <div>
-            <NavigationMenu>
         <React.Fragment>
-            <Grid
-                container
-                spacing={2}
-                style={{ padding: "20px", paddingTop: '80px' }}
-                justifyContent="flex-start"
-            >
                 <Dialog
                     fullWidth="xl"
                     maxWidth="xl"
@@ -913,9 +906,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                         <Button variant="contained" onClick={primaryButton}>{primaryButtonLabel}</Button>
                     </DialogActions>
                 </Dialog>
-            </Grid>
         </React.Fragment>
-        </NavigationMenu>
         </div>
     );
 });

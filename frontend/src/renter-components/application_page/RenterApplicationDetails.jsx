@@ -110,28 +110,24 @@ export default function RenterApplicationDetails() {
                             <Grid container justifyContent='flex-end'>
                                 <Stack direction='row' spacing={1}>
                                     <Button
-                                        xs={{ mt: 5, mr: 2 }}
                                         variant='contained'
                                         size='medium'
-                                        style={{ colour: 'white' }}
+                                        style={{ color: 'white' }}
                                     >
                                         Message the agent
                                     </Button>
-                                    <div>
-                                        {hasActiveApplication ? null : (
-                                            <Button
-                                                xs={{ mt: 5, mr: 2 }}
-                                                variant='contained'
-                                                size='medium'
-                                                style={{ backgroundColor: 'green', colour: 'white' }}
-                                                endIcon={<OpenInNewIcon />}
-                                                onClick={handleOpenDialog}
-                                            >
-                                                Apply
-                                            </Button>
-                                        )}
-                                        <RenterApplication ref={dialogRef} providedProperty={property} />
-                                    </div>
+                                    {hasActiveApplication ? null : (
+                                        <Button
+                                            variant='contained'
+                                            size='medium'
+                                            style={{ backgroundColor: 'green', color: 'white' }}
+                                            endIcon={<OpenInNewIcon />}
+                                            onClick={handleOpenDialog}
+                                        >
+                                            Apply
+                                        </Button>
+                                    )}
+                                    <RenterApplication ref={dialogRef} providedProperty={property} />
                                 </Stack>
                             </Grid>
                             <Divider sx={{ mt: 2, mb: 2 }}/>
