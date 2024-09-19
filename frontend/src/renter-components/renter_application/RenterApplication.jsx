@@ -18,7 +18,7 @@ import Paper from "@mui/material/Paper";
 import {styled} from "@mui/material/styles";
 import CardHeader from "@mui/material/CardHeader";
 import defaultImageUrl from "../../manager-components/dashboard_page/house_default.jpg";
-import {useEffect, useReducer, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useReducer, useState} from "react";
 import BedIcon from "@mui/icons-material/Bed";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import DriveEtaIcon from "@mui/icons-material/DriveEta";
@@ -49,7 +49,13 @@ function getPropertySecondLine(property) {
     return (`${property.suburb}, ${property.state} ${property.postcode}`);
 }
 
-export default function RenterApplication() {
+
+
+const RenterApplication = forwardRef(({ providedProperty }, ref) => {
+
+    // set up new property
+    console.log(providedProperty);
+
     // variables and methods for opening and closing dialog
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
@@ -58,6 +64,13 @@ export default function RenterApplication() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    // Expose handleClickOpen to the parent through ref
+    useImperativeHandle(ref, () => ({
+        openDialog() {
+            handleClickOpen();
+        },
+    }));
 
     // variables and methods for the stepper and progressing application
     const [stepperValue, setStepperValue] = React.useState(0);
@@ -814,11 +827,6 @@ export default function RenterApplication() {
                 style={{ padding: "20px", paddingTop: '80px' }}
                 justifyContent="flex-start"
             >
-                <Grid item xs={4}>
-                    <Button variant="outlined" onClick={handleClickOpen}>
-                        Open Application Dialog
-                    </Button>
-                </Grid>
                 <Dialog
                     fullWidth="xl"
                     maxWidth="xl"
@@ -910,4 +918,6 @@ export default function RenterApplication() {
         </NavigationMenu>
         </div>
     );
-}
+});
+
+export default RenterApplication;
