@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
     Container,
     Stack,
@@ -31,6 +31,7 @@ import ApplicationsTable from "../renter_home/ApplicationsTable";
 import ImgElement from "../../manager-components/property_page/ImgElement";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import {styled} from "@mui/material/styles";
+import RenterApplication from "../renter_application/RenterApplication";
 
 /**
  * A page which shows a property and its information; and all applications made by the signed-in renter at this
@@ -62,6 +63,14 @@ export default function RenterApplicationDetails() {
             setHasActiveApplication(true)
         }
     }
+
+    const dialogRef = useRef();
+
+    const handleOpenDialog = () => {
+        if (dialogRef.current) {
+            dialogRef.current.openDialog(); // Trigger openDialog method in child
+        }
+    };
 
     // For request inspection modal
     const [inspectionRequestOpen, setInspectionRequestOpen] = useState(false);
@@ -101,24 +110,24 @@ export default function RenterApplicationDetails() {
                             <Grid container justifyContent='flex-end'>
                                 <Stack direction='row' spacing={1}>
                                     <Button
-                                        xs={{ mt: 5, mr: 2 }}
                                         variant='contained'
                                         size='medium'
-                                        style={{ colour: 'white' }}
+                                        style={{ color: 'white' }}
                                     >
                                         Message the agent
                                     </Button>
                                     {hasActiveApplication ? null : (
                                         <Button
-                                            xs={{ mt: 5, mr: 2 }}
                                             variant='contained'
                                             size='medium'
-                                            style={{ backgroundColor: 'green', colour: 'white' }}
+                                            style={{ backgroundColor: 'green', color: 'white' }}
                                             endIcon={<OpenInNewIcon />}
+                                            onClick={handleOpenDialog}
                                         >
                                             Apply
                                         </Button>
                                     )}
+                                    <RenterApplication ref={dialogRef} providedProperty={property} />
                                 </Stack>
                             </Grid>
                             <Divider sx={{ mt: 2, mb: 2 }}/>

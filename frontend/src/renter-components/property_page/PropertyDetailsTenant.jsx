@@ -45,7 +45,6 @@ export default function PropertyDetailsTenant() {
 
     // property ID to query database
     const { propertyId } = useParams();
-    console.log(propertyId);
     const { property, loading } = useGetPropertyByPropertyID(propertyId);
 
     // For request inspection modal
