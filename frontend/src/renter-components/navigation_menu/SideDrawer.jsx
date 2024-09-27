@@ -1,5 +1,11 @@
 import * as React from "react";
-import { BrowserRouter as Router, Route, Routes, Link, NavLink } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link,
+  NavLink,
+} from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -24,7 +30,7 @@ import { useTheme } from "@mui/material";
 const drawerWidth = 200;
 
 export default function SideDrawer() {
-  const theme = useTheme()
+  const theme = useTheme();
   return (
     <Drawer
       variant="permanent"
@@ -48,7 +54,11 @@ export default function SideDrawer() {
               icon: <PermContactCalendarIcon />,
               link: "/RentalProfile",
             },
-            { text: "Properties", icon: <PropertiesIcon />, link: "/property" },
+            {
+              text: "Properties",
+              icon: <PropertiesIcon />,
+              link: "/saved_properties",
+            },
             {
               text: "Inspections Apply",
               icon: <InspectionIcon />,
@@ -71,13 +81,13 @@ export default function SideDrawer() {
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 {/* <ListItemText primary={item.text} /> */}
-                <NavLink 
+                <NavLink
                   to={item.link}
                   style={({ isActive }) => ({
-                    color: isActive ? theme.primary : '#000000',
+                    color: isActive ? theme.primary : "#000000",
                     fontWeight: isActive ? 700 : 400,
-                    textDecoration: 'none',
-                    padding: 2
+                    textDecoration: "none",
+                    padding: 2,
                   })}
                 >
                   {item.text}

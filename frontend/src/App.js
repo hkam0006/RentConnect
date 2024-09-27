@@ -76,6 +76,7 @@ function App() {
             <Route path='/Rprofile/:rID' element={<ManagerRoute Component={RprofileForPM}/>} />
             <Route path='/PMprofile/:pmID' element={<ManagerRoute Component={PMprofileForPM}/>} />
             <Route path='/PM/:pmID' element={<RenterRoute Component={PMprofileForR}/>} />
+            <Route path='/saved_properties' element={<RenterRoute Component={SavedProperties}/>} />
           </Routes>
     </ThemeProvider>
   )
