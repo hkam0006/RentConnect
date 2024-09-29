@@ -9,7 +9,7 @@ import Comment from './Comment'
 
 import useGetApplicationsByID from '../../queries/Application/useGetApplicationsByID'
 import useGetApplicationCommentByID from '../../queries/Application Comment/useGetApplicationCommentByID'
-import useGetApplicationSupportingDocumentsByID from '../../queries/Application Supporting Document/useGetApplicationSupportingDocumentsByID'
+import useGetApplicationSupportingDocumentsByRenterID from '../../queries/Application Supporting Document/useGetApplicationSupportingDocumentsByRenterID'
 
 import useUpdateApplicationStatusByID from '../../mutators/Application/useUpdateApplicationStatusByID'
 
@@ -52,7 +52,7 @@ function ApplicationDetails() {
     // Get database data
     const getApplication = useGetApplicationsByID(companyId, propertyId, renterId)
     const getApplicationComment = useGetApplicationCommentByID(propertyId, renterId)
-    const getApplicationSupportingDocuments = useGetApplicationSupportingDocumentsByID(propertyId, renterId)
+    const getApplicationSupportingDocuments = useGetApplicationSupportingDocumentsByRenterID(renterId)
 
     const getRenter = useGetOnlyRenterByRenterID(renterId)
     const getRenterTenancy = useGetPreviousTenanciesByRenterID(renterId)
@@ -73,17 +73,20 @@ function ApplicationDetails() {
     }, [])
 
     function getAndSetApplicationComments() {
-        let newApplicationCommentState = { ...initialApplicationCommentState }
+        let newApplicationCommentState = { ...initialApplicationCommentState };
         if (getApplicationComment.length > 0) {
             getApplicationComment.forEach((appComment) => {
-                newApplicationCommentState[appComment.type] = [
-                    ...newApplicationCommentState[appComment.type],
-                    appComment
-                ]
-            })
+                if (!(appComment.type in newApplicationCommentState)) {
+                    newApplicationCommentState[appComment.type] = [];
+                }
+    
+                newApplicationCommentState[appComment.type].push(appComment);
+            });
         }
-        setApplicationComment(newApplicationCommentState)
+    
+        setApplicationComment(newApplicationCommentState);
     }
+
     useEffect(() => {
         const setFetchedData = () => {
             if (getApplication.length > 0) {
@@ -153,15 +156,31 @@ function ApplicationDetails() {
             setShowComment(true)
         }
     }
-
+    
     const addApplicationComment = useAddApplicationComment()
     function handleCommentsPush() {
         if (comment.trim() !== '') {
-            const currentDate = (new Date()).toISOString()
-            const type_verified = verificationType[commentType]
-            addApplicationComment(renterId, propertyId, companyId, comment, userID, currentDate, type_verified)
-            getAndSetApplicationComments()
-            setComment('')
+            const currentDate = (new Date()).toISOString();
+            const newComment = {
+                renter_id: renterId,
+                property_id: propertyId,
+                company_id: companyId,
+                application_comment_contents: comment,
+                user_id: userID,
+                application_comment_date: currentDate,
+                type: commentType
+            };
+    
+            setApplicationComment((prevState) => {
+                const updatedComments = {
+                    ...prevState,
+                    [commentType]: [...(prevState[commentType] || []), newComment]
+                };
+                return updatedComments;
+            });
+    
+            addApplicationComment(renterId, propertyId, companyId, comment, userID, currentDate, commentType);
+            setComment('');
         }
     }
     

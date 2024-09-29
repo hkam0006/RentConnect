@@ -8,7 +8,7 @@ const useGetRenterCommentsByRenterID = (renter_id) =>{
     useEffect(() => {
       const fetchRenterComments = async () => {
         const { data, error } = await supabase
-        .from("RENTER COMMENT")
+        .from("RENTER-COMMENT")
         .select("*")
         .eq("renter_id", renter_id);
   
