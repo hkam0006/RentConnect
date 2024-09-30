@@ -30,6 +30,10 @@ import dayjs from 'dayjs';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import useGetUserID from "../../queries/useGetUserID";
+import EmploymentHistory from "../rental_profile/components/essentials/EmploymentHistory";
+import Identity from "../rental_profile/components/essentials/Identity";
+import AdditionalSupportingDocuments from "../rental_profile/components/AdditionalSupportingDocuments";
 
 // function to get the first line of the address (eg. Unit 502 / 64 Example Street)
 function getPropertyFirstLine(property) {
@@ -77,12 +81,10 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
         description: providedProperty[0].property_description
     })
 
-    console.log(providedProperty);
-    property.house_number = providedProperty[0].property_street_number;
-    property.house_number = providedProperty[0].property_street_number;
     property.house_number = providedProperty[0].property_street_number;
 
-
+    // get user ID
+    const {userID, loading: userLoading} = useGetUserID();
 
     // variables and methods for opening and closing dialog
     const [open, setOpen] = React.useState(false);
@@ -128,6 +130,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
             if (primaryButtonNextState) {
                 progressApplication();
             } else {
+                console.log(applicant)
                 handleClose();
             }
         } else {
@@ -147,9 +150,9 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
         switch (stepperValue) {
             case 0: return rentalInformationValidation(applicant)
             case 1: return IDDocumentsValidation(applicant)
-            case 2: return employmentHistoryValidation(applicant)
+            //case 2: return employmentHistoryValidation(applicant)
             //case 3: return <SupportingDocuments />
-            default: return false;
+            default: return true;
         }
     }
 
@@ -367,7 +370,9 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
                     <Grid container spacing={2} direction={"column"}>
-                        <Grid item xs={12}><Typography variant={"h5"}>Thanks! Now moving onto your identification...</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"h5"}>Thanks! Now please verify your identify documents are valid.</Typography></Grid>
+                        <Grid item xs={12}><Identity userID={userID}></Identity></Grid>
+                        {/*
                         <Grid item xs={12}><Typography variant={"body"}>Note: RentConnect currently only supports Australian Drivers License.</Typography></Grid>
                         <Grid item xs={6}>
                             <TextField required
@@ -388,6 +393,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                 />
                             </LocalizationProvider>
                         </Grid>
+                        */}
                     </Grid>
                 </CardContent>
             </Card>
@@ -418,8 +424,9 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
     const [occupationIndustry, setOccupationIndustry] = useState("");
     const [incomeFrequency, setIncomeFrequency] = useState("");
     const [incomeString, setIncomeString] = useState("");
+
     // card for providing employment history
-    function EmploymentHistory({formData, onFormChange, formErrors}) {
+    function EmploymentCard({formData, onFormChange, formErrors}) {
 
         const handleChange = (e) => {
             const { name, value } = e.target;
@@ -445,7 +452,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                 employmentTime = employmentYears + (1 / 12 * value);
             }
 
-            onFormChange({ ...formData, ["employment_time"]: employmentTime }, employmentHistoryValidation());
+            onFormChange({ ...formData, ["employment_time"]: employmentTime }, "employment");
         }
 
         const handleIncomeFrequencyChange = (e) => {
@@ -473,7 +480,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                 income = incomePerFrequencyInt * 52;
             }
 
-            onFormChange({ ...formData, ["annual_income"]: income }, employmentHistoryValidation());
+            onFormChange({ ...formData, ["annual_income"]: income }, "employment");
         }
 
         function occupationIndustryChange(e) {
@@ -610,6 +617,11 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
                     <Grid container spacing={2} direction={"column"}>
+                        <Grid item xs={12}><Typography variant={"h5"}>Getting closer, now please verify your employment details are correct.</Typography></Grid>
+                        <Grid item xs={12}><EmploymentHistory userID={userID}></EmploymentHistory></Grid>
+                    </Grid>
+                    {/*
+                    <Grid container spacing={2} direction={"column"}>
                         <Grid item xs={12}><Typography variant={"h5"}>Getting closer, now where have you previously worked?</Typography></Grid>
                         <Grid item xs={12}><Typography variant={"body"}>For your application, RentConnect requires you to provide some information about your previous employment.</Typography></Grid>
                         <Grid item xs={8}>
@@ -736,6 +748,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                             </Grid>
                         </Grid>
                     </Grid>
+                    */}
                 </CardContent>
             </Card>
         );
@@ -801,9 +814,9 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                 <CardContent>
                     <Grid container spacing={2} direction={"column"}>
                         <Grid item xs={12}><Typography variant={"h5"}>Almost done! Just the final touches...</Typography></Grid>
-                        <Grid item xs={12}><Typography variant={"body"}>If you have any additional supporting documents, enter the URL below.</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"body"}>If you have any additional supporting documents, please add them below.</Typography></Grid>
                         <Grid item xs={12}>
-                            <TextField fullWidth id="outlined-required" label="Document URL" defaultValue="" />
+                            <AdditionalSupportingDocuments userID={userID}></AdditionalSupportingDocuments>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -815,7 +828,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
         switch (stepperValue) {
             case 0: return <RentalInformation formData={applicant} onFormChange={handleApplicantDataChange} formErrors={renterInformationErrors} />
             case 1: return <IDDocuments formData={applicant} onFormChange={handleApplicantDataChange} formErrors={IDDocumentErrors} />
-            case 2: return <EmploymentHistory formData={applicant} onFormChange={handleApplicantDataChange} formErrors={EmploymentDetailsErrors}/>
+            case 2: return <EmploymentCard formData={applicant} onFormChange={handleApplicantDataChange} formErrors={EmploymentDetailsErrors}/>
             case 3: return <SupportingDocuments />
             default: return <RentalInformation />
         }
