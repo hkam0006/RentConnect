@@ -49,7 +49,7 @@ function EmploymentHistoryCard({ employment }) {
                             </Grid>
                             <Grid item xs={4}>
                                 <Typography variant='body1' color='text.secondary'>Net Income</Typography>
-                                <Typography variant='body1'>${Math.round(employment.renter_employment_net_income/12)} p/w</Typography>
+                                <Typography variant='body1'>${Math.round(employment.renter_employment_net_income/52)} p/w</Typography>
                             </Grid>
                         </Grid>
                         <Grid container alignItems='center' paddingTop={1}>

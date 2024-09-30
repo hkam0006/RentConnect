@@ -18,7 +18,7 @@ import Paper from "@mui/material/Paper";
 import {styled} from "@mui/material/styles";
 import CardHeader from "@mui/material/CardHeader";
 import defaultImageUrl from "../../manager-components/dashboard_page/house_default.jpg";
-import {forwardRef, useEffect, useImperativeHandle, useReducer, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useReducer, useRef, useState} from "react";
 import BedIcon from "@mui/icons-material/Bed";
 import BathtubIcon from "@mui/icons-material/Bathtub";
 import DriveEtaIcon from "@mui/icons-material/DriveEta";
@@ -30,6 +30,12 @@ import dayjs from 'dayjs';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import useGetUserID from "../../queries/useGetUserID";
+import EmploymentHistory from "../rental_profile/components/essentials/EmploymentHistory";
+import Identity from "../rental_profile/components/essentials/Identity";
+import AdditionalSupportingDocuments from "../rental_profile/components/AdditionalSupportingDocuments";
+import useGetNumberOfIDsByRenterID from "../../queries/Renter/useGetNumberOfIDsByRenterID";
+import useAddApplication from "../../mutators/Application/useAddApplication";
 
 // function to get the first line of the address (eg. Unit 502 / 64 Example Street)
 function getPropertyFirstLine(property) {
@@ -52,6 +58,8 @@ function getPropertySecondLine(property) {
 
 
 const RenterApplication = forwardRef(({ providedProperty }, ref) => {
+
+    const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";  // hard coded company ID
 
     // set up new property
     const [property, setProperty] = useState({
@@ -77,12 +85,11 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
         description: providedProperty[0].property_description
     })
 
-    console.log(providedProperty);
-    property.house_number = providedProperty[0].property_street_number;
-    property.house_number = providedProperty[0].property_street_number;
     property.house_number = providedProperty[0].property_street_number;
 
-
+    // get user ID
+    const {userID, loading: userLoading} = useGetUserID();
+    const IDRef = useRef();
 
     // variables and methods for opening and closing dialog
     const [open, setOpen] = React.useState(false);
@@ -128,6 +135,9 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
             if (primaryButtonNextState) {
                 progressApplication();
             } else {
+                // submit application
+                console.log(applicant)
+                submitApplication()
                 handleClose();
             }
         } else {
@@ -146,10 +156,10 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
     function dataValidation() {
         switch (stepperValue) {
             case 0: return rentalInformationValidation(applicant)
-            case 1: return IDDocumentsValidation(applicant)
-            case 2: return employmentHistoryValidation(applicant)
+            //case 1: return IDDocumentsValidation(applicant)
+            //case 2: return employmentHistoryValidation(applicant)
             //case 3: return <SupportingDocuments />
-            default: return false;
+            default: return true;
         }
     }
 
@@ -170,6 +180,15 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
         } else {
             goBackApplication();
         }
+    }
+
+    const { addApplication } = useAddApplication();
+    async function submitApplication() {
+        const [day, month, year] = applicant.lease_start_date.split('/').map(Number);
+        const dateObject = new Date(year, month - 1, day); // month is 0-indexed
+        await addApplication(userID, providedProperty[0].property_id, TEST_COMPANY_ID, null, applicant.lease_duration,
+            dateObject, applicant.adults, applicant.kids, applicant.pets, 'progress', false, false, false,
+            false, false, false, null);
     }
 
     const [applicant, setApplicant] = React.useState({
@@ -198,18 +217,11 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
     });
 
     const [IDDocumentErrors, setIDDocumentErrors] = React.useState({
-        license_number: false,
-        license_expiry: false,
+        id: false
     });
 
     const [EmploymentDetailsErrors, setEmploymentDetailsErrors] = React.useState({
-        industry: false,
-        occupation: false,
-        employer_name: false,
-        employer_contact: false,
-        employer_email: false,
-        employment_time: false,
-        income: false,
+        id: false
     })
 
     // stepper string values
@@ -228,7 +240,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
         } else if (type === "id") {
             IDDocumentsValidation(newData);
         } else if (type === "employment") {
-            employmentHistoryValidation(newData);
+            employmentHistoryValidation();
         }
     }
 
@@ -316,12 +328,6 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
 
     function rentalInformationValidation(applicantData) {
         let failureFlag = false;
-        if (!(/^\d+$/.test(applicantData.lease_duration))) {
-            renterInformationErrors.lease_duration = true;
-            failureFlag = true;
-        } else {
-            renterInformationErrors.lease_duration = false;
-        }
 
         if (!(dayjs(applicantData.lease_start_date,'DD/MM/YYYY').isAfter(dayjs()))) {
             renterInformationErrors.lease_start_date = true;
@@ -367,7 +373,10 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
                     <Grid container spacing={2} direction={"column"}>
-                        <Grid item xs={12}><Typography variant={"h5"}>Thanks! Now moving onto your identification...</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"h5"}>Thanks! Now please verify your identify documents are valid.</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"body"}></Typography></Grid>
+                        <Grid item xs={12}><Identity userID={userID} ref={IDRef}></Identity></Grid>
+                        {/*
                         <Grid item xs={12}><Typography variant={"body"}>Note: RentConnect currently only supports Australian Drivers License.</Typography></Grid>
                         <Grid item xs={6}>
                             <TextField required
@@ -388,27 +397,24 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                 />
                             </LocalizationProvider>
                         </Grid>
+                        */}
                     </Grid>
                 </CardContent>
             </Card>
         );
     }
 
-    function IDDocumentsValidation(applicantData) {
+    function IDDocumentsValidation() {
         let failureFlag = false;
-        if (!(/^\d+$/.test(applicantData.license_number))) { // all numbers
-            IDDocumentErrors.license_number = true;
-            failureFlag = true;
-        } else {
-            IDDocumentErrors.license_number = false;
-        }
 
-        if (dayjs(applicantData.license_expiry,'DD/MM/YYYY').isBefore(dayjs())) {
-            IDDocumentErrors.license_expiry = true;
-            failureFlag = true;
-        } else {
-            IDDocumentErrors.license_expiry = false;
-        }
+        /*
+            if (condition to check for number of IDs) {
+                IDDocumentErrors.id = true;
+                failureFlag = true;
+            } else {
+                IDDocumentErrors.id = false;
+            }
+         */
 
         return !failureFlag;
     }
@@ -418,197 +424,18 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
     const [occupationIndustry, setOccupationIndustry] = useState("");
     const [incomeFrequency, setIncomeFrequency] = useState("");
     const [incomeString, setIncomeString] = useState("");
+
     // card for providing employment history
-    function EmploymentHistory({formData, onFormChange, formErrors}) {
-
-        const handleChange = (e) => {
-            const { name, value } = e.target;
-            // Update form data
-            onFormChange({ ...formData, [name]: value }, "employment");
-            // run test
-        };
-
-        const handleEmploymentTimeChange = (e) => {
-            const { name, value } = e.target;
-
-            if (!(/^\d+$/.test(value))) { // not a valid number
-                formErrors.employment_time = true;
-                return;
-            }
-
-            let employmentTime = 0
-            if (name === "employment_years") {
-                setEmploymentYears(parseFloat(value));
-                employmentTime = value + (1 / 12 * employmentMonths);
-            } else {
-                setEmploymentMonths(parseFloat(value))
-                employmentTime = employmentYears + (1 / 12 * value);
-            }
-
-            onFormChange({ ...formData, ["employment_time"]: employmentTime }, employmentHistoryValidation());
-        }
-
-        const handleIncomeFrequencyChange = (e) => {
-            setIncomeFrequency(e.target.value);
-        }
-
-        const handleIncomeValueChange = (e) => {
-            const incomePerFrequency = e.target.value;
-            setIncomeString(incomePerFrequency);
-
-            let income = 0;
-            let incomePerFrequencyInt;
-
-            if (!(/^\d+$/.test(incomePerFrequency))) { // not a valid number
-                formErrors.income = true;
-                return;
-            }
-
-            incomePerFrequencyInt = parseInt(incomePerFrequency)
-            if (incomeFrequency === "Monthly") {
-                income = incomePerFrequencyInt * 12;
-            } else if (incomeFrequency === "Fortnightly") {
-                income = incomePerFrequencyInt * 26;
-            } else {
-                income = incomePerFrequencyInt * 52;
-            }
-
-            onFormChange({ ...formData, ["annual_income"]: income }, employmentHistoryValidation());
-        }
-
-        function occupationIndustryChange(e) {
-            setOccupationIndustry(e.target.value);
-            handleChange(e)
-        }
-
-        function getOccupationList() {
-            const academicOptions = [
-                {label: "Historian", value: "historian"}, {label: "Lab Technician", value: "labtech"}, {label: "Librarian", value: "librarian"},
-                {label: "Researcher", value: "researcher"}, {label: "Scientist/Mathematician", value: "scientist"}, {label: "Teacher", value: "teacher"},
-                {label: "University Lecturer/Teacher", value: "lecturer"},
-            ];
-
-            const businessOptions = [
-                {label: "Account Manager", value: "accmanager"}, {label: "Admin/Data-entry/Secretary", value: "admin"}, {label: "Business Trainer", value: "trainer"},
-                {label: "Clerical Worker", value: "clerical"}, {label: "Consultant", value: "consultant"}, {label: "Customer Service Consultant", value: "customerservice"},
-                {label: "Instructor", value: "instructor"}, {label: "Sales/Marketing/Advertising", value: "sales"}, {label: "Sales Representative", value: "salesrep"},
-                {label: "Travel Agent/Consultant", value: "travel"},
-            ];
-
-            const creativeOptions = [
-                {label: "Actor/Performer", value: "actor"}, {label: "Architect", value: "architect"}, {label: "Artist/Designer/Illustrator", value: "artist"},
-                {label: "Journalist/Proofreader", value: "journalist"}, {label: "Landscape Architect", value: "landscape"}, {label: "Musician", value: "musician"},
-                {label: "Sound Tech", value: "soundtech"}, {label: "Writer/Editor", value: "writer"},
-            ];
-
-            const corporateOptions = [
-                {label: "Executive", value: "exec"}, {label: "HR/Recruitment", value: "hr"}, {label: "Manager/Supervisor", value: "manager"},
-                {label: "Public Relations", value: "pr"},
-            ];
-
-            const financialOptions = [
-                {label: "Accountant", value: "accountant"}, {label: "Building/Construction Manager", value: "building"}, {label: "Bursar", value: "bursar"},
-                {label: "Caretaker/Janitor", value: "caretaker"}, {label: "Insurance/Banking", value: "insurance"}, {label: "Real Estate/Property", value: "realestate"},
-            ];
-
-            const hospitalityOptions = [
-                {label: "Baker/Pastry Cook/Chef", value: "chef"}, {label: "Catering/Restaurant Manager", value: "catering"}, {label: "Dishwasher/Kitchenhand", value: "dishwasher"},
-                {label: "Hospitality", value: "hospitality"}, {label: "Hotel Manager/Supervisor", value: "hotelmanager"},
-            ];
-
-            const itOptions = [
-                {label: "Electrical/Electronic Engineer", value: "elecengineer"}, {label: "Engineer", value: "engineer"}, {label: "IT Professional", value: "itprof"},
-                {label: "Maintenance Engineer", value: "maintenance"},
-            ];
-
-            const lawOptions = [
-                {label: "Barrister/Solicitor", value: "barrister"}, {label: "Coroner/Judge/Magistrate", value: "coroner"}, {label: "Customs Agent", value: "customs"},
-                {label: "Defence Forces", value: "defence"}, {label: "Fire Brigade/Police", value: "firepolice"}, {label: "Legal Officer", value: "legalofficer"},
-                {label: "Politician", value: "politician"}, {label: "Public Servant", value: "publicservant"}, {label: "Safety Inspector", value: "inspector"},
-                {label: "Security Services/Officer", value: "security"}, {label: "Social Worker", value: "socialworker"},
-            ];
-
-            const manufacturingOptions = [
-                {label: "Assembler", value: "assembler"}, {label: "Cashier", value: "cashier"}, {label: "Driver/Operator", value: "driver"},
-                {label: "Importer/Exporter", value: "importexport"}, {label: "Labour/Factory Worker/Process Worker", value: "labour"}, {label: "Logistics", value: "logistics"},
-                {label: "Production", value: "production"}, {label: "Retail/Small Business Manager", value: "retailmanager"}, {label: "Wholesale Manager", value: "wholesale"},
-            ];
-
-            const medicalOptions = [
-                {label: "Ambulance Officer/Manager", value: "ambulance"}, {label: "Doctor/Specialist/Surgeon", value: "doctor"}, {label: "Medical Lab Tech", value: "medicallab"},
-                {label: "Nurse/Midwife", value: "nurse"}, {label: "Pharmacist", value: "pharmacist"}, {label: "Veterinarian", value: "vet"},
-            ];
-
-            const labourOptions = [
-                {label: "Air Traffic Controller", value: "atc"}, {label: "Butcher/Smallgoods", value: "butcher"}, {label: "Childcare/Youth Worker", value: "childcare"},
-                {label: "Construction Worker", value: "construction"}, {label: "Farmer", value: "farmer"}, {label: "Gardener/Landscaper", value: "gardener"},
-                {label: "Greenkeeper/Groundsperson", value: "greenkeeper"}, {label: "Mechanic", value: "mechanic"}, {label: "Nursery and Garden Labourer", value: "nursery"},
-                {label: "Tradesperson", value: "trades"}, {label: "Translator", value: "translator"},
-            ];
-
-            const otherOptions = [
-                {label: "Home Duties", value: "homeduties"}, {label: "Professional Sportsperson", value: "sports"}, {label: "Retired", value: "retired"},
-                {label: "Self-Employed", value: "selfemployed"}, {label: "Sole Trader", value: "soletrader"}, {label: "Student", value: "student"},
-                {label: "Unemployed", value: "unemployed"}, {label: "Volunteer Work", value: "volunteer"},
-            ];
-
-            switch (occupationIndustry) {
-                case "academic":
-                    return academicOptions;
-                case "business":
-                    return businessOptions;
-                case "creative":
-                    return creativeOptions;
-                case "corporate":
-                    return corporateOptions;
-                case "financial":
-                    return financialOptions;
-                case "hospitality":
-                    return hospitalityOptions;
-                case "it":
-                    return itOptions;
-                case "law":
-                    return lawOptions;
-                case "manufacturing":
-                    return manufacturingOptions;
-                case "medical":
-                    return medicalOptions;
-                case "labour":
-                    return labourOptions;
-                case "other":
-                    return otherOptions;
-                default:
-                    return otherOptions;
-            }
-        }
-
-        // generates the select form for the occupation select
-        function OccupationSelect() {
-
-            if (occupationIndustry === "") {
-                return <Select disabled label={"Occupation"} error={formErrors.occupation}></Select>
-            } else {
-                const occupationList = getOccupationList();
-
-                return (
-                    <Select
-                        labelId="demo-simple-select-label" id="demo-simple-select"
-                        name={"occupation"} label="Occupation"
-                        defaultValue={formData.occupation}
-                        onChange={handleChange}
-                        error={formErrors.occupation}
-                    >
-                        {occupationList.map((option) => (
-                            <MenuItem value={option.value}>{option.label}</MenuItem>
-                        ))}
-                    </Select>
-                );
-            }
-        }
+    function EmploymentCard({formErrors}) {
 
         return (
             <Card sx={{ width: "100%", minHeight: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                 <CardContent>
+                    <Grid container spacing={2} direction={"column"}>
+                        <Grid item xs={12}><Typography variant={"h5"}>Getting closer, now please verify your employment details are correct.</Typography></Grid>
+                        <Grid item xs={12}><EmploymentHistory userID={userID}></EmploymentHistory></Grid>
+                    </Grid>
+                    {/*
                     <Grid container spacing={2} direction={"column"}>
                         <Grid item xs={12}><Typography variant={"h5"}>Getting closer, now where have you previously worked?</Typography></Grid>
                         <Grid item xs={12}><Typography variant={"body"}>For your application, RentConnect requires you to provide some information about your previous employment.</Typography></Grid>
@@ -736,6 +563,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                             </Grid>
                         </Grid>
                     </Grid>
+                    */}
                 </CardContent>
             </Card>
         );
@@ -801,9 +629,9 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                 <CardContent>
                     <Grid container spacing={2} direction={"column"}>
                         <Grid item xs={12}><Typography variant={"h5"}>Almost done! Just the final touches...</Typography></Grid>
-                        <Grid item xs={12}><Typography variant={"body"}>If you have any additional supporting documents, enter the URL below.</Typography></Grid>
+                        <Grid item xs={12}><Typography variant={"body"}>If you have any additional supporting documents, please add them below.</Typography></Grid>
                         <Grid item xs={12}>
-                            <TextField fullWidth id="outlined-required" label="Document URL" defaultValue="" />
+                            <AdditionalSupportingDocuments userID={userID}></AdditionalSupportingDocuments>
                         </Grid>
                     </Grid>
                 </CardContent>
@@ -815,7 +643,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
         switch (stepperValue) {
             case 0: return <RentalInformation formData={applicant} onFormChange={handleApplicantDataChange} formErrors={renterInformationErrors} />
             case 1: return <IDDocuments formData={applicant} onFormChange={handleApplicantDataChange} formErrors={IDDocumentErrors} />
-            case 2: return <EmploymentHistory formData={applicant} onFormChange={handleApplicantDataChange} formErrors={EmploymentDetailsErrors}/>
+            case 2: return <EmploymentCard formErrors={EmploymentDetailsErrors}/>
             case 3: return <SupportingDocuments />
             default: return <RentalInformation />
         }

@@ -37,6 +37,10 @@ function Identity({ userID }) {
         setIsDialogOpen(true)
     }
 
+    const getNumberOfIDs = () => {
+        return driversLicence.length + passport.length
+    };
+
     const updateIdentityDocument = useCallback((payload) => {
         switch (payload.eventType) {
             case 'INSERT':
