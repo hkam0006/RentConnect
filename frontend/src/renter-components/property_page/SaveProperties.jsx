@@ -92,13 +92,7 @@ const SavedProperties = () => {
   return (
     <div>
       <NavigationMenu>
-        <Grid
-          container
-          spacing={2}
-          style={{ padding: "30px", paddingTop: "110px" }}
-          justifyContent="flex-start"
-        />
-        <div style={{ padding: "20px" }}>
+        <div style={{ padding: "20px", marginTop: "64px" }}>
           {activeSection === "savedProperties" && (
             <Typography variant="h5">Saved Properties</Typography>
           )}
