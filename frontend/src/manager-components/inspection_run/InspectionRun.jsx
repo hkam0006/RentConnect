@@ -286,95 +286,113 @@ const InspectionRun = () => {
         </div>
         {/* MUI Modal for displaying the map */}
         <Modal open={openModal} onClose={handleCloseModal}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "80%",
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
+  <Box
+    sx={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: { xs: "90%", sm: "80%", md: "70%", lg: "60%" }, 
+      bgcolor: "background.paper",
+      border: "2px solid #000",
+      boxShadow: 24,
+      p: { xs: 2, sm: 4 },
+    }}
+  >
+    <div
+      style={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        gap: "20px",
+      }}
+    >
+      <div style={{ flex: 1 }}>
+        <div>
+          <Typography variant="subtitle1">Select Origin:</Typography>
+          <select
+            value={selectedOrigin}
+            onChange={(e) => setSelectedOrigin(e.target.value)}
+            style={{
+              width: "100%", // Full width on smaller screens
+              padding: "8px",
+              fontSize: "1rem",
             }}
           >
-            <div style={{ display: "flex", gap: "20px" }}>
-              <div>
-                <div>
-                  <Typography variant="subtitle1">Select Origin:</Typography>
-                  <select
-                    value={selectedOrigin}
-                    onChange={(e) => setSelectedOrigin(e.target.value)}
-                  >
-                    <option value="">--Select Origin--</option>
-                    {filteredInspections.map((inspection) => (
-                      <option
-                        key={inspection.id}
-                        value={fullAddress(
-                          inspection.propertyData.property_street_number,
-                          inspection.propertyData.property_street_name,
-                          inspection.propertyData.property_type,
-                          inspection.propertyData.property_suburb,
-                          inspection.propertyData.property_state
-                        )}
-                      >
-                        {fullAddress(
-                          inspection.propertyData.property_street_number,
-                          inspection.propertyData.property_street_name,
-                          inspection.propertyData.property_type,
-                          inspection.propertyData.property_suburb,
-                          inspection.propertyData.property_state
-                        )}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Typography variant="subtitle1">Select Destination:</Typography>
-                  <select
-                    value={selectedDestination}
-                    onChange={(e) => setSelectedDestination(e.target.value)}
-                  >
-                    <option value="">--Select Destination--</option>
-                    {filteredInspections.map((inspection) => (
-                      <option
-                        key={inspection.id}
-                        value={fullAddress(
-                          inspection.propertyData.property_street_number,
-                          inspection.propertyData.property_street_name,
-                          inspection.propertyData.property_type,
-                          inspection.propertyData.property_suburb,
-                          inspection.propertyData.property_state
-                        )}
-                      >
-                        {fullAddress(
-                          inspection.propertyData.property_street_number,
-                          inspection.propertyData.property_street_name,
-                          inspection.propertyData.property_type,
-                          inspection.propertyData.property_suburb,
-                          inspection.propertyData.property_state
-                        )}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <Button
-                  variant="contained"
-                  onClick={handleSaveRoute}
-                  style={{ marginTop: '20px' }}
-                >
-                  Show Route on Map
-                </Button>
-              </div>
-              <MapComponent
-                origin={mapData.origin}
-                destination={mapData.destination}
-                waypoints={mapData.waypoints}
-              />
-            </div>
-          </Box>
-        </Modal>
+            <option value="">--Select Origin--</option>
+            {filteredInspections.map((inspection) => (
+              <option
+                key={inspection.id}
+                value={fullAddress(
+                  inspection.propertyData.property_street_number,
+                  inspection.propertyData.property_street_name,
+                  inspection.propertyData.property_type,
+                  inspection.propertyData.property_suburb,
+                  inspection.propertyData.property_state
+                )}
+              >
+                {fullAddress(
+                  inspection.propertyData.property_street_number,
+                  inspection.propertyData.property_street_name,
+                  inspection.propertyData.property_type,
+                  inspection.propertyData.property_suburb,
+                  inspection.propertyData.property_state
+                )}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div style={{ marginTop: "20px" }}>
+          <Typography variant="subtitle1">Select Destination:</Typography>
+          <select
+            value={selectedDestination}
+            onChange={(e) => setSelectedDestination(e.target.value)}
+            style={{
+              width: "100%", // Full width on smaller screens
+              padding: "8px",
+              fontSize: "1rem",
+            }}
+          >
+            <option value="">--Select Destination--</option>
+            {filteredInspections.map((inspection) => (
+              <option
+                key={inspection.id}
+                value={fullAddress(
+                  inspection.propertyData.property_street_number,
+                  inspection.propertyData.property_street_name,
+                  inspection.propertyData.property_type,
+                  inspection.propertyData.property_suburb,
+                  inspection.propertyData.property_state
+                )}
+              >
+                {fullAddress(
+                  inspection.propertyData.property_street_number,
+                  inspection.propertyData.property_street_name,
+                  inspection.propertyData.property_type,
+                  inspection.propertyData.property_suburb,
+                  inspection.propertyData.property_state
+                )}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Button
+          variant="contained"
+          onClick={handleSaveRoute}
+          style={{ marginTop: '20px', width: "100%" }} // Full width button
+        >
+          Show Route on Map
+        </Button>
+      </div>
+      <MapComponent
+        origin={mapData.origin}
+        destination={mapData.destination}
+        waypoints={mapData.waypoints}
+        style={{ flex: 1, minHeight: "300px" }} // Ensuring the map takes space
+      />
+    </div>
+  </Box>
+</Modal>
+
       </NavigationMenu>
     </div>
   );
