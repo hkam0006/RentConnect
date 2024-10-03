@@ -1,10 +1,6 @@
 import * as React from "react";
 import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Link,
-  NavLink,
+  NavLink
 } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -17,20 +13,28 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import ChatIcon from "@mui/icons-material/Chat";
 import InspectionIcon from "@mui/icons-material/Assignment";
-import InspectionRunsIcon from "@mui/icons-material/AssignmentTurnedIn";
-import ApplicationsIcon from "@mui/icons-material/Apps";
+import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import PropertiesIcon from "@mui/icons-material/AccountBalance";
 import ReferencesIcon from "@mui/icons-material/People";
 import ContactsIcon from "@mui/icons-material/Contacts";
-import KeysIcon from "@mui/icons-material/VpnKey";
-import AddPropertyIcon from "@mui/icons-material/Add";
 import HelpIcon from "@mui/icons-material/Help";
-import PermContactCalendarIcon from "@mui/icons-material/PermContactCalendar";
 import { useTheme } from "@mui/material";
 const drawerWidth = 200;
 
+const menuItems = [
+  { text: "Dashboard", icon: <HomeIcon />, link: "/RenterHome" },
+  { text: "Messages", icon: <ChatIcon />, link: "/messages" },
+  { text: "Rental Profile", icon: <PermContactCalendarIcon />, link: "/RentalProfile" },
+  { text: "Properties", icon: <PropertiesIcon />, link: "/saved_properties" },
+  { text: "Inspections Apply", icon: <InspectionIcon />, link: "/InspectionRenter" },
+  { text: "References", icon: <ReferencesIcon />, link: "/references" },
+  { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
+  { text: "Help", icon: <HelpIcon />, link: "/help" },
+];
+
 export default function SideDrawer() {
   const theme = useTheme();
+
   return (
     <Drawer
       variant="permanent"
@@ -46,51 +50,20 @@ export default function SideDrawer() {
       <Toolbar />
       <Box sx={{ overflow: "auto" }}>
         <List>
-          {[
-            { text: "Dashboard", icon: <HomeIcon />, link: "/RenterHome" },
-            { text: "Messages", icon: <ChatIcon />, link: "/messages" },
-            {
-              text: "Rental Profile",
-              icon: <PermContactCalendarIcon />,
-              link: "/RentalProfile",
-            },
-            {
-              text: "Properties",
-              icon: <PropertiesIcon />,
-              link: "/saved_properties",
-            },
-            {
-              text: "Inspections Apply",
-              icon: <InspectionIcon />,
-              link: "/InspectionRenter",
-            },
-
-            {
-              text: "References",
-              icon: <ReferencesIcon />,
-              link: "/references",
-            },
-            { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
-            { text: "Help", icon: <HelpIcon />, link: "/help" },
-          ].map((item) => (
+          {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding>
-              <ListItemButton
-                // component={Link}
-                // to={item.link}
-                sx={{ paddingRight: "8px" }}
-              >
+              <ListItemButton sx={{ paddingRight: "8px" }}>
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                {/* <ListItemText primary={item.text} /> */}
                 <NavLink
                   to={item.link}
                   style={({ isActive }) => ({
-                    color: isActive ? theme.primary : "#000000",
+                    color: isActive ? theme.palette.primary.main : "#000000",
                     fontWeight: isActive ? 700 : 400,
                     textDecoration: "none",
-                    padding: 2,
+                    padding: "2px",
                   })}
                 >
-                  {item.text}
+                  <ListItemText primary={item.text} />
                 </NavLink>
               </ListItemButton>
             </ListItem>

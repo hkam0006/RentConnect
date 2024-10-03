@@ -11,11 +11,18 @@ import SideDrawer from "./SideDrawer";
 import logo from "./RENTCONNECT-2.png"
 import { supabase } from "../../supabase";
 import {useNavigate } from 'react-router-dom';
+import Drawer from '@mui/material/Drawer';
+import MenuIcon from '@mui/icons-material/Menu'; // Add Menu Icon
 
 const drawerWidth = 200;
 
 export default function NavigationMenu({ children }) {
-    const [accountAnchorEl, setAccountAnchorEl] = useState(null); // State variable for account circle icon
+    const [accountAnchorEl, setAccountAnchorEl] = useState(null); 
+    const [mobileOpen, setMobileOpen] = useState(false);
+
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
 
     const handleIcon = (event) => {
         setAccountAnchorEl(event.currentTarget);
@@ -60,12 +67,21 @@ export default function NavigationMenu({ children }) {
         <Box sx={{ display: 'flex' }}>
             <AppBar sx={{backgroundColor: 'white', color: 'black', zIndex: 1201}}>
                 <Toolbar>
-                    <a href='/'style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
-                        
-                    <img src={logo} alt="Logo" width="70" height="70" />
+                    {/* Add button to toggle drawer on mobile */}
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        sx={{ mr: 2, display: { sm: 'none' } }} // Display on mobile (xs)
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <a href='/' style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+                        <img src={logo} alt="Logo" width="70" height="70" />
                     </a>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left', paddingRight: '10px' }}>
-                        <a href='/' style={{ textDecoration: "none", color: "inherit" }} >
+                        <a href='/' style={{ textDecoration: "none", color: "inherit" }}>
                             RentConnect
                         </a>
                         <span style={{ fontSize: "90%" }}>
@@ -105,23 +121,52 @@ export default function NavigationMenu({ children }) {
                                 open={Boolean(accountAnchorEl)}
                                 onClose={handleAccountClose}
                             >
-                                <MenuItem onClick={() =>{handleGoToProfile()}}>My Account</MenuItem>
-                                <MenuItem onClick={() => {handleLogOut()}}>Log Out</MenuItem>
+                                <MenuItem onClick={handleGoToProfile}>My Account</MenuItem>
+                                <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
                             </Menu>
                         </Box>
                     )}
                 </Toolbar>
             </AppBar>
+
+            {/* Main Content */}
             <Box
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    marginLeft: `${drawerWidth}px`, // Adjust this value to match the width of your SideDrawer
+                    marginLeft: { sm: `${drawerWidth}px` }, // Adjust this value to match the width of your SideDrawer
                 }}
             >
                 {children}
             </Box>
-            <SideDrawer sx={{ zIndex: 1200 }} /> {/* Add zIndex to ensure SideDrawer stays above main content */}
+
+            {/* Temporary Drawer for mobile */}
+            <Drawer
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                    keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' }, // Only show on mobile
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, marginTop: '10px' },
+                }}
+            >
+                <SideDrawer />
+            </Drawer>
+
+            {/* Permanent Drawer for larger screens */}
+            <Drawer
+                variant="permanent"
+                sx={{
+                    display: { xs: 'none', sm: 'block' }, // Hide on mobile
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                }}
+                open
+            >
+                <SideDrawer />
+            </Drawer>
         </Box>
     );
 }

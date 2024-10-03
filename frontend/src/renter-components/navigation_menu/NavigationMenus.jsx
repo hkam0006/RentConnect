@@ -1,5 +1,4 @@
-import { ReactComponent as Logo } from "../../logo.svg";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,133 +8,165 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SideDrawer from "./SideDrawer";
-import { Link, useNavigate } from "react-router-dom";
-import logo from "./RENTCONNECT-2.png";
+import logo from "./RENTCONNECT-2.png"
 import { supabase } from "../../supabase";
+import {useNavigate } from 'react-router-dom';
+import Drawer from '@mui/material/Drawer';
+import MenuIcon from '@mui/icons-material/Menu'; // Add Menu Icon
 
 const drawerWidth = 200;
 
 export default function NavigationMenu({ children }) {
-  const [auth, setAuth] = useState(true);
-  const [accountAnchorEl, setAccountAnchorEl] = useState(null); // State variable for account circle icon
+    const [accountAnchorEl, setAccountAnchorEl] = useState(null); 
+    const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleIcon = (event) => {
-    setAccountAnchorEl(event.currentTarget);
-  };
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
 
-  const handleAccountClose = () => {
-    setAccountAnchorEl(null);
-  };
+    const handleIcon = (event) => {
+        setAccountAnchorEl(event.currentTarget);
+    };
 
-  const handleLogOut = () => {
-    setAccountAnchorEl(null);
-    supabase.auth.signOut();
-  };
+    const handleAccountClose = () => {
+        setAccountAnchorEl(null);
+    };
 
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    async function getUserData() {
-      await supabase.auth.getUser().then((value) => {
-        if (value.data?.user) {
-          setUser(value.data.user);
-        }
-      });
+    const navigate = useNavigate();
+
+    const handleGoToProfile = () => {
+        navigate(`/PMprofile/${user.id}`)
+    };
+
+    const handleLogOut = () => {
+        supabase.auth.signOut().then(data=> {
+            if (data.error){
+                console.log('Failed to log out:')
+                console.log(data.error)
+            }
+        })
+        .catch(error => {
+            console.log('Failed to log out:')
+            console.log(error)
+        })
     }
-    getUserData();
-  }, []);
 
-  return (
-    <Box sx={{ display: "flex" }}>
-      <AppBar sx={{ backgroundColor: "white", color: "black", zIndex: 1201 }}>
-        <Toolbar>
-          <a
-            href="/"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            <img src={logo} alt="Logo" width="70" height="70" />
-          </a>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, textAlign: "left", paddingRight: "10px" }}
-          >
-            <a href="/" style={{ textDecoration: "none", color: "inherit" }}>
-              RentConnect
-            </a>
-            <span style={{ fontSize: "90%" }}>
-              <a
-                href="/renterhome"
-                style={{
-                  textDecoration: "none",
-                  color: "inherit",
-                  padding: "20px",
-                }}
-              >
-                Dashboard
-              </a>
-            </span>
-          </Typography>
+    const [user, setUser] = useState({});
+    useEffect(() => {
+        async function getUserData() {
+            await supabase.auth.getUser().then((value) =>{
+                if (value.data?.user) {
+                    setUser(value.data.user);
+                }
+            })
+        }
+        getUserData();
+    }, []);
 
-          {auth && (
-            <Box>
-              <Box
+    return (
+        <Box sx={{ display: 'flex' }}>
+            <AppBar sx={{backgroundColor: 'white', color: 'black', zIndex: 1201}}>
+                <Toolbar>
+                    {/* Add button to toggle drawer on mobile */}
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        edge="start"
+                        onClick={handleDrawerToggle}
+                        sx={{ mr: 2, display: { sm: 'none' } }} // Display on mobile (xs)
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <a href='/' style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+                        <img src={logo} alt="Logo" width="70" height="70" />
+                    </a>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left', paddingRight: '10px' }}>
+                        <a href='/' style={{ textDecoration: "none", color: "inherit" }}>
+                            RentConnect
+                        </a>
+                        <span style={{ fontSize: "90%" }}>
+                            <a href="/property" style={{ textDecoration: 'none', color: 'inherit', padding: '20px' }}>
+                                Property
+                            </a>
+                        </span>
+                    </Typography>
+
+                    {user && (
+                        <Box>
+                            <Box sx={{justifyContent: 'flex-end', display: 'flex', alignItems: 'center'}}>
+                                <Typography sx={{fontSize: '130%'}}>{user.email}</Typography>
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleIcon}
+                                    color="inherit"
+                                >
+                                    <AccountCircle />
+                                </IconButton>
+                            </Box>
+                            <Menu
+                                id="menu-appbar"
+                                anchorEl={accountAnchorEl}
+                                anchorOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                                open={Boolean(accountAnchorEl)}
+                                onClose={handleAccountClose}
+                            >
+                                <MenuItem onClick={handleGoToProfile}>My Account</MenuItem>
+                                <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
+                            </Menu>
+                        </Box>
+                    )}
+                </Toolbar>
+            </AppBar>
+
+            {/* Main Content */}
+            <Box
+                component="main"
                 sx={{
-                  justifyContent: "flex-end",
-                  display: "flex",
-                  alignItems: "center",
+                    flexGrow: 1,
+                    marginLeft: { sm: `${drawerWidth}px` }, // Adjust this value to match the width of your SideDrawer
                 }}
-              >
-                <Typography sx={{ fontSize: "130%" }}>{user.email}</Typography>
-                <IconButton
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleIcon}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-              </Box>
-              <Menu
-                id="menu-appbar"
-                anchorEl={accountAnchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(accountAnchorEl)}
-                onClose={handleAccountClose}
-              >
-                <MenuItem onClick={handleAccountClose}>Profile</MenuItem>
-                <MenuItem onClick={handleAccountClose}>My account</MenuItem>
-                <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
-              </Menu>
+            >
+                {children}
             </Box>
-          )}
-        </Toolbar>
-      </AppBar>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          marginLeft: `${drawerWidth}px`, // Adjust this value to match the width of your SideDrawer
-        }}
-      >
-        {children}
-      </Box>
-      <SideDrawer sx={{ zIndex: 1200 }} />{" "}
-      {/* Add zIndex to ensure SideDrawer stays above main content */}
-    </Box>
-  );
+
+            {/* Temporary Drawer for mobile */}
+            <Drawer
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+                ModalProps={{
+                    keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                    display: { xs: 'block', sm: 'none' }, // Only show on mobile
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, marginTop: '10px' },
+                }}
+            >
+                <SideDrawer />
+            </Drawer>
+
+            {/* Permanent Drawer for larger screens */}
+            <Drawer
+                variant="permanent"
+                sx={{
+                    display: { xs: 'none', sm: 'block' }, // Hide on mobile
+                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                }}
+                open
+            >
+                <SideDrawer />
+            </Drawer>
+        </Box>
+    );
 }
