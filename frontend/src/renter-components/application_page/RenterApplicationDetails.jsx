@@ -56,13 +56,19 @@ export default function RenterApplicationDetails() {
     // get applications from user at this property
     const { applications, loading: applicationLoading } = useGetApplicationsByPropertyAndUserID(propertyId, userID)
 
-    // determine if there is an active application
+    // determine if there is an application
     const [hasActiveApplication, setHasActiveApplication] = useState(false);
+    if (applications.length > 0 && !hasActiveApplication) { setHasActiveApplication(true); }
+
+    /* original check if there was an active applicaiton
+    // but decided to check if there was any application at the property
     for (let i=0; i<applications.length; i++) {
         if (applications[i].application_status === "approved" && !hasActiveApplication) {
             setHasActiveApplication(true)
         }
     }
+
+     */
 
     const dialogRef = useRef();
 
@@ -251,6 +257,30 @@ function PropertyApplicationsTable({applications}) {
         },
     }));
 
+    if (applications.length == 0) {
+        return (
+            <Table stickyHeader sx={{minWidth: 650}} aria-label="Table of properties">
+                <TableHead>
+                    <TableRow>
+                        <StyledTableCell><Typography fontSize={"12px"} fontWeight={700}>Application Date </Typography></StyledTableCell>
+                        <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Last Updated</Typography></StyledTableCell>
+                        <StyledTableCell align="right"><Typography fontWeight={700} fontSize={"12px"}>Application Status</Typography></StyledTableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <TableRow sx={{'&:last-child td, &:last-child th': {border: 0}}}>
+                        <TableCell width={{width: "fit-content"}}>
+                            {/* <Card sx={{ padding: 2, }} > */}
+                            <Typography variant='body' fontWeight={700}>
+                                No found applications at this address.
+                            </Typography>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+        )
+    }
+
     return (
         <Table stickyHeader sx={{minWidth: 650}} aria-label="Table of properties">
             <TableHead>
@@ -271,9 +301,11 @@ function PropertyApplicationsTable({applications}) {
                             <Typography variant='body' fontWeight={700}>
                                 {new Date(row.application_apply_date).toLocaleDateString('en-GB')}
                             </Typography>
+                            {/*}
                             <Stack direction='row' spacing={2} justifyContent="start" sx={{width: "fit-content"}}>
                                 test
                             </Stack>
+                            */}
                             {/* </Card> */}
                         </TableCell>
                         <TableCell align="right">
