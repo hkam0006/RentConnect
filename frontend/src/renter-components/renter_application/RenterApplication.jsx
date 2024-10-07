@@ -94,6 +94,10 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
     // variables and methods for opening and closing dialog
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
+        applicant.lease_start_date = dayjs().add(1, 'month'); // a month from today
+        applicant.adults = 2;
+        applicant.kids = 0;
+        applicant.pets = 0;
         setOpen(true);
     };
     const handleClose = () => {
@@ -269,7 +273,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                             label="Duration of Lease"
                                             defaultValue={formData.lease_duration}
                                             onBlur={handleChange}
-                                            error={formErrors.first_name}
+                                            error={formErrors.lease_duration}
                                             MenuProps={{PaperProps: { style: { maxHeight: 300}}}}
                                         >
                                             {[...Array(48)].map((_, index) => (
@@ -286,7 +290,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                                    name="lease_start_date" label="Lease Start Date"
                                                    defaultValue={dayjs(formData.lease_start_date,'DD/MM/YYYY')} format="DD/MM/YYYY"
                                                    onBlur={handleChange}
-                                                   error={formErrors.date_of_birth}
+                                                   error={formErrors.lease_start_date}
                                         />
                                     </LocalizationProvider>
                                 </Grid>
@@ -299,7 +303,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                                name="adults" id="outlined-required"
                                                label="Adults" defaultValue={formData.adults}
                                                onBlur={handleChange}
-                                               error={formErrors.mobile}
+                                               error={formErrors.adults}
                                     />
                                 </Grid>
                                 <Grid item xs={2}>
@@ -307,7 +311,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                                name="kids" id="outlined-required"
                                                label="Children" defaultValue={formData.kids}
                                                onBlur={handleChange}
-                                               error={formErrors.email}
+                                               error={formErrors.kids}
                                     />
                                 </Grid>
                                 <Grid item xs={2}>
@@ -315,7 +319,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
                                                name="pets" id="outlined-required"
                                                label="Pets" defaultValue={formData.pets}
                                                onBlur={handleChange}
-                                               error={formErrors.email}
+                                               error={formErrors.pets}
                                     />
                                 </Grid>
                             </Grid>
@@ -329,7 +333,14 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
     function rentalInformationValidation(applicantData) {
         let failureFlag = false;
 
-        if (!(dayjs(applicantData.lease_start_date,'DD/MM/YYYY').isAfter(dayjs()))) {
+        if (applicantData.lease_duration == null) {
+            renterInformationErrors.lease_duration = true;
+            failureFlag = true;
+        } else {
+            renterInformationErrors.lease_duration = false;
+        }
+
+        if (!(dayjs(applicantData.lease_start_date, 'DD/MM/YYYY').isAfter(dayjs(), 'day'))) {
             renterInformationErrors.lease_start_date = true;
             failureFlag = true;
         } else {
