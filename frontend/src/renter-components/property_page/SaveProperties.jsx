@@ -24,6 +24,7 @@ const fullAddress = (number, name, type, suburb, state) => {
 }
 // Function that allows saving of properties for tenants. Saved properties can be unsaved as well
 const SavedProperties = () => {
+  const [activeSection, setActiveSection] = useState("savedProperties");
   const [savedPropertiesData, setSavedPropertiesData] = useState([]);
   useEffect(() => {
     // find properties that have been saved 
