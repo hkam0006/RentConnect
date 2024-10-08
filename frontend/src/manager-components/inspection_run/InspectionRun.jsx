@@ -5,7 +5,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
   tableCellClasses,
@@ -16,6 +15,14 @@ import { styled } from "@mui/material/styles";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import MapComponent from "./MapNav";
 
+/* Shows the inspection runs that a property manager might have. 
+
+Shows the name of the manager, location of inspection, date and time, duration and button to show route
+
+Route is not shown if only one inspection 
+
+Allows input of origin and destination in map modal
+*/
 const InspectionRun = () => {
   const [activeSection, setActiveSection] = useState("inspection");
   const [inspectionsData, setInspectionsData] = useState([]);
@@ -108,7 +115,8 @@ const InspectionRun = () => {
   const fullAddress = (number, name, type, suburb, state) => {
     return `${number} ${name} ${type}, ${suburb}, ${state}`;
   };
-
+  
+// handles showing routes
   const handleShowRoute = (propertyManagerId) => {
     setSelectedPropertyManagerId(propertyManagerId);
     // Filter inspections based on the selected property manager ID
@@ -127,6 +135,7 @@ const InspectionRun = () => {
     }
 
   };
+  // if only one property address
   const isShowRouteDisabled = (propertyManagerId) => {
     const filteredInspections = inspectionsData.filter(
       (inspection) =>
@@ -162,7 +171,7 @@ const InspectionRun = () => {
       setMapData({ origin, destination, waypoints });
     }
   };
-
+// handling for map modal
   const handleCloseModal = () => {
     setOpenModal(false); // Close the modal when user clicks outside or on close button
   };
@@ -313,7 +322,7 @@ const InspectionRun = () => {
             value={selectedOrigin}
             onChange={(e) => setSelectedOrigin(e.target.value)}
             style={{
-              width: "100%", // Full width on smaller screens
+              width: "100%",
               padding: "8px",
               fontSize: "1rem",
             }}
@@ -378,7 +387,7 @@ const InspectionRun = () => {
         <Button
           variant="contained"
           onClick={handleSaveRoute}
-          style={{ marginTop: '20px', width: "100%" }} // Full width button
+          style={{ marginTop: '20px', width: "100%" }} 
         >
           Show Route on Map
         </Button>
@@ -387,7 +396,7 @@ const InspectionRun = () => {
         origin={mapData.origin}
         destination={mapData.destination}
         waypoints={mapData.waypoints}
-        style={{ flex: 1, minHeight: "300px" }} // Ensuring the map takes space
+        style={{ flex: 1, minHeight: "300px" }} 
       />
     </div>
   </Box>
