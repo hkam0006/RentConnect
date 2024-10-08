@@ -3,7 +3,9 @@ import { Accordion, AccordionSummary, AccordionDetails, List, ListItem, Typograp
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-
+/* Helps display the itinerary on the side of the map modal
+Inputs: Itinerary (list of locations), legDurations (time for each location)
+Output: list of locations and the journey time */
 const DrivingInstructionsBox = ({ itinerary,  legDurations }) => {
   return (
     <Accordion defaultExpanded sx={{ width: "30%" }}>
@@ -23,7 +25,7 @@ const DrivingInstructionsBox = ({ itinerary,  legDurations }) => {
             <ListItem>
               <Typography variant="body1">{place}</Typography>
             </ListItem>
-            {index < itinerary.length - 1 && ( // Add the arrow and divider only between items
+            {index < itinerary.length - 1 && (
               <>
                 <Divider
                   sx={{

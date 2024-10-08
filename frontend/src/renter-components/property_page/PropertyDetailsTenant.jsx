@@ -1,29 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Stack, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
+import React, {useState } from 'react';
+import {Stack, Typography, Box, Grid, Divider, Card, CardContent, Button } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import SquareFootIcon from '@mui/icons-material/SquareFoot';
 import DriveEtaIcon from '@mui/icons-material/DriveEta';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
-import AcUnitIcon from '@mui/icons-material/AcUnit';
-import CheckroomIcon from '@mui/icons-material/Checkroom';
-import DeckIcon from '@mui/icons-material/Deck';
 import { UpcomingViewingsTable } from './UpcomingViewingsTable';
 import InspectionRequestModal from './InspectionRequestModal';
 import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
 import MapComponent from '../../manager-components/inspection_run/MapNav';
 
 // Demo Images
-import ListingImage from '../../manager-components/property_page/listing.jpg'
-import ListingImageAppt from '../../manager-components/property_page/listing2.jpg'
 import NavigationMenu from '../../manager-components/navigation_menu/NavigationMenus';
 import { useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 import AppLoader from "../../manager-components/property_page/AppLoader";
-import Carousel from "react-material-ui-carousel";
 import Paper from "@mui/material/Paper";
-import {supabase} from "../../supabase";
-import useGetUserID from "../../queries/useGetUserID";
 
 export default function PropertyDetailsTenant() {
 

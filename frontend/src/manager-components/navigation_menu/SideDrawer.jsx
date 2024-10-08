@@ -35,9 +35,9 @@ const menuItems = [
   { text: "Add Property", icon: <AddPropertyIcon />, link: "/add_property" },
   { text: "Help", icon: <HelpIcon />, link: "/help" }
 ];
-
+// Sidedrawer to help with navigating around the applcation
 export default function SideDrawer() {
-  const theme = useTheme(); // Get theme for styling
+  const theme = useTheme();
 
   return (
     <Drawer

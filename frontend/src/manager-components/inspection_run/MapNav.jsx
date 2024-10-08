@@ -9,9 +9,10 @@ import DrivingInstructionsBox from "./DrivingInstructionsBox";
 const ACCESS_TOKEN =
   "pk.eyJ1IjoicGRldjAwMTAiLCJhIjoiY2x6ajVxNG1nMG4xOTJucTE1MHY4bDF2bCJ9.HfHy4wIk1KMg658ISOLoRQ";
 
+// to allow conversion of string address to coords for placing markers
 const geocodingClient = mbxGeocoding({ accessToken: ACCESS_TOKEN });
 
-// Updated getCoordinates function to return index along with coordinates
+// getCoordinates function to return index along with coordinates
 const getCoordinates = async (addresses) => {
   try {
     const coordinatePromises = addresses.map((address, index) =>
@@ -41,8 +42,7 @@ const getCoordinates = async (addresses) => {
   }
 };
 
-// New optimizeRoute function to reorder coordinates
-// Updated optimizeRoute function to retain addresses
+// optimizeRoute function to retain addresses
 const optimizeRoute = async (coords) => {
   const coordinatesStr = coords.map((c) => c.coordinates.join(",")).join(";");
   const url = `https://api.mapbox.com/optimized-trips/v1/mapbox/driving/${coordinatesStr}?access_token=${ACCESS_TOKEN}&source=first&destination=last`;
@@ -65,12 +65,15 @@ const optimizeRoute = async (coords) => {
   return coords; // Return original if optimization fails
 };
 
+/* Renders Map on the screen 
+Inputs: Origin (property), Destination (property), and list of waypoints (properties)
+Output: A map with markers on each location */
 const MapComponent = ({ origin, destination, waypoints }) => {
   const [coords, setCoords] = useState([]);
   const [itinerary, setItinerary] = useState([]); // State for the itinerary
   const [legDurations, setLegDurations] = useState([]); // State for the leg durations
 
-  // Updated useEffect to fetch and optimize coordinates
+  // useEffect to fetch and optimize coordinates
   useEffect(() => {
     const fetchAndOptimizeCoordinates = async () => {
       const rawCoords = await getCoordinates([origin, ...waypoints, destination]);
