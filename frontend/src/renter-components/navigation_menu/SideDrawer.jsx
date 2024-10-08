@@ -28,7 +28,7 @@ const menuItems = [
   { text: "Properties", icon: <PropertiesIcon />, link: "/saved_properties" },
   { text: "Inspections Apply", icon: <InspectionIcon />, link: "/InspectionRenter" },
   { text: "References", icon: <ReferencesIcon />, link: "/references" },
-  { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
+  { text: "Contacts", icon: <ContactsIcon />, link: "/renter_contacts" },
   { text: "Help", icon: <HelpIcon />, link: "/help" },
 ];
 

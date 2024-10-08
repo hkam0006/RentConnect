@@ -38,6 +38,7 @@ import InspectionRenter from './renter-components/renter_inspection/InspectionRe
 import TenantReferences from './renter-components/references/TenantReferences'
 import PMprofileForR from './renter-components/profile_page/PMprofile';
 import RenterMessages from './renter-components/renter_message/RenterMessages';
+import RenterContacts from './renter-components/renter_contacts/RenterContacts';
 
 function App() {
   useAuthListener()
@@ -81,6 +82,7 @@ function App() {
 
             <Route path='/renter_messages' element={<RenterRoute Component={RenterMessages}/>}/>
             <Route path='/renter_messages/:directMessageUserID' element={<RenterRoute Component={RenterMessages}/>}/>
+            <Route path='/renter_contacts' element={<RenterRoute Component={RenterContacts}/>} />
           </Routes>
     </ThemeProvider>
   )
