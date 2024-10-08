@@ -23,7 +23,7 @@ const drawerWidth = 200;
 
 const menuItems = [
   { text: "Dashboard", icon: <HomeIcon />, link: "/RenterHome" },
-  { text: "Messages", icon: <ChatIcon />, link: "/messages" },
+  { text: "Messages", icon: <ChatIcon />, link: "/renter_messages" },
   { text: "Rental Profile", icon: <PermContactCalendarIcon />, link: "/RentalProfile" },
   { text: "Properties", icon: <PropertiesIcon />, link: "/saved_properties" },
   { text: "Inspections Apply", icon: <InspectionIcon />, link: "/InspectionRenter" },

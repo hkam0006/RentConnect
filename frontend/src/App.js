@@ -37,6 +37,7 @@ import PMprofileForPM from './manager-components/profile_page/PMprofile';
 import InspectionRenter from './renter-components/renter_inspection/InspectionRenter';
 import TenantReferences from './renter-components/references/TenantReferences'
 import PMprofileForR from './renter-components/profile_page/PMprofile';
+import RenterMessages from './renter-components/renter_message/RenterMessages';
 
 function App() {
   useAuthListener()
@@ -77,6 +78,9 @@ function App() {
             <Route path='/PMprofile/:pmID' element={<ManagerRoute Component={PMprofileForPM}/>} />
             <Route path='/PM/:pmID' element={<RenterRoute Component={PMprofileForR}/>} />
             <Route path='/saved_properties' element={<RenterRoute Component={SavedProperties}/>} />
+
+            <Route path='/renter_messages' element={<RenterRoute Component={RenterMessages}/>}/>
+            <Route path='/renter_messages/:directMessageUserID' element={<RenterRoute Component={RenterMessages}/>}/>
           </Routes>
     </ThemeProvider>
   )
