@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from "../../supabase";
-import { Typography, Grid, Button } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
@@ -11,7 +11,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
   tableCellClasses,
@@ -23,10 +22,11 @@ import ImgElement from '../../manager-components/property_page/ImgElement';
 const fullAddress = (number, name, type, suburb, state) => {
   return `${number} ${name} ${type}, ${suburb}, ${state}`
 }
+// Function that allows saving of properties for tenants. Saved properties can be unsaved as well
 const SavedProperties = () => {
-  const [activeSection, setActiveSection] = useState("savedProperties");
   const [savedPropertiesData, setSavedPropertiesData] = useState([]);
   useEffect(() => {
+    // find properties that have been saved 
     const fetchSavedPropertyData = async () => {
       try {
         const { data: properties, error: propertiesError } = await supabase
@@ -60,6 +60,7 @@ const SavedProperties = () => {
     fetchSavedPropertyData();
   }, []);
 
+  //unsaving of properties
   const handleUnsave = async (id) => {
     try {
       const { error } = await supabase

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table, TableBody, Checkbox, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Box } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, tableCellClasses, Box } from "@mui/material"
 import { styled } from '@mui/material/styles';
 import InspectionRequestModal from './InspectionRequestModal';
 
