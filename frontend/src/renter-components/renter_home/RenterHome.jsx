@@ -78,9 +78,11 @@ const ActualProperties = ({properties, setShowModal}) => {
 
 const SkeletonProperties = () => {
   return <>
-    {Array.from(Array(6)).map((key) => <Grid key={key} item xs={12} sm={6} md={4}>
-      <PropertyCard key={key} loading={true} />
-    </Grid>)}
+    {Array.from(Array(6)).map((key, index) => {
+      return <Grid key={index} item xs={12} sm={6} md={4}>
+        <PropertyCard key={key} loading={true} />
+      </Grid>
+    })}
   </>
 }
 
@@ -104,7 +106,6 @@ export default function RenterHome() {
     useEffect(() => {
       async function findProperties(queries){
         const joint_q = queries.join(" ")
-        console.log("TRIGGERED")
         const { data, error } = await supabase
           .from('PROPERTY') 
           .select('*')
