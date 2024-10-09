@@ -8,7 +8,6 @@ import store from './utils/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
 import { render, screen } from '@testing-library/react';
-import App from './App';
 
 jest.mock('@mui/x-charts/BarChart', () => ({
   BarChart: () => null, // Return a simple functional component that renders nothing
