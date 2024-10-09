@@ -2,7 +2,6 @@ import { supabase } from "../../supabase";
 import { Box, Button, Fade, Modal, Stack, TextField, Typography } from '@mui/material'
 import React, { useState } from 'react'
 import dayjs from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -49,7 +48,6 @@ const CheckoutModal = ({ onClose, keyObject }) => {
           <Stack direction='column' spacing={2} mt={1}>
             <TextField label="Borrower" value={borrower} onChange={(e) => setBorrower(e.target.value)} />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker', 'DatePicker']}>
                 <DatePicker
                   label="Issue Date"
                   value={issueDate}
@@ -60,7 +58,6 @@ const CheckoutModal = ({ onClose, keyObject }) => {
                   value={dueDate}
                   onChange={(newValue) => setDueDate(newValue)}
                 />
-              </DemoContainer>
             </LocalizationProvider>
             <Button
               variant='contained'
