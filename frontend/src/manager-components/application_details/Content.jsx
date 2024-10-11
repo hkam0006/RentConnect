@@ -1,5 +1,5 @@
 import React from 'react'
-import { CircularProgress, Paper, Box } from '@mui/material'
+import { CircularProgress, Paper, Box, Alert } from '@mui/material'
 
 import Preferences from './Content/Preferences'
 import AddressHistory from './Content/AddressHistory'
@@ -8,7 +8,7 @@ import Income from './Content/Income'
 import Identity from './Content/Identity'
 import Pets from './Content/Pets'
 
-function Content({ application, applicationComment, applicationSupportingDocument, renter, renterTenancy, renterEmployment, renterPet, renterComment, handleVerification, handleCommentsClick }) {
+function Content({ application, applicationComment, applicationSupportingDocument, renter, renterTenancy, renterEmployment, renterPet, renterComment, handleVerification, handleCommentsClick, loading }) {
     // Test income
     const income = {
         bank_statements: [], 
@@ -28,10 +28,18 @@ function Content({ application, applicationComment, applicationSupportingDocumen
                 <Pets renterPet={renterPet} verified={application.pets_verified} handleVerification={handleVerification} handleCommentsClick={handleCommentsClick}/>
             </Box>
         )
-    } else {
+    } else if (loading) {
         return (
             <Paper sx={{ padding: 2, margin: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
                 <CircularProgress />
+            </Paper>
+        )
+    } else {
+        return (
+            <Paper sx={{ padding: 2, margin: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+                <Alert severity='error' sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    No application found
+                </Alert>
             </Paper>
         )
     }

@@ -3,12 +3,20 @@ import { List, ListItem, Typography, Paper, Box } from '@mui/material'
 
 function Outline({ renter }) {
     const goToSection = (section) => {
-        const contentPosition = document.getElementById(section).getBoundingClientRect().top + window.scrollY - 110
+        const sectionElement = document.getElementById(section)
+
+            if (!sectionElement) {
+            console.error(`Section with id "${section}" not found.`)
+            return
+        }
+    
+        const contentPosition = sectionElement.getBoundingClientRect().top + window.scrollY - 110
         window.scrollTo({
             top: contentPosition,
             behavior: 'smooth'
         })
     }
+    
 
     const result = (
         <Paper sx={{ padding: 2, margin: 2, position: 'fixed', width: '20%', height: '83%' }}>

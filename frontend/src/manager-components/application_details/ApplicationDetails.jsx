@@ -23,6 +23,14 @@ import useAddApplicationComment from '../../mutators/Application Comment/useAddA
 
 function ApplicationDetails() {
     const { companyId, propertyId, renterId } = useParams()
+    const [loading, setLoading] = useState(true)
+    // Scuffed but 1s should be enough to load the data
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false)
+        }, 1000)
+        return () => clearTimeout(timer)
+    }, [])
 
     // Database variables
     const [application, setApplication] = useState(null)
@@ -89,6 +97,7 @@ function ApplicationDetails() {
 
     useEffect(() => {
         const setFetchedData = () => {
+            console.log(getApplication, getApplicationComment, getApplicationSupportingDocuments, getRenter, getRenterTenancy, getRenterEmployment, getRenterPet, getRenterComment)
             if (getApplication.length > 0) {
                 setApplication(getApplication[0])
             }
@@ -204,6 +213,7 @@ function ApplicationDetails() {
                         renterComment={renterComment}
                         handleVerification={handleVerification}
                         handleCommentsClick={handleCommentsClick}
+                        loading={loading}
                     />
                 </Grid>
 
