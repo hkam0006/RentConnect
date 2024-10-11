@@ -32,6 +32,7 @@ import ImgElement from "../../manager-components/property_page/ImgElement";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import {styled} from "@mui/material/styles";
 import RenterApplication from "../renter_application/RenterApplication";
+import { useNavigate } from 'react-router-dom';
 
 /**
  * A page which shows a property and its information; and all applications made by the signed-in renter at this
@@ -39,7 +40,8 @@ import RenterApplication from "../renter_application/RenterApplication";
  * @author Luke Phillips
  */
 export default function RenterApplicationDetails() {
-
+    const navigate = useNavigate();
+    
     // Cuncomment below to view the table
     const viewings = [
         // viewing1,
@@ -119,6 +121,7 @@ export default function RenterApplicationDetails() {
                                         variant='contained'
                                         size='medium'
                                         style={{ color: 'white' }}
+                                        onClick={() => navigate('/messages/' + prop.property_manager_id)}
                                     >
                                         Message the agent
                                     </Button>
