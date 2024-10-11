@@ -54,7 +54,7 @@ const headCells = [
     label: 'Name',
   },
   {
-    id: 'phonenumber',
+    id: 'phone_number',
     sortable: true,
     disablePadding: false,
     label: 'Phone Number',
@@ -66,7 +66,7 @@ const headCells = [
     label: 'Email',
   },
   {
-    id: 'lastcontact',
+    id: 'last_contact',
     sortable: true,
     disablePadding: false,
     label: 'Last Contact',
@@ -124,11 +124,11 @@ EnhancedTableHead.propTypes = {
 };
 
 function Contacts() {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories'); //Calories needs to be changed to be the appropriate value
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [order, setOrder] = useState('asc')
+  const [orderBy, setOrderBy] = useState('name')
+  const [selected, setSelected] = useState([])
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(5)
   const [userID, setUserID] = useState(null)
   const [contacts, setContacts] = useState([])
   const fetchContacts = useGetContactsByID(userID)
@@ -141,15 +141,15 @@ function Contacts() {
   
   useEffect(() => {
     async function getUserID() {
-        const { data, error } = await supabase.auth.getUser()
-        if (error) {
-            console.error("Error fetching user:", error.message)
-        } else if (data?.user) {
-            setUserID(data.user.id)
-        }
+      const { data, error } = await supabase.auth.getUser()
+      if (error) {
+        console.error("Error fetching user:", error.message)
+      } else if (data?.user) {
+        setUserID(data.user.id)
+      }
     }
     getUserID()
-}, [])
+  }, [])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -195,74 +195,74 @@ function Contacts() {
       ),
     [contacts, order, orderBy, page, rowsPerPage],
   );
-  
+
   return (
     <NavigationMenu>
     <Box sx={{ width: '100%', flexDirection: 'column'}}>
         
-      <br/><br/><br/><br/>
+        <br/><br/><br/><br/>
       <Paper sx={{ width: '95%', mb: 2 , marginLeft: "2.5%"}}>
-        <TableContainer>
+          <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
           >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={contacts.length}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+                rowCount={contacts.length}
+              />
+              <TableBody>
+                {visibleRows.map((row, index) => {
                 const isItemSelected = isSelected(contacts.id);
-                const labelId = `enhanced-table-${index}`;
+                  const labelId = `enhanced-table-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.id)}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="normal"
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row.id)}
+                      tabIndex={-1}
+                      key={row.id}
+                      selected={isItemSelected}
+                      sx={{ cursor: 'pointer' }}
                     >
-                      {row.name}
-                    </TableCell>
-                    <TableCell align="left">{row.phone_number}</TableCell>
-                    <TableCell align="left">{row.email}</TableCell>
-                    <TableCell align="left">
-                      {new Date(row.last_contact).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="normal"
+                      >
+                        {row.name}
+                      </TableCell>
+                      <TableCell align="left">{row.phone_number}</TableCell>
+                      <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">
+                        {new Date(row.last_contact).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </TableCell>
                     <TableCell align="right"><Button variant="contained" disableElevation onClick={() => navigate(`/messages/${row.id}`)}>Message</Button></TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={contacts.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Box>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={contacts.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </Box>
     </NavigationMenu>
   );
 }
