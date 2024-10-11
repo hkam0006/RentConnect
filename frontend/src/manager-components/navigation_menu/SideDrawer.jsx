@@ -33,7 +33,7 @@ const menuItems = [
   { text: "Contacts", icon: <ContactsIcon />, link: "/contacts" },
   { text: "Keys", icon: <KeysIcon />, link: "/keys" },
   { text: "Add Property", icon: <AddPropertyIcon />, link: "/add_property" },
-  { text: "Help", icon: <HelpIcon />, link: "/help" }
+  //{ text: "Help", icon: <HelpIcon />, link: "/help" }
 ];
 // Sidedrawer to help with navigating around the applcation
 export default function SideDrawer() {

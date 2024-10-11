@@ -29,7 +29,7 @@ const menuItems = [
   { text: "Inspections Apply", icon: <InspectionIcon />, link: "/InspectionRenter" },
   { text: "References", icon: <ReferencesIcon />, link: "/references" },
   { text: "Contacts", icon: <ContactsIcon />, link: "/renter_contacts" },
-  { text: "Help", icon: <HelpIcon />, link: "/help" },
+  //{ text: "Help", icon: <HelpIcon />, link: "/help" },
 ];
 
 export default function SideDrawer() {
