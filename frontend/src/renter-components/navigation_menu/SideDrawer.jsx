@@ -43,8 +43,8 @@ export default function SideDrawer() {
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
           width: drawerWidth,
-          boxSizing: "border-box",
-        },
+          boxSizing: "border-box"
+        }
       }}
     >
       <Toolbar />
@@ -52,19 +52,26 @@ export default function SideDrawer() {
         <List>
           {menuItems.map((item) => (
             <ListItem key={item.text} disablePadding>
-              <ListItemButton sx={{ paddingRight: "8px" }}>
+              <ListItemButton
+                component={NavLink}
+                to={item.link}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  textDecoration: "none",
+                  color: "inherit",
+                  padding: 1.7,
+                  paddingLeft: 2,
+                  '&.active': {
+                    backgroundColor: theme.palette.action.selected,
+                    color: theme.palette.primary.main,
+                    fontWeight: 700
+                  }
+                }}
+              >
                 <ListItemIcon>{item.icon}</ListItemIcon>
-                <NavLink
-                  to={item.link}
-                  style={({ isActive }) => ({
-                    color: isActive ? theme.palette.primary.main : "#000000",
-                    fontWeight: isActive ? 700 : 400,
-                    textDecoration: "none",
-                    padding: "2px",
-                  })}
-                >
-                  <ListItemText primary={item.text} />
-                </NavLink>
+                {item.text}
               </ListItemButton>
             </ListItem>
           ))}
