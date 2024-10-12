@@ -2,7 +2,6 @@ import { Box } from '@mui/material'
 
 import NavigationMenu from '../navigation_menu/NavigationMenus'
 import AccountDetails from './components/AccountDetails'
-import Preferences from './components/Preferences'
 import Essentials from './components/Essentials'
 import AdditionalSupportingDocuments from './components/AdditionalSupportingDocuments'
 import AppLoader from "../../manager-components/property_page/AppLoader"
@@ -19,7 +18,6 @@ function BuildRentalProfile() {
             <Box display="flex" justifyContent="center">
                 <Box margin={2} sx={{ width: '50%', marginTop: '64px', marginLeft: '190px' }} >
                     <AccountDetails userID={userID}/>
-                    <Preferences />
                     <Essentials userID={userID}/>
                     <AdditionalSupportingDocuments userID={userID}/>
                 </Box>
