@@ -296,7 +296,7 @@ const InspectionTableRenter = ({ inspectionsData, setInspections }) => {
             type="datetime-local"
             fullWidth
             variant="outlined"
-            value={newDateTime}
+            value={newDateTime ? new Date(new Date(newDateTime).getTime() + 11 * 60 * 60 * 1000).toISOString().slice(0, 16) : ''}
             onChange={(e) => setNewDateTime(e.target.value)}
             // Prevent selecting the current day and time by setting min to tomorrow's date
             inputProps={{
