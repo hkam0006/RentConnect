@@ -122,7 +122,10 @@ export default function RenterHome() {
       findProperties(chips)
     }, [chips])
 
-    if (userLoading || renterLoading || applicationsLoading) return <AppLoader />
+    if (userLoading || renterLoading || applicationsLoading || loading) return (<NavigationMenu>
+        <AppLoader />
+      </NavigationMenu>
+    )
 
     return (
         <NavigationMenu>

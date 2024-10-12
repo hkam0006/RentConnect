@@ -247,7 +247,11 @@ const AddProp = () => {
   };
   
 
-  if (loading) return <AppLoader />;
+  if (loading) return(
+    <NavigationMenu>
+      <AppLoader />
+    </NavigationMenu>
+  );
 
   return (
     <NavigationMenu>

@@ -37,7 +37,12 @@ function RentalProfile () {
         setProfileCompletionScore(score)
     }, [hasAddressHistory, hasEmployment, hasSupportingDocuments])
 
-    if (userLoading || propLoading) { return <AppLoader />}
+    // This makes it stutter as the loading variables are initialised to false
+    /*if (userLoading || propLoading) { return (
+        <NavigationMenu>
+            <AppLoader />
+        </NavigationMenu>
+    )}*/
 
     return (
         <Box>

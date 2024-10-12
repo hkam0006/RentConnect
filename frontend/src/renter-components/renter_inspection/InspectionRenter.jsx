@@ -17,6 +17,7 @@ import { supabase } from "../../supabase";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import InspectionTableRenter from "./InspectionTableRenter";
 import HistoryTableRenter from "./HistoryTableRenter";
+import AppLoader from "../../manager-components/property_page/AppLoader";
 
 const InspectionRenter = () => {
   const [activeSection, setActiveSection] = useState("inspection");
@@ -24,7 +25,7 @@ const InspectionRenter = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userID, setUserID] = useState(null);
-  const [accountType, setAccountType] = useState(null);
+  const [accountType, setAccountType] = useState("LOADING");
   const [unreadMessages, setUnreadMessages] = useState(false);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
   const [messageContent, setMessageContent] = useState(null);
@@ -41,6 +42,7 @@ const InspectionRenter = () => {
 
   useEffect(() => {
     async function getAccountType() {
+      setAccountType("LOADING");
       if (userID) {
         // Check if user is a renter
         const renterResponse = await supabase
@@ -222,7 +224,13 @@ const InspectionRenter = () => {
   const pendingInspections = inspectionsData.filter(
     (inspection) => inspection.inspection_type === "pending"
   );
-
+  if (accountType === "LOADING") {
+    return (
+      <NavigationMenu>
+        <AppLoader />
+      </NavigationMenu>
+    );
+  }
   if (accountType == null) {
     return (
       <Paper sx={{ borderRadius: 3, padding: 2, marginTop: 2 }}>
