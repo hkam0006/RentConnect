@@ -8,43 +8,40 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPropertiesByPropertyManagerID';
 import ImageCarousel from '../property_page/ImageCarousel';
 import useUpdatePropertyManager from '../../mutators/Property Manager/useUpdatePropertyManager';
+import useGetUserID from '../../queries/useGetUserID';
 
 export default function PMprofileForPM() {
     const navigate = useNavigate();
-    const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
+    const {userID: userIDData, loading: userLoading} = useGetUserID();
     const [propertyManager, setPropertyManager] = useState({});
     const fetchCompany = useGetCompanyByCompanyID();
     const [pmCompany, setPMCompany] = useState({});
     const { pmID } = useParams()
     const [properties, setProperties] = useState([{}])
     const fetchProperies = useGetPropertiesByPropertyManagerID();
-    const [user, setUser] = useState({});
+    const [userID, setUserID] = useState("");
     const [editing, setEditing] = useState(false);
     const updatePropertyManager = useUpdatePropertyManager();
+    const {propertyManager:pm, loading:pmLoading} = useGetPropertyManagerByPropertyManagerID(pmID);
 
     useEffect(() => {
         async function getPMData() {
-            const pm = await fetchPropertyManager(pmID);
-            setPropertyManager(pm.data[0]);
-            const company = await fetchCompany(pm.data[0].company_id);
+            setPropertyManager(pm[0]);
+            const company = await fetchCompany(pm[0].company_id);
             setPMCompany(company.data[0]);
         }
         async function getPMProperties() {
             const data = await fetchProperies(pmID)
             setProperties(data.data)
         }
-        async function getUserData() {
-            await supabase.auth.getUser().then((value) =>{
-                if (value.data?.user) {
-                    setUser(value.data.user);
-                }
-            })
+        if (!pmLoading){
+            getPMData();
+            getPMProperties();
         }
-        
-        getUserData();
-        getPMData();
-        getPMProperties();
-    }, []);
+        if (!userLoading){
+            setUserID(userIDData);
+        }
+    }, [pmLoading, userLoading, pmID, userIDData]);
 
     const handleSaveChanges = () => {
         var new_property_manager_data = propertyManager;
@@ -133,7 +130,7 @@ export default function PMprofileForPM() {
                             <Typography variant='h5'>
                                 {pmCompany.company_name}
                             </Typography>
-                            {user.id = pmID?
+                            {userID == pmID?
                             <React.Fragment>{!editing?<Button variant="contained" disableElevation onClick={handleStartEditing}>Edit Profile</Button>
                             :
                             <Button variant="contained" disableElevation onClick={handleSaveChanges}>Save</Button>}</React.Fragment>

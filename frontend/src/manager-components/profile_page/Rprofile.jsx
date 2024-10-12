@@ -4,15 +4,14 @@ import { Box, Button, Card, CardContent, Container, Dialog, DialogActions, Dialo
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID';
 import useGetApplicationsByRenterID from '../../queries/Application/useGetApplicationsByRenterID';
-import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 import useGetRenterCommentsWithPMInfoByRenterID from '../../queries/Renter Comment/useGetRenterCommentsWithPMInfoByRenterID';
 import useAddRenterComment from '../../mutators/Renter Comment/useAddRenterComment';
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
-import { supabase } from '../../supabase';
 import useSubscribeRenterCommentByRenterID from '../../subscribers/Renter Comment/useSubscribeRenterCommentByRenterID';
 import useGetPropertiesByPropertyIDs from "../../queries/Property/useGetPropertiesByPropertyIDs";
 import AppLoader from "../property_page/AppLoader";
 import useGetUserID from "../../queries/useGetUserID";
+import useGetPropertyByPropertyIDRepeatable from '../../queries/Property/useGetPropertyByPropertyIDRepeatable';
 
 export default function RprofileForPM() {
     const { rID } = useParams()
@@ -21,10 +20,14 @@ export default function RprofileForPM() {
     const {renter: renterData, loading: renterLoading} = useGetRenterByRenterID(rID);
     const {applications: baseApplications, loading: appLoading} = useGetApplicationsByRenterID(rID);
     const {comments: commentData, loading: commentsLoading} = useGetRenterCommentsWithPMInfoByRenterID(rID);
-    const fetchProperty = useGetPropertyByPropertyID();
+    const {fetchProperty} = useGetPropertyByPropertyIDRepeatable();
     const [dialogueOpen, setDialogueOpen] = useState(false);
     const addComment = useAddRenterComment();
     const {propertyManager: pmData, loading: pmLoading} = useGetPropertyManagerByPropertyManagerID(userID);
+    const [renter, setRenter] = useState({});
+    const [propertyManager, setPropertyManager] = useState({});
+    const [renterComments, setRenterComments] = useState([]);
+    
 
     // get all applications from renter
     // get the properties from applications
@@ -39,61 +42,29 @@ export default function RprofileForPM() {
             applications.push([app, address])
         })
     }
-
-    // get renter data
-    let renter = {}
-    if (!renterLoading) {
-        renter = renterData[0];
-    }
-
-    // get pm data
-    let property_manager = {};
-    if (!pmLoading) {
-        property_manager = pmData[0];
-    }
-
+    
     // setup comments
-    const [renterComments, setRenterComments] = useState([]);
-    if (!commentsLoading && renterComments.length === 0) {
-        setRenterComments(commentData);
-    }
 
-    /*
+    
     useEffect(() => {
-        async function getRData() {
-            const r = await fetchRenter(rID);
-            setRenter(r.data[0]);
+        if (!appLoading){
+            baseApplications.map(async (application) => {
+                const property = await fetchProperty(application.property_id);
+                const address = `${property.data[0].property_unit_number ? `Unit ${property.data[0].property_unit_number}` : ''} ${property.data[0].property_street_number} ${property.data[0].property_street_name} ${property.data[0].property_street_type}, ${property.data[0].property_suburb} ${property.data[0].property_state}`;
+                return { ...application, address };
+            })
         }
-        async function getApplications() {
-            const applications = await fetchApplications(rID);
-            if (applications.data.length > 0){
-                const applicationsWithAddresses = await Promise.all(applications.data.map(async (application) => {
-                    const property = await fetchProperty(application.property_id);
-                    const address = `${property.data[0].property_unit_number ? `Unit ${property.data[0].property_unit_number}` : ''} ${property.data[0].property_street_number} ${property.data[0].property_street_name} ${property.data[0].property_street_type}, ${property.data[0].property_suburb} ${property.data[0].property_state}`;
-                    return { ...application, address };
-                }));
-                setApplications(applicationsWithAddresses);
-            }
+        if (!commentsLoading && renterComments.length === 0) {
+            setRenterComments(commentData);
         }
+        if (!pmLoading) {
+            setPropertyManager(pmData[0]);
+        }
+        if (!renterLoading) {
+            setRenter(renterData[0]);
+        }
+    }, [commentData, pmData, baseApplications, renterData]);
 
-        async function getComments() {
-            const comments = await fetchRenterComments(rID);
-            setRenterComments(comments.data);
-        }
-        
-        async function getPMData(){
-            const {data, error} = await supabase.auth.getUser();
-            const property_manager = await fetchPropertyManager(data.user?.id);
-            setPropertyManager(property_manager.data[0]);
-        }
-
-        getComments();
-        getPMData();
-        getRData();
-        getApplications();
-    }, [rID, fetchRenter, fetchApplications, fetchRenterComments, fetchProperty, fetchPropertyManager]);
-
-     */
 
     const handleNewComment = useCallback((payload) => {
         setRenterComments(prevComments => [...prevComments, payload.new]);
@@ -103,7 +74,7 @@ export default function RprofileForPM() {
 
 
     function handleAddComment(commentContents) {
-        addComment(property_manager.property_manager_id, rID, property_manager.company_id, commentContents);
+        addComment(propertyManager.property_manager_id, rID, propertyManager.company_id, commentContents);
     }
 
     const handleCloseAddComment = () => {
