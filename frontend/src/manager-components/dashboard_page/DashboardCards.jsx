@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Typography,
     Container,
@@ -15,6 +15,10 @@ import {
 import CardHeader from '@mui/material/CardHeader';
 import { BarChart } from '@mui/x-charts/BarChart';
 import defaultImageUrl from './house_default.jpg'
+import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
+import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
+import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID';
+import { supabase } from '../../supabase';
 
 
 export default function ChartsOverviewDemo() {
@@ -31,6 +35,31 @@ export default function ChartsOverviewDemo() {
 }
 
 export function DashboardCards() {
+    const [user, setUser] = useState({});
+    const [company, setCompany] = useState({});
+    const [properties, setProperties] = useState({});
+    const fetchCompany = useGetCompanyByCompanyID();
+    const fetchProperies = useGetPropertiesByCompanyID();
+    const{propertyManager, loading} = useGetPropertyManagerByPropertyManagerID(user.id);
+    
+    useEffect(() => {
+        async function getUserData() {
+            await supabase.auth.getUser().then((value) =>{
+                if (value.data?.user) {
+                    setUser(value.data.user);
+                }
+            })
+        }
+        getUserData();
+
+        async function getCompanyData() {
+            const companyTemp = await fetchCompany(propertyManager.company_id);
+            setCompany(companyTemp.data[0]);
+            const propertiesTemp = await fetchProperies(propertyManager.company_id);
+            setProperties(propertiesTemp.data[0]);
+        }
+        getCompanyData();
+    }, []);
 
     return <>
         <Grid container spacing={2} >
