@@ -80,6 +80,12 @@ export default function RenterApplicationDetails() {
         }
     };
 
+    const handleOpenInspectionRequest = () => {
+        handleInspectionRequestOpen();
+    };
+
+    
+
     // For request inspection modal
     const [inspectionRequestOpen, setInspectionRequestOpen] = useState(false);
     const [inspectionRequestData, setInspectionRequestData] = useState(property);
@@ -108,6 +114,8 @@ export default function RenterApplicationDetails() {
                 data={inspectionRequestData}
                 setData={setInspectionRequestData}
                 handleSubmit={handleInspectionRequestSubmit}
+                companyID={prop.company_id}
+                propertyID={prop.property_id}
             />
         )}
         <NavigationMenu>
@@ -135,6 +143,19 @@ export default function RenterApplicationDetails() {
                                         >
                                             Apply
                                         </Button>
+                                        
+                                    )}
+
+{hasActiveApplication ? null : (
+                                        <Button
+                                            variant='contained'
+                                            size='medium'
+                                            style={{ backgroundColor: 'green', color: 'white' }}
+                                            onClick={handleOpenInspectionRequest}
+                                        >
+                                            Request Inspection
+                                        </Button>
+                                        
                                     )}
                                     <RenterApplication ref={dialogRef} providedProperty={property} />
                                 </Stack>
