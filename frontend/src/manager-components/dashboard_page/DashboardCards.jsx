@@ -19,6 +19,7 @@ import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Man
 import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
 import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID';
 import { supabase } from '../../supabase';
+import useGetUserID from '../../queries/useGetUserID';
 
 
 export default function ChartsOverviewDemo() {
@@ -35,30 +36,23 @@ export default function ChartsOverviewDemo() {
 }
 
 export function DashboardCards() {
-    const [user, setUser] = useState({});
     const [company, setCompany] = useState({});
     const [properties, setProperties] = useState({});
+    const {userID, loading: userLoading} = useGetUserID();
     const fetchCompany = useGetCompanyByCompanyID();
     const fetchProperies = useGetPropertiesByCompanyID();
-    const{propertyManager, loading} = useGetPropertyManagerByPropertyManagerID(user.id);
+    const{propertyManager, loading: propertyManagerLoading} = useGetPropertyManagerByPropertyManagerID(userID);
     
     useEffect(() => {
-        async function getUserData() {
-            await supabase.auth.getUser().then((value) =>{
-                if (value.data?.user) {
-                    setUser(value.data.user);
-                }
-            })
-        }
-        getUserData();
-
         async function getCompanyData() {
             const companyTemp = await fetchCompany(propertyManager.company_id);
             setCompany(companyTemp.data[0]);
             const propertiesTemp = await fetchProperies(propertyManager.company_id);
             setProperties(propertiesTemp.data[0]);
         }
-        getCompanyData();
+        if (!propertyManagerLoading && !userLoading){
+            getCompanyData();
+        }
     }, []);
 
     return <>
