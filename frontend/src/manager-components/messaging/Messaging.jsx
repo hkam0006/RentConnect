@@ -171,7 +171,7 @@ function Messaging() {
     return (
         <Box sx={{ padding: 2 }}>
             <NavigationMenu />
-            <Grid container sx={{ marginTop: '64px', marginLeft: '190px', width: 'calc(100% - 190px)' }}>
+            <Grid container sx={{ marginTop: '64px', marginLeft: { xs: 0, sm: '190px' }, width: { xs: '100%', sm: 'calc(100% - 190px)' } }}>
                 <Grid item xs={4}>
                     <ChatHistory
                         data={chatHistoryData}

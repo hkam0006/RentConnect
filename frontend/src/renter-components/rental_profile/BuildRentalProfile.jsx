@@ -16,7 +16,7 @@ function BuildRentalProfile() {
         <Box sx={{ padding: 2 }}>
             <NavigationMenu />
             <Box display="flex" justifyContent="center">
-                <Box margin={2} sx={{ width: '50%', marginTop: '64px', marginLeft: '190px' }} >
+                <Box margin={2} sx={{ width: '100%', marginTop: '64px', marginLeft: { xs: '17px', sm: '217px' } }} >
                     <AccountDetails userID={userID}/>
                     <Essentials userID={userID}/>
                     <AdditionalSupportingDocuments userID={userID}/>

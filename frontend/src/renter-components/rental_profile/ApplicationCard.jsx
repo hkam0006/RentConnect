@@ -40,10 +40,10 @@ function ApplicationCard({ application }) {
     return (
         <Box>
             {property && (
-                <Card sx={{ display: 'flex', marginBottom: 2 }}>
+                <Card sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'column', md: 'row' }, marginBottom: 2 }}>
                     <CardMedia
                         component='img'
-                        sx={{ width: 300, height: 250, objectFit: 'cover' }}
+                        sx={{ width: {xs: '100%', sm: '100%', md: '300px'}, height: 250, objectFit: 'cover' }}
                         image={property.property_pictures[0]}
                         alt="Property Image"
                     />

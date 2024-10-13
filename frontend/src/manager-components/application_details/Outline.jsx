@@ -17,8 +17,7 @@ function Outline({ renter }) {
         })
     }
     
-
-    const result = (
+    return (
         <Paper sx={{ padding: 2, margin: 2, position: 'fixed', width: '20%', height: '83%' }}>
             {renter && (
                 <Box>
@@ -43,8 +42,6 @@ function Outline({ renter }) {
             </Box>
         </Paper>
     )
-    
-    return result
 }
 
 export default Outline
