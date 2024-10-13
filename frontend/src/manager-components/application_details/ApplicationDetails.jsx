@@ -87,7 +87,7 @@ function ApplicationDetails() {
 
     useEffect(() => {
         const setFetchedData = () => {
-            console.log(getApplication, getApplicationComment, getApplicationSupportingDocuments, getRenter, getRenterTenancy, getRenterEmployment, getRenterPet, getRenterComment)
+            //console.log(getApplication, getApplicationComment, getApplicationSupportingDocuments, getRenter, getRenterTenancy, getRenterEmployment, getRenterPet, getRenterComment)
             if (getApplication.length > 0) {
                 setApplication(getApplication[0])
             }
