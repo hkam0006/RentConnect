@@ -77,11 +77,11 @@ export default function NavigationMenu({ children }) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <a href='/' style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
+                    <a href='/RenterHome' style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'inherit' }}>
                         <img src={logo} alt="Logo" width="70" height="70" />
                     </a>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left', paddingRight: '10px' }}>
-                        <a href='/' style={{ textDecoration: "none", color: "inherit" }}>
+                        <a href='/RenterHome' style={{ textDecoration: "none", color: "inherit" }}>
                             RentConnect
                         </a>
                         <span style={{ fontSize: "90%" }}>
