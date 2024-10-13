@@ -20,6 +20,7 @@ import useGetPetsByRenterID from '../../queries/Pet/useGetPetsByRenterID'
 import useGetRenterCommentsByRenterID from '../../queries/Renter Comment/useGetRenterCommentsByRenterID'
 import NavigationMenu from '../navigation_menu/NavigationMenus'
 import useAddApplicationComment from '../../mutators/Application Comment/useAddApplicationComment'
+import useGetUserID from '../../queries/useGetUserID'
 
 function ApplicationDetails() {
     const { companyId, propertyId, renterId } = useParams()
@@ -67,18 +68,7 @@ function ApplicationDetails() {
     const getRenterEmployment = useGetRenterEmploymentsByRenterID(renterId)
     const getRenterPet = useGetPetsByRenterID(renterId)
     const getRenterComment = useGetRenterCommentsByRenterID(renterId)
-
-    const [userID, setUserID] = useState(null)
-    useEffect(() => {
-        async function getUserID() {
-            await supabase.auth.getUser().then((value) =>{
-                if (value.data?.user) {
-                    setUserID(value.data.user.id)
-                }
-            })
-        }
-        getUserID()
-    }, [])
+    const {userID, loading: userLoading} = useGetUserID();
 
     function getAndSetApplicationComments() {
         let newApplicationCommentState = { ...initialApplicationCommentState };
