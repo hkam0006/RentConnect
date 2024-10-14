@@ -25,6 +25,7 @@ import useUpdateKeyStatus from "../../mutators/Keys/useUpdateKeyStatus";
 import AppLoader from "../property_page/AppLoader";
 import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const rowHeading = [
   "",
@@ -303,7 +304,9 @@ const Keys = () => {
                       onClick={(e) => handleSelectRow(e, key.key_id)}
                       sx={{ cursor: "pointer" }}
                     >
-                      {propManagerMap[key.property_manager_id]}
+                      <Link href="#" to={`/PMprofile/${key.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                        {propManagerMap[key.property_manager_id]}
+                      </Link>
                     </TableCell>
                     <TableCell
                       onClick={(e) => handleSelectRow(e, key.key_id)}
@@ -321,7 +324,11 @@ const Keys = () => {
                       onClick={(e) => handleSelectRow(e, key.key_id)}
                       sx={{ cursor: "pointer" }}
                     >
-                      {key.key_status === "On Loan" ? key.borrower_name : "N/A"}
+                      {key.key_status === "On Loan" ? 
+                      <Link href="#" to={`/PMprofile/${key.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                        {key.borrower_name}
+                      </Link>
+                       : "N/A"}
                     </TableCell>
                     <TableCell align="left">
                       {buttonTitle === "Check Out" ? (

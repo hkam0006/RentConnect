@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from "../../supabase";
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
@@ -234,7 +234,9 @@ function Contacts() {
                         scope="row"
                         padding="normal"
                       >
-                        {row.name}
+                        <Link href="#" to={`/Rprofile/${row.id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                          {row.name}
+                        </Link>
                       </TableCell>
                       <TableCell align="left">{row.phone_number}</TableCell>
                       <TableCell align="left">{row.email}</TableCell>

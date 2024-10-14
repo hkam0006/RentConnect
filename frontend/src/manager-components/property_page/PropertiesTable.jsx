@@ -152,7 +152,6 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
                     <Typography>${row.property_rent} {row.property_rent_frequency}</Typography>
                     <Typography>Type: {row.property_type}</Typography>
                     <Typography>Available: {row.property_lease_start}</Typography>
-                    <Button variant='outlined' size='small' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                   </Stack>
                 </Stack>
                 {/* </Card> */}

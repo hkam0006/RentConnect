@@ -84,7 +84,6 @@ export default function PropertyDetails() {
                     <CardContent>
                         <Grid container justifyContent='flex-end'>
                             <Stack direction='row' spacing={1}>
-                                <Button xs={{ mt: 5, mr: 2 }} variant='outlined' size='medium' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                                 <Button onClick={() => handleOpen()} xs={{ mt: 5 }} variant='outlined' size='medium' endIcon={<EditIcon />}>Edit</Button>
                             </Stack>
                         </Grid>
