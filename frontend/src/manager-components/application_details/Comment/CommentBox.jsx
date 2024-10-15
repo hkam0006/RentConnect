@@ -1,7 +1,24 @@
-import React from 'react'
+import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { Paper, TextField, Button } from '@mui/material'
+import useAddApplicationComment from '../../../mutators/Application Comment/useAddApplicationComment'
+import useGetUserID from '../../../queries/useGetUserID'
 
-function CommentBox({ comment, setComment, handleCommentsPush }) {
+function CommentBox({ commentType }) {
+    const { userID } = useGetUserID();
+    const [comment, setComment] = useState('')
+    const { companyId, propertyId, renterId } = useParams()
+
+    const addApplicationComment = useAddApplicationComment()
+    function handleCommentsPush() {
+        if (comment.trim() !== '') {
+            const currentDate = (new Date()).toISOString();
+            
+            addApplicationComment(renterId, propertyId, companyId, comment, userID, currentDate, commentType);
+            setComment('');
+        }
+    }
+
     return (
         <Paper sx={{ padding: 2, width: '100%', marginBottom: '30px' }}>
             <TextField
