@@ -31,8 +31,12 @@ const TenantReferences = () => {
   const { previousTenancies: fetchedPreviousTenancyReferences } = useGetPreviousTenanciesByRenterID(renterId, loadingCallback)
 
   useEffect(() => {
-    setEmployerReferences(fetchedEmployerReferences)
-    setRentalHistoryReferences(fetchedPreviousTenancyReferences)
+    if (fetchedEmployerReferences) {
+      setEmployerReferences(fetchedEmployerReferences)
+    }
+    if (fetchedPreviousTenancyReferences){
+      setRentalHistoryReferences(fetchedPreviousTenancyReferences)
+    }
   }, [fetchedEmployerReferences, fetchedPreviousTenancyReferences])
 
 
