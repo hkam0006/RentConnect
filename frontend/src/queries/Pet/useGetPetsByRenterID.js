@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 
 
 const useGetPetsByRenterID = (renter_id) =>{
-    const [pets, setPets] = useState([]);
+    const [pets, setPets] = useState(null);
+    const [loading, setLoading] = useState(true);
   
     useEffect(() => {
       const fetchPets = async () => {
@@ -17,11 +18,12 @@ const useGetPetsByRenterID = (renter_id) =>{
         } else {
             setPets(data);
         }
+        setLoading(false);
       };
   
       fetchPets();
     }, [renter_id]);
-      return pets;
+      return { pets, setPets, loading };
     };
 
 export default useGetPetsByRenterID;

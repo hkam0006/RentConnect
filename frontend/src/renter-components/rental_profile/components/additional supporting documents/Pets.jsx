@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { Paper } from '@mui/material'
 import useGetPetsByRenterID from '../../../../queries/Pet/useGetPetsByRenterID'
 import PetsCard from './PetsCard'
@@ -7,13 +7,8 @@ import useSubscribeTableByRenterID from '../../../../subscribers/useSubscribeTab
 import PetsDialog from '../Dialogs/PetsDialog'
 
 function Pets({ userID }) {
-    const [pets, setPets] = useState(null)
+    const { pets, setPets } = useGetPetsByRenterID(userID)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-    const fetchedPets = useGetPetsByRenterID(userID)
-    useEffect(() => {
-        setPets(fetchedPets)
-    }, [fetchedPets])
 
     function closeDialog() {
         setIsDialogOpen(false)
