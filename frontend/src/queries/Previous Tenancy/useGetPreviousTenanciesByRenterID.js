@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 
 
 const useGetPreviousTenanciesByRenterID = (renter_id, callback) =>{
-    const [previous_tenancies, setPreviousTenancies] = useState([]);
+    const [previousTenancies, setPreviousTenancies] = useState(null);
+    const [loading, setLoading] = useState(true);
   
     useEffect(() => {
       const fetchPreviousTenancies = async () => {
@@ -20,11 +21,12 @@ const useGetPreviousTenanciesByRenterID = (renter_id, callback) =>{
         if (Boolean(callback)){
           callback()
         }
+        setLoading(false);
       };
   
       fetchPreviousTenancies();
     }, [renter_id]);
-      return previous_tenancies;
+      return { previousTenancies, setPreviousTenancies, loading };
     };
 
 export default useGetPreviousTenanciesByRenterID;

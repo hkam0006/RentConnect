@@ -7,13 +7,8 @@ import AddressHistoryDialog from '../Dialogs/AddressHistoryDialog'
 import useSubscribeTableByRenterID from '../../../../subscribers/useSubscribeTableByRenterID'
 
 function AddressHistory({ userID }) {
-    const [previousTenancies, setPreviousTenancies] = useState(null)
+    const { previousTenancies, setPreviousTenancies } = useGetPreviousTenanciesByRenterID(userID)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
-    
-    const { previousTenancies: fetchedPreviousTenancies, loading } = useGetPreviousTenanciesByRenterID(userID)
-    useEffect(() => {
-        setPreviousTenancies(fetchedPreviousTenancies)
-    }, [fetchedPreviousTenancies])
 
     function closeDialog() {
         setIsDialogOpen(false)
