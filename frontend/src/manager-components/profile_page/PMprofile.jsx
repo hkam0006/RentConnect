@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import { supabase } from '../../supabase';
-import { Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
+import {Grid, Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
 import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -87,132 +87,208 @@ export default function PMprofileForPM() {
         setNewAboutMe(f.target.value);
     };
 
+    const gridContainerStyle = {
+      display: "grid",
+      gridAutoColumns: "1fr",
+      gridAutoFlow: "column"
+    };
+
     return (
-        <NavigationMenu>
-            <Container sx={{mt:'8%', ml:'1%'}}>
-                <Card>
-                    <CardContent>
-                        <Box sx={{display:'flex', justifyContent: 'space-between'}}>
-                            {!editing?
-                            <Typography variant='h2'>
-                                {propertyManager.property_manager_first_name} {propertyManager.property_manager_last_name}
-                            </Typography>
-                            :
-                            <Box sx={{display:'flex', alignItems:'center', flexDirection: 'row', justifyContent: 'space-between'}}>
-                                <Typography variant='h5' sx={{fontWeight:'bold'}}>Name:</Typography>
-                                <TextField id='new-fname' onChange={handleNewFnameChange} value={newFName} variant="outlined"/>
-                                <Typography variant='h5' sx={{fontWeight:'bold'}}>Surame:</Typography>
-                                <TextField id='new-lname' onChange={handleNewLnameChange} value={newLName} variant="outlined"/>
-                            </Box>}
-
-                            {!editing?
-                            <Box sx={{display:'flex', justifyContent: 'flex-end', flexDirection: 'column'}}>
-                                <Typography variant='h5' sx={{textAlign: 'right'}}>
-                                    {propertyManager.property_manager_email}
-                                </Typography>
-                                <Typography variant='h5' sx={{textAlign: 'right'}}>
-                                    {propertyManager.property_manager_phone_number}
-                                </Typography>
-                            </Box>
-                            :
-                            <Box sx={{display:'flex', justifyContent: 'flex-end', flexDirection: 'row'}}>
-                                <Box sx={{display:'flex', alignItems:'center', justifyContent: 'flex-end', flexDirection: 'row'}}>
-                                    <Typography variant='h5' sx={{fontWeight:'bold'}}>Email: </Typography>
-                                    <TextField id='new-email' onChange={handleNewEmailChange} value={newEmail} variant="outlined"/>
-                                </Box>
-                                <Box sx={{display:'flex', alignItems:'center', justifyContent: 'flex-end', flexDirection: 'row'}}>
-                                    <Typography variant='h5' sx={{fontWeight:'bold'}}>Phone: </Typography>
-                                    <TextField id='new-phone' onChange={handleNewPhoneChange} value={newPhone} variant="outlined"/>
-                                </Box>
-                            </Box>}
-                        </Box>
-                        <Box sx={{display:'flex', justifyContent: 'space-between'}}>
-                            <Typography variant='h5'>
-                                {pmCompany.company_name}
-                            </Typography>
-                            {userID == pmID?
-                            <React.Fragment>{!editing?<Button variant="contained" disableElevation onClick={handleStartEditing}>Edit Profile</Button>
-                            :
-                            <Button variant="contained" disableElevation onClick={handleSaveChanges}>Save</Button>}</React.Fragment>
-                            :
-                            <Button variant="contained" disableElevation onClick={() => navigate(`/messages/${propertyManager.property_manager_id}`)}>Message</Button>}
-                        </Box>
-                    </CardContent>
-                </Card>
-            </Container>
-            <Container sx={{mt:'1%', ml:'1%', display:'flex', flexDirection:'row'}}>
-                <Card sx={{width:'30%'}}>
-                    <CardContent>
-                        {propertyManager.property_manager_dp?
-                            <img src={propertyManager.property_manager_dp} 
-                            style={{
-                            width: '100%', 
-                            height: '100%', 
-                            objectFit: 'cover'
-                            }}/>
-                            :
-                            <img src={'https://bpnlxdcsmicxotakbydb.supabase.co/storage/v1/object/public/PMDP/default.jpg'} 
-                            style={{
-                            width: '100%', 
-                            height: '100%', 
-                            objectFit: 'cover'
-                            }}/>
-                        }
-                    </CardContent>
-                </Card>
-                <Card sx={{width:'28%', ml:'1%'}}>
-                    <CardContent>
-                        <Typography sx={{fontWeight:'bold'}}>
-                            About me:
+      <NavigationMenu>
+        <Container sx={{ mt: '70px', ml: '1%', p: "20px" }}>
+          <Card>
+            <CardContent>
+              <Grid container spacing={2} alignItems="center" >
+                {/* Left Side */}
+                <Grid item xs={12} md={6}>
+                  {!editing ? (
+                    <Typography variant="h2">
+                      {propertyManager.property_manager_first_name}{' '}
+                      {propertyManager.property_manager_last_name}
+                    </Typography>
+                  ) : (
+                    <Grid container spacing={1} alignItems="center">
+                      <Grid item>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                          Name:
                         </Typography>
-                        {!editing?
-                        <Typography>
-                            {propertyManager.property_manager_about_me}
+                        <TextField
+                          id="new-fname"
+                          onChange={handleNewFnameChange}
+                          value={newFName}
+                          variant="outlined"
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                          Surname:
                         </Typography>
-                        :
-                        <TextField 
-                        id='new-about-me' 
-                        onChange={handleNewAboutMeChange} 
-                        value={newAboutMe} 
-                        variant="outlined"
-                        multiline
-                        sx={{height:'55vh'}}
-                        fullWidth/>}
-                        
-                    </CardContent>
-                </Card>
-                <Card sx={{width:'40%', ml:'1%'}}>
-                    <CardContent>
-                        <Typography sx={{fontWeight:'bold'}}>
-                        {propertyManager.property_manager_first_name} {propertyManager.property_manager_last_name}'s current listings:
+                        <TextField
+                          id="new-lname"
+                          onChange={handleNewLnameChange}
+                          value={newLName}
+                          variant="outlined"
+                        />
+                      </Grid>
+                    </Grid>
+                  )}
+                </Grid>
+                {/* Right Side */}
+                <Grid item xs={12} md={6}>
+                  {!editing ? (
+                    <Box sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
+                      <Typography variant="h5">
+                        {propertyManager.property_manager_email}
+                      </Typography>
+                      <Typography variant="h5">
+                        {propertyManager.property_manager_phone_number}
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Grid container spacing={1} alignItems="center">
+                      <Grid item>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold'}}>
+                          Email:
                         </Typography>
-                        <Paper sx={{overflow:'hidden', boxShadow:'0'}}>
-                            <TableContainer sx={{height:'55vh'}}>
-                                {properties.length > 0?
-                                <Table>
-                                    <TableBody>
-                                        {properties.map((property) => (
-                                            <TableRow>
-                                                <TableCell sx={{width:'35%'}}>
-                                                    {property?.property_pictures?<ImageCarousel images={property.property_pictures} />:''}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {property.property_unit_number?`Unit ${property.property_unit_number}`:''} {property.property_street_number} {property.property_street_name} {property.property_street_type}, {property.property_suburb} {property.property_state}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button variant='contained' onClick={() => navigate(`/property/${property.property_id}`)}>View</Button>
-                                                </TableCell>
-
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                                :""}
-                            </TableContainer>
-                        </Paper>
-                    </CardContent>
-                </Card>
-            </Container>
-        </NavigationMenu>
-    )
-}
+                        <TextField
+                          id="new-email"
+                          onChange={handleNewEmailChange}
+                          value={newEmail}
+                          variant="outlined"
+                        />
+                      </Grid>
+                      <Grid item>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                          Phone:
+                        </Typography>
+                        <TextField
+                          id="new-phone"
+                          onChange={handleNewPhoneChange}
+                          value={newPhone}
+                          variant="outlined"
+                        />
+                      </Grid>
+                    </Grid>
+                  )}
+                </Grid>
+              </Grid>
+              <Grid container spacing={2} alignItems="center" sx={{ mt: 2 }}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h5">{pmCompany.company_name}</Typography>
+                </Grid>
+                <Grid item xs={12} sm={6} sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
+                  {userID === pmID ? (
+                    !editing ? (
+                      <Button variant="contained" disableElevation onClick={handleStartEditing}>
+                        Edit Profile
+                      </Button>
+                    ) : (
+                      <Button variant="contained" disableElevation onClick={handleSaveChanges}>
+                        Save
+                      </Button>
+                    )
+                  ) : (
+                    <Button
+                      variant="contained"
+                      disableElevation
+                      onClick={() => navigate(`/messages/${propertyManager.property_manager_id}`)}
+                    >
+                      Message
+                    </Button>
+                  )}
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Container>
+  
+        <Container sx={{ mt: '1%', ml: '1%',  }} >
+          <Grid container spacing={2} sx={{alignItems: "stretch"}}>
+            {/* Profile Picture */}
+            <Grid item xs={12} md={3}>
+              <Card sx={{height: "100%"}}>
+                <CardContent>
+                  <img
+                    src={
+                      propertyManager.property_manager_dp ||
+                      'https://bpnlxdcsmicxotakbydb.supabase.co/storage/v1/object/public/PMDP/default.jpg'
+                    }
+                    alt="Profile"
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+            {/* About Me */}
+            <Grid item xs={12} md={3}>
+              <Card sx={{height: "100%"}}>
+                <CardContent>
+                  <Typography sx={{ fontWeight: 'bold' }}>About me:</Typography>
+                  {!editing ? (
+                    <Typography>{propertyManager.property_manager_about_me}</Typography>
+                  ) : (
+                    <TextField
+                      id="new-about-me"
+                      onChange={handleNewAboutMeChange}
+                      value={newAboutMe}
+                      variant="outlined"
+                      multiline
+                      rows={15}
+                      fullWidth
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+            {/* Current Listings */}
+            <Grid item xs={12} md={6}>
+              <Card>
+                <CardContent>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    {propertyManager.property_manager_first_name}{' '}
+                    {propertyManager.property_manager_last_name}
+                    's current listings:
+                  </Typography>
+                  <Paper sx={{ overflow: 'hidden', boxShadow: 0 }}>
+                    <TableContainer sx={{ height: '55vh' }}>
+                      {properties.length > 0 ? (
+                        <Table>
+                          <TableBody>
+                            {properties.map((property) => (
+                              <TableRow key={property.property_id}>
+                                <TableCell sx={{ width: '35%' }}>
+                                  {property.property_pictures ? (
+                                    <ImageCarousel images={property.property_pictures} />
+                                  ) : null}
+                                </TableCell>
+                                <TableCell>
+                                  {property.property_unit_number
+                                    ? `Unit ${property.property_unit_number}`
+                                    : ''}{' '}
+                                  {property.property_street_number}{' '}
+                                  {property.property_street_name} {property.property_street_type},{' '}
+                                  {property.property_suburb} {property.property_state}
+                                </TableCell>
+                                <TableCell>
+                                  <Button
+                                    variant="contained"
+                                    onClick={() => navigate(`/property/${property.property_id}`)}
+                                  >
+                                    View
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      ) : null}
+                    </TableContainer>
+                  </Paper>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Container>
+      </NavigationMenu>
+    );
+  };
