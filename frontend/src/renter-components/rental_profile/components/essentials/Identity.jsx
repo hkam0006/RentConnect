@@ -65,26 +65,30 @@ function Identity({ userID }) {
     }, [identityDocuments, setIdentityDocuments])
     useSubscribeTableByRenterID('APPLICATION-SUPPORTING-DOCUMENT', userID, updateIdentityDocument)
     
-    return (
-        <>
-            <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <Typography variant='h5'>Identity Documents</Typography>
-                <Divider/>
-                <IdentityContentTitle title={'Drivers Licence'} addOnClick={() => addButton('Drivers Licence')} />
-                {(driversLicence.length > 0) && (
-                    driversLicence.map((document, index) => (
-                        <IdentityCard key={index} document={document} />
-                )))}
-                <Divider/>
-                <IdentityContentTitle title={'Passport'} addOnClick={() => addButton('Passport')} />
-                {(passport.length > 0) && (
-                    passport.map((document, index) => (
-                        <IdentityCard key={index} document={document} />
-                )))}
-            </Paper>
-            {isDialogOpen && <IdentityDialog document={{renter_id: userID}} identityType={identityType} closeDialog={closeDialog} isUpdate={false}/>}
-        </>
-    )
+    if (!identityDocuments) {
+        return <></>
+    } else {
+        return (
+            <>
+                <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <Typography variant='h5'>Identity Documents</Typography>
+                    <Divider/>
+                    <IdentityContentTitle title={'Drivers Licence'} addOnClick={() => addButton('Drivers Licence')} />
+                    {(driversLicence.length > 0) && (
+                        driversLicence.map((document, index) => (
+                            <IdentityCard key={index} document={document} />
+                    )))}
+                    <Divider/>
+                    <IdentityContentTitle title={'Passport'} addOnClick={() => addButton('Passport')} />
+                    {(passport.length > 0) && (
+                        passport.map((document, index) => (
+                            <IdentityCard key={index} document={document} />
+                    )))}
+                </Paper>
+                {isDialogOpen && <IdentityDialog document={{renter_id: userID}} identityType={identityType} closeDialog={closeDialog} isUpdate={false}/>}
+            </>
+        )
+    }
 }
 
 export default Identity

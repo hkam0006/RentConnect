@@ -65,19 +65,23 @@ function EmploymentHistory({ userID }) {
     }, [employmentHistories, setEmploymentHistories])
     useSubscribeTableByRenterID('RENTER-EMPLOYMENT', userID, updateEmploymentHistory)
 
-    return (
-        <>
-            <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <ContentTitle title={'Employment History'} addOnClick={addButton} />
-                {employmentHistories && (
-                    employmentHistories.map((employment, index) => (
-                        <EmploymentHistoryCard key={index} employment={employment} />
-                    ))
-                )}
-            </Paper>
-            {isDialogOpen && <EmploymentHistoryDialog employment={{renter_id: userID}} closeDialog={closeDialog} isUpdate={false}/>}
-        </>
-    )
+    if (!employmentHistories) {
+        return <></>
+    } else {
+        return (
+            <>
+                <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <ContentTitle title={'Employment History'} addOnClick={addButton} />
+                    {employmentHistories && (
+                        employmentHistories.map((employment, index) => (
+                            <EmploymentHistoryCard key={index} employment={employment} />
+                        ))
+                    )}
+                </Paper>
+                {isDialogOpen && <EmploymentHistoryDialog employment={{renter_id: userID}} closeDialog={closeDialog} isUpdate={false}/>}
+            </>
+        )
+    }
 }
 
 export default EmploymentHistory

@@ -10,7 +10,7 @@ function AddressHistory({ userID }) {
     const [previousTenancies, setPreviousTenancies] = useState(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     
-    const fetchedPreviousTenancies = useGetPreviousTenanciesByRenterID(userID)
+    const { previousTenancies: fetchedPreviousTenancies, loading } = useGetPreviousTenanciesByRenterID(userID)
     useEffect(() => {
         setPreviousTenancies(fetchedPreviousTenancies)
     }, [fetchedPreviousTenancies])
@@ -46,20 +46,24 @@ function AddressHistory({ userID }) {
         }
     }, [previousTenancies, setPreviousTenancies])
     useSubscribeTableByRenterID('PREVIOUS-TENANCY', userID, updateAddressHistory)
-    
-    return (
-        <>
-            <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <ContentTitle title={'Address History'} addOnClick={addAddressHistoryButton} />
-                {previousTenancies && (
-                    previousTenancies.map((previousTenancy, index) => (
-                        <PreviousTenancyCard key={index} previousTenancy={previousTenancy} />
-                    ))
-                )}
-            </Paper>
-            {isDialogOpen && <AddressHistoryDialog addressHistory={{renter_id: userID}} closeDialog={closeDialog} isUpdate={false}/>}
-        </>
-    )
+
+    if (!previousTenancies) {
+        return <></>
+    } else {
+        return (
+            <>
+                <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <ContentTitle title={'Address History'} addOnClick={addAddressHistoryButton} />
+                    {previousTenancies && (
+                        previousTenancies.map((previousTenancy, index) => (
+                            <PreviousTenancyCard key={index} previousTenancy={previousTenancy} />
+                        ))
+                    )}
+                </Paper>
+                {isDialogOpen && <AddressHistoryDialog addressHistory={{renter_id: userID}} closeDialog={closeDialog} isUpdate={false}/>}
+            </>
+        )
+    }
 }
 
 export default AddressHistory

@@ -51,19 +51,23 @@ function Pets({ userID }) {
     }, [pets])
     useSubscribeTableByRenterID('PET', userID, updatePet)
 
-    return (
-        <>
-            <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <ContentTitle title={'Pets'} addOnClick={addButton} />
-                {pets && (
-                    pets.map((pet, index) => (
-                        <PetsCard key={index} pet={pet} />
-                    ))
-                )}
-            </Paper>
-            {isDialogOpen && <PetsDialog pet={{renter_id: userID}} closeDialog={closeDialog} isUpdate={false}/>}
-        </>
-    )
+    if (!pets) {
+        return <></>
+    } else {
+        return (
+            <>
+                <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <ContentTitle title={'Pets'} addOnClick={addButton} />
+                    {pets && (
+                        pets.map((pet, index) => (
+                            <PetsCard key={index} pet={pet} />
+                        ))
+                    )}
+                </Paper>
+                {isDialogOpen && <PetsDialog pet={{renter_id: userID}} closeDialog={closeDialog} isUpdate={false}/>}
+            </>
+        )
+    }
 }
 
 export default Pets
