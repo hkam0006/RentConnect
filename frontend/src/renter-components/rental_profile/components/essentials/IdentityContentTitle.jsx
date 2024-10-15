@@ -1,4 +1,4 @@
-import { Typography, Grid, Box, Button } from '@mui/material'
+import { Typography, Grid, Button } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 
 function IdentityContentTitle({ title, addOnClick }) {

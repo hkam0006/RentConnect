@@ -1,7 +1,13 @@
-import React from 'react'
-import { List, ListItem, Typography, Paper, Box } from '@mui/material'
+import { useParams } from 'react-router-dom'
+import { List, ListItem, Typography, Paper, Box, Alert } from '@mui/material'
 
-function Outline({ renter }) {
+import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID'
+
+function Outline() {
+    const { renterId } = useParams()
+    const {renter: fetchedRenter, loading} = useGetRenterByRenterID(renterId) 
+    const renter = fetchedRenter[0]
+
     const goToSection = (section) => {
         const sectionElement = document.getElementById(section)
 
@@ -17,31 +23,43 @@ function Outline({ renter }) {
         })
     }
     
-    return (
-        <Paper sx={{ padding: 2, margin: 2, position: 'fixed', width: '20%', height: '83%' }}>
-            {renter && (
+    if (loading) {
+        return <></>
+    } else if (!renter) {
+        return (
+            <Paper sx={{ padding: 2, margin: 2, position: 'fixed', width: '20%', height: '83%' }}>
+                <Alert severity='error' sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 1 }}>
+                    No renter found
+                </Alert>
+            </Paper>
+        )
+    } else {
+        return (
+            <Paper sx={{ padding: 2, margin: 2, position: 'fixed', width: '20%', height: '83%' }}>
+                {renter && (
+                    <Box>
+                        <Typography variant='h6'>{renter.renter_first_name} {renter.renter_last_name}</Typography>
+                        <List>
+                            <ListItem variant='h6'>Primary Applicant</ListItem>
+                            <ListItem variant='h6'>Phone: {renter.renter_phone_number}</ListItem>
+                            <ListItem variant='h6'>Email: {renter.renter_email}</ListItem>
+                        </List>
+                    </Box>
+                )}
                 <Box>
-                    <Typography variant='h6'>{renter.renter_first_name} {renter.renter_last_name}</Typography>
+                    <Typography variant='h6'>Outline</Typography>
                     <List>
-                        <ListItem variant='h6'>Primary Applicant</ListItem>
-                        <ListItem variant='h6'>Phone: {renter.renter_phone_number}</ListItem>
-                        <ListItem variant='h6'>Email: {renter.renter_email}</ListItem>
+                        <ListItem onClick={() => goToSection('Preferences')}>Preferences</ListItem>
+                        <ListItem onClick={() => goToSection('Address History')}>Address History</ListItem>
+                        <ListItem onClick={() => goToSection('Employment History')}>Employment History</ListItem>
+                        <ListItem onClick={() => goToSection('Income')}>Income</ListItem>
+                        <ListItem onClick={() => goToSection('Identity')}>Identity</ListItem>
+                        <ListItem onClick={() => goToSection('Pets')}>Pets</ListItem>
                     </List>
                 </Box>
-            )}
-            <Box>
-                <Typography variant='h6'>Outline</Typography>
-                <List>
-                    <ListItem onClick={() => goToSection('Preferences')}>Preferences</ListItem>
-                    <ListItem onClick={() => goToSection('Address History')}>Address History</ListItem>
-                    <ListItem onClick={() => goToSection('Employment History')}>Employment History</ListItem>
-                    <ListItem onClick={() => goToSection('Income')}>Income</ListItem>
-                    <ListItem onClick={() => goToSection('Identity')}>Identity</ListItem>
-                    <ListItem onClick={() => goToSection('Pets')}>Pets</ListItem>
-                </List>
-            </Box>
-        </Paper>
-    )
+            </Paper>
+        )
+    }
 }
 
 export default Outline
