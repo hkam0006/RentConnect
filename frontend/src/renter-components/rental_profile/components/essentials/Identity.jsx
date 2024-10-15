@@ -7,26 +7,21 @@ import IdentityDialog from '../Dialogs/IdentityDialog'
 import useSubscribeTableByRenterID from '../../../../subscribers/useSubscribeTableByRenterID'
 
 function Identity({ userID }) {
-    const fetchedIdentityDocuments = useGetApplicationSupportingDocumentsByRenterID(userID)
-    const [identityDocuments, setIdentityDocuments] = useState(null)
+    const { applicationSupportingDocuments, setApplicationSupportingDocuments } = useGetApplicationSupportingDocumentsByRenterID(userID)
     const [driversLicence, setDriversLicence] = useState([])
     const [passport, setPassport] = useState([])
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [identityType, setIdentityType] = useState('')
 
     useEffect(() => {
-        setIdentityDocuments(fetchedIdentityDocuments)
-    }, [fetchedIdentityDocuments])
-
-    useEffect(() => {
-        if (identityDocuments) {
-            const driversLicences = identityDocuments.filter(doc => doc.application_supporting_document_type === 'Drivers Licence')
-            const passports = identityDocuments.filter(doc => doc.application_supporting_document_type === 'Passport')
+        if (applicationSupportingDocuments) {
+            const driversLicences = applicationSupportingDocuments.filter(doc => doc.application_supporting_document_type === 'Drivers Licence')
+            const passports = applicationSupportingDocuments.filter(doc => doc.application_supporting_document_type === 'Passport')
             
             setDriversLicence(driversLicences)
             setPassport(passports)
         }
-    }, [identityDocuments])
+    }, [applicationSupportingDocuments])
 
     function closeDialog() {
         setIsDialogOpen(false)
@@ -44,28 +39,28 @@ function Identity({ userID }) {
     const updateIdentityDocument = useCallback((payload) => {
         switch (payload.eventType) {
             case 'INSERT':
-                setIdentityDocuments([...identityDocuments, payload.new])
+                setApplicationSupportingDocuments([...applicationSupportingDocuments, payload.new])
                 break
             case 'UPDATE':
-                const updatedDocuments = identityDocuments.map((document) => {
+                const updatedDocuments = applicationSupportingDocuments.map((document) => {
                     if (document.application_supporting_document_id === payload.new.application_supporting_document_id) {
                         return payload.new
                     }
                     return document
                 })
-                setIdentityDocuments(updatedDocuments)
+                setApplicationSupportingDocuments(updatedDocuments)
                 break
             case 'DELETE':
-                const filteredDocuments = identityDocuments.filter((document) => document.application_supporting_document_id !== payload.old.application_supporting_document_id)
-                setIdentityDocuments(filteredDocuments)
+                const filteredDocuments = applicationSupportingDocuments.filter((document) => document.application_supporting_document_id !== payload.old.application_supporting_document_id)
+                setApplicationSupportingDocuments(filteredDocuments)
                 break
             default:
                 break
         }
-    }, [identityDocuments, setIdentityDocuments])
+    }, [applicationSupportingDocuments, setApplicationSupportingDocuments])
     useSubscribeTableByRenterID('APPLICATION-SUPPORTING-DOCUMENT', userID, updateIdentityDocument)
     
-    if (!identityDocuments) {
+    if (!applicationSupportingDocuments) {
         return <></>
     } else {
         return (

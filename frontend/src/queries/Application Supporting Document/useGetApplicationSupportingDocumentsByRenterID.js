@@ -2,7 +2,8 @@ import { supabase } from "../../supabase";
 import { useState, useEffect } from 'react';
 
 const useGetApplicationSupportingDocumentsByRenterID = (renter_id) =>{
-    const [application_supporting_documents, setApplicationSupportingDocuments] = useState([]);
+    const [applicationSupportingDocuments, setApplicationSupportingDocuments] = useState(null);
+    const [loading, setLoading] = useState(true);
   
     useEffect(() => {
       const fetchApplicationSupportingDocuments = async () => {
@@ -17,12 +18,13 @@ const useGetApplicationSupportingDocumentsByRenterID = (renter_id) =>{
           } else {
             setApplicationSupportingDocuments(data);
           }
+          setLoading(false);
         }
       };
   
       fetchApplicationSupportingDocuments();
     }, [renter_id]);
-      return application_supporting_documents;
+      return { applicationSupportingDocuments, setApplicationSupportingDocuments, loading };
     };
 
 export default useGetApplicationSupportingDocumentsByRenterID;
