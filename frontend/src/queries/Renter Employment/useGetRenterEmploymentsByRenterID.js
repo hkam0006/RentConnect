@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 
 
 const useGetRenterEmploymentsByRenterID = (renter_id) =>{
-    const [renter_employments, setRenterEmployments] = useState([]);
+    const [renterEmployments, setRenterEmployments] = useState([]);
+    const [loading, setLoading] = useState(true);
   
     useEffect(() => {
       const fetchRenterEmployments = async () => {
@@ -14,17 +15,18 @@ const useGetRenterEmploymentsByRenterID = (renter_id) =>{
         .order("renter_employment_end", { ascending: true, nullsFirst: true })
         .order("renter_employment_end", { ascending: false })
         .order("renter_employment_start", { ascending: false });
-  
+
         if (error) {
           console.error("Error fetching renter employments:", error.message);
         } else {
             setRenterEmployments(data);
         }
+        setLoading(false);
       };
   
       fetchRenterEmployments();
     }, [renter_id]);
-      return renter_employments;
+      return { renterEmployments, setRenterEmployments, loading };
     };
 
 export default useGetRenterEmploymentsByRenterID;

@@ -21,7 +21,7 @@ const AddReferenceModal = ({onClose}) => {
   const renterId = useSelector(state => state.user.currentUser?.renter_id)
   const addPreviousTenancy = useAddPreviousTenancy()
   const addRenterEmployer = useAddRenterEmployer()
-  const fetchedEmployments = useGetRenterEmploymentsByRenterID(renterId)
+  const { renterEmployments: fetchedEmployments } = useGetRenterEmploymentsByRenterID(renterId)
   const [formData, setFormData] = useState({
     type: "",
     name: "",
