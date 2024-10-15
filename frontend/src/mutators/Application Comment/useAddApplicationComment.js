@@ -4,7 +4,7 @@ const useAddApplicationComment = () => {
   const AddApplicationComment = async (renterId, propertyId, companyId, comment, userID, currentDate, type_verified) => {
     try {
         const { data, error } = await supabase
-            .from("APPLICATION COMMENT")
+            .from("APPLICATION-COMMENT")
             .insert([{
               renter_id: renterId,
               property_id: propertyId,
