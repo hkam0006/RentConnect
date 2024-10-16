@@ -41,8 +41,8 @@ export function PropertiesTable() {
   }));
 
   return <>
-    <TableContainer component={Paper} sx={{ mt: 2.5, borderRadius: 3, width: "104%", height: "350px" }}>
-      <Table stickyHeader sx={{ minWidth: 700 }} aria-label="simple table">
+    <TableContainer component={Paper} sx={{ mt: 2.5, borderRadius: 3, height: "350px" }}>
+      <Table stickyHeader aria-label="simple table">
         <TableHead>
           <TableRow>
             <StyledTableCell><Typography fontSize={"12px"} fontWeight={700}>Property </Typography></StyledTableCell>

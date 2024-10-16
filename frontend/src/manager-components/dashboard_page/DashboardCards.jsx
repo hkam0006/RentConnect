@@ -118,7 +118,7 @@ export function DashboardCards() {
 
             {/* Appointment Card */}
             <Grid xs={12} sm={2.5} item>
-                <Card sx={{ width: "120%", height: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
+                <Card sx={{height: "100%", borderRadius: 3 }} style={{backgroundColor: "#ffffff"}}>
                     <CardHeader
                         action={
                             <IconButton aria-label="settings">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ImgElement from '../property_page/ImgElement';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Grid } from "@mui/material"
 import { styled } from '@mui/material/styles';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import BathtubIcon from '@mui/icons-material/Bathtub';
@@ -39,6 +39,7 @@ export function PropertiesTable() {
   }));
 
   return <>
+  <Grid container>
     <TableContainer component={Paper} sx={{ mt: 2.5, borderRadius: 3, width: "104%", height: "350px" }}>
       <Table stickyHeader sx={{ minWidth: 700 }} aria-label="simple table">
         <TableHead>
@@ -98,5 +99,6 @@ export function PropertiesTable() {
         </TableBody>
       </Table>
     </TableContainer>
+    </Grid>
   </>
 }
