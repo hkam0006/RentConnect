@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container, Typography, Box, Card, CardContent, CardActions, Button, Grid, Avatar, Stack } from '@mui/material';
+import { Container, Typography, Box, Card, CardContent, CardActions, Button, Grid, Avatar, Stack, useMediaQuery, useTheme, IconButton } from '@mui/material';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import useGetPreviousTenanciesByRenterID from '../../queries/Previous Tenancy/useGetPreviousTenanciesByRenterID';
 import { useSelector } from 'react-redux';
@@ -10,6 +10,7 @@ import useSubscribeTableByRenterID from '../../subscribers/useSubscribeTableByRe
 import useRemovePreviousTenancy from '../../mutators/Previous Tenancy/useRemovePreviousTenancyByID';
 import useRemoveRenterEmployer from '../../mutators/Renter Employer/useRemoveRenterEmployerbyID';
 import AddReferenceModal from './AddReferenceModal';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const TenantReferences = () => {
   const renterId = useSelector(state => state.user.currentUser?.renter_id)
@@ -94,20 +95,30 @@ const TenantReferences = () => {
   useSubscribeTableByRenterID('PREVIOUS-TENANCY', renterId, updateRental)
   useSubscribeTableByRenterID('RENTER-EMPLOYER', renterId, updateEmployer)
 
+  const theme = useTheme()
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'))
+
   if (loading) return <NavigationMenu>
     <AppLoader />
   </NavigationMenu>
+
 
   return (
     <NavigationMenu>
       {Boolean(editModal) && <ReferenceModal onClose={() => setEditModal(null)} reference={editModal}/>}
       {addModal && <AddReferenceModal onClose={() => setAddModal(false)}/>}
       <div style={{ padding: "20px", marginTop: "64px" }}>
-          <Stack direction='row' gap={2} sx={{alignItems: "center"}}>
+          <Stack direction='row' gap={2} sx={{alignItems: "center", justifyContent: "space-between"}}>
             <Typography variant="h4" component="h1">
               Tenant References
             </Typography>
-            <Button variant='contained' onClick={() => setAddModal(true)}>Add References</Button>
+            {!isXs ? (
+              <Button variant='contained' onClick={() => setAddModal(true)}>Add References</Button>
+            ): (
+              <IconButton onClick={() => setAddModal(true)} sx={{border: 'solid 2px', borderColor: theme.palette.primary }}>
+                <AddCircleOutlineIcon color='primary'/>
+              </IconButton>
+            )}
           </Stack>
 
           {/* Employer References Section */}
