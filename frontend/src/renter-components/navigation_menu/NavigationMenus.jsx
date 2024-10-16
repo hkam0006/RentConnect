@@ -13,6 +13,7 @@ import { supabase } from "../../supabase";
 import {useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu'; // Add Menu Icon
+import { Stack } from '@mui/material';
 
 const drawerWidth = 200;
 
@@ -64,7 +65,7 @@ export default function NavigationMenu({ children }) {
     }, []);
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex'}}>
             <AppBar sx={{backgroundColor: 'white', color: 'black', zIndex: 1201}}>
                 <Toolbar>
                     {/* Add button to toggle drawer on mobile */}
@@ -84,17 +85,13 @@ export default function NavigationMenu({ children }) {
                         <a href='/RenterHome' style={{ textDecoration: "none", color: "inherit" }}>
                             RentConnect
                         </a>
-                        <span style={{ fontSize: "90%" }}>
-                            <a href="/property" style={{ textDecoration: 'none', color: 'inherit', padding: '20px' }}>
-                                Property
-                            </a>
-                        </span>
                     </Typography>
 
                     {user && (
                         <Box>
                             <Box sx={{justifyContent: 'flex-end', display: 'flex', alignItems: 'center'}}>
-                                <Typography sx={{fontSize: '130%'}}>{user.email}</Typography>
+                              <Stack direction='row' sx={{alignItems: "center"}}>
+                                <Typography sx={{fontSize: '130%', display:{ xs: 'none', sm: 'block' }}}>{user.email}</Typography>
                                 <IconButton
                                     size="large"
                                     aria-label="account of current user"
@@ -105,6 +102,7 @@ export default function NavigationMenu({ children }) {
                                 >
                                     <AccountCircle />
                                 </IconButton>
+                              </Stack>
                             </Box>
                             <Menu
                                 id="menu-appbar"

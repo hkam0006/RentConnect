@@ -14,6 +14,7 @@ import {useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu'; // Add Menu Icon
 import { Stack } from '@mui/material';
+import store from '../../utils/store';
 
 const drawerWidth = 200;
 
@@ -74,9 +75,9 @@ export default function NavigationMenu({ children }) {
                         <IconButton
                             color="inherit"
                             aria-label="open drawer"
-                            edge="start"
+                            // edge="start"
                             onClick={handleDrawerToggle}
-                            sx={{ mr: 2, display: { sm: 'none' }}} // Display on mobile (xs)
+                            sx={{display: { sm: 'none' }}} // Display on mobile (xs)
                         >
                             <MenuIcon />
                         </IconButton>
@@ -94,7 +95,9 @@ export default function NavigationMenu({ children }) {
                         {user && (
                             <Box>
                                 <Box sx={{justifyContent: 'flex-end', display: 'flex', alignItems: 'center'}}>
-                                    <Typography sx={{fontSize: '130%',display:{ xs: 'none', sm: 'block' }}}>{user.email}</Typography>
+                                    <Typography sx={{fontSize: '130%',display:{ xs: 'none', sm: 'block' }}}>
+                                      {store.getState().user.currentUser.property_manager_email}
+                                    </Typography>
                                     <IconButton
                                         size="large"
                                         aria-label="account of current user"
