@@ -1,9 +1,9 @@
 import { supabase } from "../../supabase";
 
 
-const useGetPropertiesByCompanyID = (company_id) =>{
+const useGetPropertiesByCompanyID = () =>{
 
-  const fetchProperties = async () => {
+  const fetchProperties = async (company_id) => {
     const {data, error} = await supabase
       .from("PROPERTY")
       .select("*")

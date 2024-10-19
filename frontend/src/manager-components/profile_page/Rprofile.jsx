@@ -12,10 +12,12 @@ import useGetPropertiesByPropertyIDs from "../../queries/Property/useGetProperti
 import AppLoader from "../property_page/AppLoader";
 import useGetUserID from "../../queries/useGetUserID";
 import useGetPropertyByPropertyIDRepeatable from '../../queries/Property/useGetPropertyByPropertyIDRepeatable';
+import { useSelector } from 'react-redux';
 
 export default function RprofileForPM() {
     const { rID } = useParams()
     const {userID, loading: userLoading} = useGetUserID();
+    const companyId = useSelector((state) => state.user.currentUser.company_id)
     const navigate = useNavigate();
     const {renter: renterData, loading: renterLoading} = useGetRenterByRenterID(rID);
     const {applications: baseApplications, loading: appLoading} = useGetApplicationsByRenterID(rID);
@@ -74,7 +76,7 @@ export default function RprofileForPM() {
 
 
     function handleAddComment(commentContents) {
-        addComment(propertyManager.property_manager_id, rID, propertyManager.company_id, commentContents);
+        addComment(propertyManager.property_manager_id, rID, companyId, commentContents);
     }
 
     const handleCloseAddComment = () => {

@@ -9,7 +9,11 @@ const isPropertyManager = async (userId) => {
     .from("PROPERTY MANAGER")
     .select("*")
     .eq('property_manager_id', userId)
-
+  const {data:pmCompanyID, error:pmCompanyIDerror } = await supabase
+    .from("PROPERTY MANAGER COMPANY")
+    .select("*")
+    .eq('property_manager_id', userId)
+  data[0].company_id = pmCompanyID[0].company_id;
   return data
 }
 

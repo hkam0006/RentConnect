@@ -9,9 +9,11 @@ import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPr
 import ImageCarousel from '../property_page/ImageCarousel';
 import useUpdatePropertyManager from '../../mutators/Property Manager/useUpdatePropertyManager';
 import useGetUserID from '../../queries/useGetUserID';
+import { useSelector } from 'react-redux';
 
 export default function PMprofileForPM() {
     const navigate = useNavigate();
+    const companyId = useSelector((state) => state.user.currentUser.company_id)
     const {userID: userIDData, loading: userLoading} = useGetUserID();
     const [propertyManager, setPropertyManager] = useState({});
     const fetchCompany = useGetCompanyByCompanyID();
@@ -27,7 +29,7 @@ export default function PMprofileForPM() {
     useEffect(() => {
         async function getPMData() {
             setPropertyManager(pm[0]);
-            const company = await fetchCompany(pm[0].company_id);
+            const company = await fetchCompany(companyId);
             setPMCompany(company.data[0]);
         }
         async function getPMProperties() {

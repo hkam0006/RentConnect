@@ -6,9 +6,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPropertiesByPropertyManagerID';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
+import { useSelector } from 'react-redux';
 
 export default function PMprofileForR() {
     const navigate = useNavigate();
+    const companyId = useSelector((state) => state.user.currentUser.company_id)
     const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
     const [propertyManager, setPropertyManager] = useState({});
     const fetchCompany = useGetCompanyByCompanyID();
@@ -20,7 +22,7 @@ export default function PMprofileForR() {
         async function getPMData() {
             const pm = await fetchPropertyManager(pmID);
             setPropertyManager(pm.data[0]);
-            const company = await fetchCompany(pm.data[0].company_id);
+            const company = await fetchCompany(companyId);
             setPMCompany(company.data[0]);
         }
         async function getPMProperties() {

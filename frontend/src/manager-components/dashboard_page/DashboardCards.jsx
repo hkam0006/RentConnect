@@ -20,6 +20,8 @@ import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompa
 import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID';
 import { supabase } from '../../supabase';
 import useGetUserID from '../../queries/useGetUserID';
+import useGetCompanyIDByPropertyManagerID from '../../queries/Property Manager Company/useGetCompanyIDByPropertyManagerID';
+import { useSelector } from 'react-redux';
 
 
 export default function ChartsOverviewDemo() {
@@ -36,24 +38,26 @@ export default function ChartsOverviewDemo() {
 }
 
 export function DashboardCards() {
+    const companyId = useSelector((state) => state.user.currentUser.company_id)
     const [company, setCompany] = useState({});
     const [properties, setProperties] = useState({});
     const {userID, loading: userLoading} = useGetUserID();
     const fetchCompany = useGetCompanyByCompanyID();
-    const fetchProperies = useGetPropertiesByCompanyID();
-    const{propertyManager, loading: propertyManagerLoading} = useGetPropertyManagerByPropertyManagerID(userID);
+    const {fetchProperties} = useGetPropertiesByCompanyID();
     
     useEffect(() => {
         async function getCompanyData() {
-            const companyTemp = await fetchCompany(propertyManager.company_id);
+            const companyTemp = await fetchCompany(companyId);
             setCompany(companyTemp.data[0]);
-            const propertiesTemp = await fetchProperies(propertyManager.company_id);
-            setProperties(propertiesTemp.data[0]);
+            const propertiesTemp = await fetchProperties(companyId);
+            setProperties(propertiesTemp.data);
         }
-        if (!propertyManagerLoading && !userLoading){
+
+
+        if (!userLoading){
             getCompanyData();
         }
-    }, []);
+    }, [userLoading, userID]);
 
     return <>
         <Grid container spacing={2} >
