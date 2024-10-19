@@ -14,7 +14,14 @@ import {
   Button,
   Chip,
   Checkbox,
+  useTheme,
+  useMediaQuery,
+  Badge,
+  Grid,
+  Container,
 } from "@mui/material";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import useGetKeyByCompanyID from "../../queries/Key/useGetKeyByCompanyID";
 import AddKeyModal from "./AddKeyModal";
 import useGetPropertiesByCompanyID from "../../queries/Property/useGetPropertiesByCompanyID";
@@ -193,6 +200,9 @@ const Keys = () => {
   const isSelected = (id) => selected.indexOf(id) !== -1;
   useSubscribeKeysByCompanyID(company_id, handleKeyChanges);
 
+  const theme = useTheme()
+  const isXs = useMediaQuery(theme.breakpoints.only('xs'))
+
   if (loading) return (
     <NavigationMenu>
       <AppLoader />
@@ -215,7 +225,7 @@ const Keys = () => {
           keyObject={openCheckout}
         />
       )}
-      <Box sx={{ mt: "70px", padding: "20px", width: "100%" }}>
+      <Container sx={{ mt: "70px", padding: "10px" }}>
         <Stack
           direction="row"
           sx={{
@@ -234,138 +244,161 @@ const Keys = () => {
             />
           </Stack>
           <Stack direction="row" spacing={1}>
-            <Button
-              variant="contained"
-              color="error"
-              disabled={selected.length === 0}
-              onClick={() => handleDeleteMultipleRows()}
-            >
-              Delete {selected.length} Key(s)
-            </Button>
+            {
+              isXs ? (
+                <Badge badgeContent={selected.length} color="error">
+                  <Button
+                      variant="outlined"
+                      color="error"
+                      disabled={selected.length === 0}
+                      onClick={() => handleDeleteMultipleRows()}
+                      size={isXs ? "small" : "medium"}
+                      sx={{borderWidth: "2.5px"}}
+                    >
+                      <DeleteForeverIcon />
+                  </Button>
+                </Badge>
+              ) : (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  disabled={selected.length === 0}
+                  onClick={() => handleDeleteMultipleRows()}
+                  size={isXs ? "small" : "medium"}
+                  sx={{borderWidth: "2.5px"}}
+                >
+                  Delete {selected.length} Key(s)
+                </Button>
+              )
+            }            
             <Button variant="contained" onClick={handleOpen}>
-              Add Key
+              {isXs ? <AddCircleOutlineIcon /> : `Add Key`}
             </Button>
           </Stack>
         </Stack>
-        <TableContainer sx={{ mt: 2 }}>
-          <Table sx={{ minWidth: 600 }}>
-            <TableHead sx={{ backgroundColor: "#ebeaea" }}>
-              <TableRow>
-                {rowHeading.map((title, index) => {
-                  return (
-                    <TableCell align="left" key={index}>
-                      <Typography variant="subtitle1" fontWeight={700}>
-                        {title}
-                      </Typography>
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredKeys.map((key, index) => {
-                const buttonTitle =
-                  key.key_status === "On Loan" ? "Check In" : "Check Out";
-                const buttonVariant =
-                  key.key_status === "On Loan" ? "outlined" : "contained";
-                const propertyAddress = fullAddressMap[key.property_id];
-                const isKeySelected = isSelected(key.key_id);
-                return (
-                  <TableRow hover key={key.key_id} selected={isKeySelected}>
-                    <TableCell>
-                      <Checkbox
-                        checked={isKeySelected}
-                        onClick={(e) => handleSelectRow(e, key.key_id)}
-                      />
-                    </TableCell>
-                    <TableCell
-                      onClick={(e) => handleSelectRow(e, key.key_id)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      <Chip
-                        variant="filled"
-                        label={key.key_status}
-                        color={chipColour[key.key_status]}
-                      />
-                    </TableCell>
-                    <TableCell
-                      onClick={(e) => handleSelectRow(e, key.key_id)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      {key.key_set}
-                    </TableCell>
-                    <TableCell
-                      onClick={(e) => handleSelectRow(e, key.key_id)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      {propertyAddress}
-                    </TableCell>
-                    <TableCell
-                      onClick={(e) => handleSelectRow(e, key.key_id)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      <Link href="#" to={`/PMprofile/${key.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
-                        {propManagerMap[key.property_manager_id]}
-                      </Link>
-                    </TableCell>
-                    <TableCell
-                      onClick={(e) => handleSelectRow(e, key.key_id)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      {key.key_status === "On Loan" ? new Date(key.key_issued).toLocaleDateString("en-us", dateOptions) : "N/A"}
-                    </TableCell>
-                    <TableCell
-                      onClick={(e) => handleSelectRow(e, key.key_id)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      {key.key_status === "On Loan" ? new Date(key.key_due).toLocaleDateString("en-us", dateOptions) : "N/A"}
-                    </TableCell>
-                    <TableCell
-                      onClick={(e) => handleSelectRow(e, key.key_id)}
-                      sx={{ cursor: "pointer" }}
-                    >
-                      {key.key_status === "On Loan" ? 
-                      <Link href="#" to={`/PMprofile/${key.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
-                        {key.borrower_name}
-                      </Link>
-                       : "N/A"}
-                    </TableCell>
-                    <TableCell align="left">
-                      {buttonTitle === "Check Out" ? (
-                        <Button
-                          variant={buttonVariant}
-                          style={{ borderWidth: "3px" }}
-                          sx={{ width: "100%" }}
-                          onClick={() =>
-                            setOpenCheckout({
-                              key_id: key.key_id,
-                              prop_add: propertyAddress,
-                              key_set: key.key_set,
-                              manager_name: propManagerMap[key.property_manager_id],
-                              key_set: key.key_set
-                            })
-                          }
-                        >
-                          {buttonTitle}
-                        </Button>
-                      ) : (
-                        <Button
-                          variant={buttonVariant}
-                          style={{ borderWidth: "3px" }}
-                          sx={{ width: "100%" }}
-                          onClick={() => handleCheckIn(key.key_id)}
-                        >
-                          {buttonTitle}
-                        </Button>
-                      )}
-                    </TableCell>
+        <Grid container alignItems="center">
+          <Grid item xs={12}>
+            <TableContainer style={{maxWidth: "90vw"}}>
+              <Table>
+                <TableHead sx={{ backgroundColor: "#ebeaea" }}>
+                  <TableRow>
+                    {rowHeading.map((title, index) => {
+                      return (
+                        <TableCell align="left" key={index}>
+                          <Typography variant="subtitle1" fontWeight={700}>
+                            {title}
+                          </Typography>
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
+                </TableHead>
+                <TableBody>
+                  {filteredKeys.map((key, index) => {
+                    const buttonTitle =
+                      key.key_status === "On Loan" ? "Check In" : "Check Out";
+                    const buttonVariant =
+                      key.key_status === "On Loan" ? "outlined" : "contained";
+                    const propertyAddress = fullAddressMap[key.property_id];
+                    const isKeySelected = isSelected(key.key_id);
+                    return (
+                      <TableRow hover key={key.key_id} selected={isKeySelected}>
+                        <TableCell>
+                          <Checkbox
+                            checked={isKeySelected}
+                            onClick={(e) => handleSelectRow(e, key.key_id)}
+                          />
+                        </TableCell>
+                        <TableCell
+                          onClick={(e) => handleSelectRow(e, key.key_id)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          <Chip
+                            variant="filled"
+                            label={key.key_status}
+                            color={chipColour[key.key_status]}
+                          />
+                        </TableCell>
+                        <TableCell
+                          onClick={(e) => handleSelectRow(e, key.key_id)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          {key.key_set}
+                        </TableCell>
+                        <TableCell
+                          onClick={(e) => handleSelectRow(e, key.key_id)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          {propertyAddress}
+                        </TableCell>
+                        <TableCell
+                          onClick={(e) => handleSelectRow(e, key.key_id)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          <Link href="#" to={`/PMprofile/${key.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                            {propManagerMap[key.property_manager_id]}
+                          </Link>
+                        </TableCell>
+                        <TableCell
+                          onClick={(e) => handleSelectRow(e, key.key_id)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          {key.key_status === "On Loan" ? new Date(key.key_issued).toLocaleDateString("en-us", dateOptions) : "N/A"}
+                        </TableCell>
+                        <TableCell
+                          onClick={(e) => handleSelectRow(e, key.key_id)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          {key.key_status === "On Loan" ? new Date(key.key_due).toLocaleDateString("en-us", dateOptions) : "N/A"}
+                        </TableCell>
+                        <TableCell
+                          onClick={(e) => handleSelectRow(e, key.key_id)}
+                          sx={{ cursor: "pointer" }}
+                        >
+                          {key.key_status === "On Loan" ? 
+                          <Link href="#" to={`/PMprofile/${key.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                            {key.borrower_name}
+                          </Link>
+                          : "N/A"}
+                        </TableCell>
+                        <TableCell align="left">
+                          {buttonTitle === "Check Out" ? (
+                            <Button
+                              variant={buttonVariant}
+                              style={{ borderWidth: "3px" }}
+                              // sx={{ width: "100%" }}
+                              onClick={() =>
+                                setOpenCheckout({
+                                  key_id: key.key_id,
+                                  prop_add: propertyAddress,
+                                  key_set: key.key_set,
+                                  manager_name: propManagerMap[key.property_manager_id],
+                                  key_set: key.key_set
+                                })
+                              }
+                            >
+                              {buttonTitle}
+                            </Button>
+                          ) : (
+                            <Button
+                              variant={buttonVariant}
+                              style={{ borderWidth: "3px" }}
+                              // sx={{ width: "100%" }}
+                              onClick={() => handleCheckIn(key.key_id)}
+                            >
+                              {buttonTitle}
+                            </Button>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
+      </Container>
     </NavigationMenu>
   );
 };
