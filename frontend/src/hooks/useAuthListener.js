@@ -52,7 +52,10 @@ const useAuthListener = () => {
           if (data.length > 0) {
             getCompanyID(user.id).then(async (companyIDData) => {
               if (companyIDData[0]){
-                data[0].company_id = companyIDData[0].company_id;
+                data = data.map((item) => ({
+                  ...item,
+                  company_id: companyIDData[0].company_id       
+                }));
               }
             });
             dispatch(setManager())
