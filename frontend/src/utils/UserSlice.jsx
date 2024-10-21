@@ -4,7 +4,8 @@ const initialState = {
   currentUser: null,
   isRenter: false,
   isManager: false,
-  isAdmin: false
+  isAdmin: false,
+  isLoading: false,
 }
 
 const UserSlice = createSlice({
@@ -31,6 +32,9 @@ const UserSlice = createSlice({
     },
     setUser: (state, action) => {
       state.currentUser = action.payload;
+    },
+    setLoading: (state, action) => {
+      state.isLoading = action.payload
     }
   }
 })
@@ -41,7 +45,8 @@ export const {
   setRenter,
   setManager,
   setAdmin,
-  setUser
+  setUser,
+  setLoading
 } = UserSlice.actions;
 
 export default UserSlice.reducer;

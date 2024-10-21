@@ -42,9 +42,17 @@ import RenterContacts from './renter-components/renter_contacts/RenterContacts';
 import NotFoundPage from './public-components/NotFoundPage';
 import WaitingForCompany from './manager-components/waiting_for_company/Waiting';
 import ManagerWithoutCompanyRoute from './utils/ManagerWithoutCompanyRoute';
+import AppLoader from './manager-components/property_page/AppLoader';
 
 function App() {
-  useAuthListener()
+    useAuthListener()
+
+    const loading = useSelector(state => state.user.isLoading)
+
+    if (loading) {
+        return <AppLoader />
+    }
+
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />

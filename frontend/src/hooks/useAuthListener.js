@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { supabase } from "../supabase";
-import { setUser, logout, setManager, setRenter } from '../utils/UserSlice';
+import { setUser, logout, setManager, setRenter, setLoading } from '../utils/UserSlice';
 import { useNavigate } from "react-router-dom";
 
 const isPropertyManager = async (userId) => {
@@ -45,6 +45,7 @@ const useAuthListener = () => {
 
   useEffect(() => {
     const {data} = supabase.auth.onAuthStateChange(async (event, session) => {
+      dispatch(setLoading(true))
       if ((event === 'SIGNED_IN' || event === "INITIAL_SESSION") && session) {
         const user = session.user;
         // Example role-checking logic
@@ -58,6 +59,7 @@ const useAuthListener = () => {
                 }));
                 dispatch(setManager())
                 dispatch(setUser(data[0]))
+                dispatch(setLoading(false))
               }
             });
           }
@@ -66,11 +68,13 @@ const useAuthListener = () => {
           if (data.length > 0) {
             dispatch(setRenter())
             dispatch(setUser(data[0]))
+            dispatch(setLoading(false))
           }
         })
       } else if (event === 'SIGNED_OUT'){
         dispatch(logout())
         navigate("/Landing")
+        dispatch(setLoading(false))
       }
     });
 
