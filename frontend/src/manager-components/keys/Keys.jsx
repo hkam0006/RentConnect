@@ -57,7 +57,7 @@ const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 const Keys = () => {
   const company_id = useSelector((state) => state.user.currentUser.company_id)
   const { fetchKeys } = useGetKeyByCompanyID(company_id);
-  const { fetchProperties } = useGetPropertiesByCompanyID(company_id);
+  const { fetchProperties } = useGetPropertiesByCompanyID();
   const propManagers = useGetPropetyManagersByCompanyID(company_id);
   const deleteKeys = useDeleteMultipleKeys();
   const { checkInKey } = useUpdateKeyStatus();
@@ -93,7 +93,7 @@ const Keys = () => {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await fetchProperties();
+      const { data, error } = await fetchProperties(company_id);
 
       setProperties(data);
       setError(error);
