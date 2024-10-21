@@ -10,6 +10,8 @@ import useAddCompany from '../../mutators/Company/useAddCompany';
 import useGetCompanyByName from '../../queries/Company/useGetCompanyByName';
 import useAddPropertyManager from '../../mutators/Property Manager/useAddPropertyManager';
 import { supabase } from '../../supabase';
+import useAddPropertyManagerCompany from '../../mutators/Property Manager Company/useAddPropertyManagerCompany';
+import useAddCompanyJoinRequest from '../../mutators/Company Join Request/useAddCompanyJoinRequest';
 
 
 
@@ -69,7 +71,7 @@ function AccountSetUpPM(){
             });
             setCompanies(companies);
         })();
-    });
+    }, []);
 
     const [newCompanyFlag, setNewCompanyFlag] = useState(false);
     const handleNewCompanyFlagChange = f => {
@@ -125,6 +127,8 @@ function AccountSetUpPM(){
     const { addCompany } = useAddCompany();
     const { fetchCompany } = useGetCompanyByName();
     const { addPropertyManager } = useAddPropertyManager();
+    const { addPropertyManagerCompany} = useAddPropertyManagerCompany();
+    const { addCompanyJoinRequest } = useAddCompanyJoinRequest();
 
     const handleAccountCreation = async () => {
         var anyError = false;
@@ -174,13 +178,18 @@ function AccountSetUpPM(){
             if (newCompanyFlag){
                 await addCompany(user.id, newCompanyName, abn, companyPhoneNum, companyStreetAddress, companySuburb, statesList[companyState]);
                 company_id = await fetchCompany(newCompanyName);
+                company_id = company_id.data[0].company_id
+                await addPropertyManager(user.id, fname, lname, phoneNum, user.email);
+                await addPropertyManagerCompany(user.id, company_id);
             }
             else{
                 company_id = await fetchCompany(companies[companyIndex]);
+                company_id = company_id.data[0].company_id
+                await addPropertyManager(user.id, fname, lname, phoneNum, user.email);
+                await addCompanyJoinRequest(user.id, company_id);
             }
-            company_id = company_id.data[0].company_id
-            await addPropertyManager(user.id, fname, lname, phoneNum, user.email, company_id);
-            navigate('/dashboard');
+            
+            navigate('/waiting_for_company');
         }
     }
 

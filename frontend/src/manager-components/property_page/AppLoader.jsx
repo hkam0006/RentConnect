@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function AppLoader() {
   return (
-    <Stack mt={45} alignItems="center">
+    <Stack mt={5} alignItems="center">
       <CircularProgress />
     </Stack>
   )

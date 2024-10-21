@@ -40,6 +40,8 @@ import PMprofileForR from './renter-components/profile_page/PMprofile';
 import RenterMessages from './renter-components/renter_message/RenterMessages';
 import RenterContacts from './renter-components/renter_contacts/RenterContacts';
 import NotFoundPage from './public-components/NotFoundPage';
+import WaitingForCompany from './manager-components/waiting_for_company/Waiting';
+import ManagerWithoutCompanyRoute from './utils/ManagerWithoutCompanyRoute';
 
 function App() {
   useAuthListener()
@@ -80,10 +82,10 @@ function App() {
             <Route path='/PMprofile/:pmID' element={<ManagerRoute Component={PMprofileForPM}/>} />
             <Route path='/PM/:pmID' element={<RenterRoute Component={PMprofileForR}/>} />
             <Route path='/saved_properties' element={<RenterRoute Component={SavedProperties}/>} />
-
             <Route path='/renter_messages' element={<RenterRoute Component={RenterMessages}/>}/>
             <Route path='/renter_messages/:directMessageUserID' element={<RenterRoute Component={RenterMessages}/>}/>
             <Route path='/renter_contacts' element={<RenterRoute Component={RenterContacts}/>} />
+            <Route path='/waiting_for_company' element={<ManagerWithoutCompanyRoute Component={WaitingForCompany}/>} />
             <Route path='*' element={<NotFoundPage />}/>
           </Routes>
     </ThemeProvider>

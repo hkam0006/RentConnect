@@ -8,7 +8,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SideDrawer from "./SideDrawer";
-import logo from "./RENTCONNECT-2.png"
+import logo from "../../RENTCONNECT-2.png";
 import { supabase } from "../../supabase";
 import {useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';

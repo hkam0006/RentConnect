@@ -9,12 +9,15 @@ const isPropertyManager = async (userId) => {
     .from("PROPERTY MANAGER")
     .select("*")
     .eq('property_manager_id', userId)
-  const {data:pmCompanyID, error:pmCompanyIDerror } = await supabase
+  return data
+}
+
+const getCompanyID = async (userId) => {
+  const {data: companyIDData, error} = await supabase
     .from("PROPERTY MANAGER COMPANY")
     .select("*")
     .eq('property_manager_id', userId)
-  data[0].company_id = pmCompanyID[0].company_id;
-  return data
+  return companyIDData
 }
 
 const isRenter =  async (userId) => {
@@ -22,7 +25,6 @@ const isRenter =  async (userId) => {
     .from("RENTER")
     .select("*")
     .eq('renter_id', userId)
-  
     return data
 }
 
@@ -46,8 +48,13 @@ const useAuthListener = () => {
       if ((event === 'SIGNED_IN' || event === "INITIAL_SESSION") && session) {
         const user = session.user;
         // Example role-checking logic
-        isPropertyManager(user.id).then((data) => {
+        isPropertyManager(user.id).then(async (data) => {
           if (data.length > 0) {
+            getCompanyID(user.id).then(async (companyIDData) => {
+              if (companyIDData[0]){
+                data[0].company_id = companyIDData[0].company_id;
+              }
+            });
             dispatch(setManager())
             dispatch(setUser(data[0]))
           }
