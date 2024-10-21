@@ -57,57 +57,50 @@ function LogIn() {
   const handleEmailChange = (f) => setEmail(f.target.value);
   const handlePasswordChange = (f) => setPassword(f.target.value);
 
-  const attemptLogIn = (e) => {
+  const attemptLogIn = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    supabase.auth
+    const {data, error} = await supabase.auth
       .signInWithPassword({
         email: email,
         password: password,
-      })
-      .then(async (data) => {
-        setLoading(false);
-        if (!data.error) {
-          const user = data.data.user;
-          var account_type = await fetchAccountSetup(data.data.user.id);
+      });
+      setLoading(false);
+      if (!error) {
+        const user = data.user;
+        var account_type = await fetchAccountSetup(data.user.id);
 
-          if (rememberMe) {
-            localStorage.setItem("email", email);
-            localStorage.setItem("password", password);
-            localStorage.setItem("user", JSON.stringify(user));
-          } else {
-            localStorage.removeItem("email");
-            localStorage.removeItem("password");
-            sessionStorage.setItem("user", JSON.stringify(user));
-          }
-
-          if (account_type.data[0]) {
-            switch (account_type.data[0].account_type) {
-              case "Property Manager":
-                navigate("/AccountSetUpPM");
-                break;
-              case "Renter":
-                navigate("/AccountSetUpR");
-                break;
-              default:
-                console.log("Invalid account type found");
-                return;
-            }
-          } else {
-            navigate("/dashboard");
-          }
+        if (rememberMe) {
+          localStorage.setItem("email", email);
+          localStorage.setItem("password", password);
+          localStorage.setItem("user", JSON.stringify(user));
         } else {
-          setErrorText(true);
-          setPassword("");
+          localStorage.removeItem("email");
+          localStorage.removeItem("password");
+          sessionStorage.setItem("user", JSON.stringify(user));
         }
-      })
-      .catch((error) => {
-        setLoading(false);
+
+        if (account_type.data[0]) {
+          switch (account_type.data[0].account_type) {
+            case "Property Manager":
+              navigate("/AccountSetUpPM");
+              break;
+            case "Renter":
+              navigate("/AccountSetUpR");
+              break;
+            default:
+              console.log("Invalid account type found");
+              return;
+          }
+        } 
+        else{
+          navigate("/dashboard");
+        }
+      } else {
         setErrorText(true);
         setPassword("");
-        console.log(error);
-      });
+      }
   };
 
   return (

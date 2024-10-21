@@ -56,10 +56,10 @@ const useAuthListener = () => {
                   ...item,
                   company_id: companyIDData[0].company_id       
                 }));
+                dispatch(setManager())
+                dispatch(setUser(data[0]))
               }
             });
-            dispatch(setManager())
-            dispatch(setUser(data[0]))
           }
         })
         isRenter(user.id).then((data) => {
