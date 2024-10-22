@@ -43,13 +43,8 @@ const useAuthListener = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const storedUser = useSelector(state => state.user.currentUser)
-
   useEffect(() => {
     const {data} = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (Boolean(storedUser) && event !== "SIGNED_OUT") {
-        return
-      }
       await dispatch(setLoading(true))
       if ((event === 'SIGNED_IN' ) && session) {
         const user = session.user;
