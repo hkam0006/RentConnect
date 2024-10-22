@@ -50,7 +50,7 @@ const useAuthListener = () => {
       if (Boolean(storedUser) && event !== "SIGNED_OUT") {
         return
       }
-      dispatch(setLoading(true))
+      await dispatch(setLoading(true))
       if ((event === 'SIGNED_IN' ) && session) {
         const user = session.user;
         // Example role-checking logic
@@ -62,9 +62,9 @@ const useAuthListener = () => {
                   ...item,
                   company_id: companyIDData[0].company_id       
                 }));
-                dispatch(setManager())
-                dispatch(setUser(data[0]))
-                dispatch(setLoading(false))
+                await dispatch(setManager())
+                await dispatch(setUser(data[0]))
+                await dispatch(setLoading(false))
               }
             });
           }
@@ -77,9 +77,9 @@ const useAuthListener = () => {
           }
         })
       } else if (event === 'SIGNED_OUT'){
-        dispatch(logout())
-        navigate("/Landing")
-        dispatch(setLoading(false))
+        await dispatch(logout())
+        await navigate("/Landing")
+        await dispatch(setLoading(false))
       }
     });
 
