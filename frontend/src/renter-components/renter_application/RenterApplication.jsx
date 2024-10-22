@@ -58,8 +58,7 @@ function getPropertySecondLine(property) {
 
 
 const RenterApplication = forwardRef(({ providedProperty }, ref) => {
-
-    const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";  // hard coded company ID
+    const company_id = providedProperty[0].company_id; 
 
     // set up new property
     const [property, setProperty] = useState({
@@ -190,7 +189,7 @@ const RenterApplication = forwardRef(({ providedProperty }, ref) => {
     async function submitApplication() {
         const [day, month, year] = applicant.lease_start_date.split('/').map(Number);
         const dateObject = new Date(year, month - 1, day); // month is 0-indexed
-        await addApplication(userID, providedProperty[0].property_id, TEST_COMPANY_ID, null, applicant.lease_duration,
+        await addApplication(userID, providedProperty[0].property_id, company_id, null, applicant.lease_duration,
             dateObject, applicant.adults, applicant.kids, applicant.pets, 'progress', false, false, false,
             false, false, false, null);
     }

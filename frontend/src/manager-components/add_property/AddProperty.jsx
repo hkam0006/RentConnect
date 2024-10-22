@@ -16,11 +16,12 @@ import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/use
 import ListingImage from '../property_page/listing.jpg'
 import useAddProperty from "../../mutators/Property/useAddProperty";
 import { v4 as uuidv4 } from 'uuid';
-
-const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";         // Hardcoded, is to be the super admin's company
+import { useSelector } from "react-redux";
 
 const AddProp = () => {
-  const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
+  const company_id = useSelector(state => state.user.currentUser.company_id)
+  const property_manager_id = useSelector(state => state.user.currentUser.property_manager_id)
+  const propManagers = useGetPropetyManagersByCompanyID(company_id);
   const [loading, setLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
   const [errors, setErrors] = useState({});
@@ -120,7 +121,6 @@ const AddProp = () => {
 
   async function confirmPressed(event) {
     event.preventDefault();
-    console.log(newProp)
 
     const isValid = validateForm();
     if (!isValid) {
@@ -128,8 +128,8 @@ const AddProp = () => {
     }
 
     await addProperty(
-      TEST_COMPANY_ID,                              // Hardcoded Company ID
-      uuidv4(),                                     // UUID for Property ID
+      company_id,                              
+      uuidv4(),                                    
       newProp.streetNumber,
       newProp.streetName,
       newProp.streetType,
@@ -143,7 +143,7 @@ const AddProp = () => {
       newProp.amenities, 
       newProp.listingImages,
       newProp.payFreq, 
-      'fc8e3cf4-cbbc-4557-b303-7aa028c616eb',       // Hardcoded Property Manager ID
+      property_manager_id,  
       null, 
       new Date(),
       0, 

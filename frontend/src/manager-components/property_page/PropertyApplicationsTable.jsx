@@ -1,17 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import ImgElement from './ImgElement';
 import { Table, TableBody, Checkbox, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Stack, Button, Card, tableCellClasses, Box } from "@mui/material"
 import { styled } from '@mui/material/styles';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import BathtubIcon from '@mui/icons-material/Bathtub';
-import BedIcon from '@mui/icons-material/Bed';
-import { Fab } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import AddPropertyModal from './AddPropertyModal';
-import { green } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
-import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID';
 import RenterNameCell from './RenterNameCell';
 
 

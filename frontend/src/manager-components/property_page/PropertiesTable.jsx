@@ -7,11 +7,8 @@ import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
 import { Fab } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import AddPropertyModal from './AddPropertyModal';
 import { useNavigate } from "react-router-dom"
 import { supabase } from '../../supabase';
-import { getApp } from 'firebase/app';
 
 const fullAddress = (number, name, type, suburb, state) => {
   return `${number} ${name} ${type}, ${suburb}, ${state}`
@@ -93,7 +90,6 @@ export function PropertiesTable({ properties, handleAddProperties, propManagers,
   };
 
   return <>
-    {open && <AddPropertyModal handleClose={handleClose} handleAdd={handleAddProperties} rows={properties} propManagers={propManagers} />}
     {/* Snackbar for showing "Property already saved" message */}
     <Snackbar
       open={snackbarOpen}

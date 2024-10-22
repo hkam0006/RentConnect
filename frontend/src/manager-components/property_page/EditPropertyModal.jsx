@@ -15,16 +15,16 @@ import {
   Select,
   Stack,
 } 
-  from '@mui/material';
-  import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
-  import useAddProperty from "../../mutators/Property/useAddProperty";
-  import useEditProperty from '../../mutators/Property/useEditProperty';
-  import { v4 as uuidv4 } from 'uuid';
+from '@mui/material';
+import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
+import useAddProperty from "../../mutators/Property/useAddProperty";
+import useEditProperty from '../../mutators/Property/useEditProperty';
+import { useSelector } from 'react-redux';
 
 function EditPropertyModal({ property_id, open, handleClose, data, setData, handleSubmit }) {
-  const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78";         // Hardcoded, is to be the super admin's company
+  const company_id = useSelector(state => state.user.currentUser.company_id);        
 
-  const propManagers = useGetPropetyManagersByCompanyID(TEST_COMPANY_ID);
+  const propManagers = useGetPropetyManagersByCompanyID(company_id);
   const [errors, setErrors] = useState({});
   const [photos, setPhotos] = useState([]);
   const { addProperty } = useAddProperty();
