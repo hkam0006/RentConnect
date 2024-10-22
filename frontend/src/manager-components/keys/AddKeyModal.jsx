@@ -3,9 +3,7 @@ import { Box, Button, Fade, FormControl, InputLabel, MenuItem, Modal, Select, St
 import Backdrop from '@mui/material/Backdrop';
 import dayjs from 'dayjs';
 import React, { useState } from 'react'
-
-const TEST_PROPERTY_MANAGER_ID = "fc8e3cf4-cbbc-4557-b303-7aa028c616eb";
-const TEST_COMPANY_ID = "1b9500a6-ac39-4c6a-971f-766f85b41d78"
+import { useSelector } from "react-redux";
 
 const AddKeyModal = ({ OnClose, properties, propManagers, keySetList }) => {
   const [value, setValue] = useState(dayjs('2022-04-17'));
@@ -25,6 +23,8 @@ const AddKeyModal = ({ OnClose, properties, propManagers, keySetList }) => {
     boxShadow: 24,
     p: 4,
   };
+
+  const company_id = useSelector((state) => state.user.currentUser.company_id)
 
   const [keySetError, setKeySetError] = useState(null)
 
@@ -50,7 +50,7 @@ const AddKeyModal = ({ OnClose, properties, propManagers, keySetList }) => {
       .insert([
         {
           property_id: newKey.property_id,
-          company_id: TEST_COMPANY_ID,
+          company_id: company_id,
           key_status: "Added",
           key_set: newKey.key_set,
           property_manager_id: newKey.property_manager_id,
