@@ -66,7 +66,7 @@ export default function NavigationMenu({ children }) {
     }, []);
 
     return (
-        <Box sx={{ display: 'flex'}}>
+        <Box >
             <AppBar sx={{backgroundColor: 'white', color: 'black', zIndex: 1201}}>
                 <Toolbar>
                     {/* Add button to toggle drawer on mobile */}

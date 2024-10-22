@@ -11,23 +11,23 @@ export function PropertyApplicationsTable({ applications }) {
       backgroundColor: "white",
     },
     [`&.${tableCellClasses.body}`]: {
-      fontSize: 12,
+      fontSize: 8,
     },
   }));
 
   const navigate = useNavigate();
 
   return <>
-    {applications.length > 0 ? <TableContainer component={Paper} sx={{ mt: 2, borderRadius: 3 }}>
-      <Table stickyHeader sx={{ minWidth: 1000 }} aria-label="simple table">
+    {applications.length > 0 ? <TableContainer sx={{ mt: 2, borderRadius: 3 }}>
+      <Table sx={{minWidth: 650}} stickyHeader aria-label="simple table">
         <TableHead>
           <TableRow>
             {/* <StyledTableCell></StyledTableCell> */}
-            <StyledTableCell align="center"><Typography variant='h6'>Applied On</Typography></StyledTableCell>
-            <StyledTableCell align="left"><Typography variant='h6' >Name</Typography></StyledTableCell>
-            <StyledTableCell align="left"><Typography variant='h6' >Persons</Typography></StyledTableCell>
-            <StyledTableCell align="left"><Typography variant='h6'>Proposed Start Date</Typography></StyledTableCell>
-            <StyledTableCell align="left"><Typography variant='h6'>Status</Typography></StyledTableCell>
+            <StyledTableCell align="center"><Typography variant='body'>Applied On</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='body' >Name</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='body' >Persons</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='body'>Proposed Start Date</Typography></StyledTableCell>
+            <StyledTableCell align="left"><Typography variant='body'>Status</Typography></StyledTableCell>
             <StyledTableCell></StyledTableCell>
           </TableRow>
         </TableHead>

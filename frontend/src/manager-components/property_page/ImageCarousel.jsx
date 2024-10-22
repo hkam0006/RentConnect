@@ -47,7 +47,7 @@ export default function ImageCarousel({ images, style_props }) {
                 style={{
                     width: '100%', 
                     height: '100%', 
-                    objectFit: 'contain', // Adjust to cover if you want the image to fill the area
+                    objectFit: 'cover', // Adjust to cover if you want the image to fill the area
                     ...style_props
                 }}
             />
