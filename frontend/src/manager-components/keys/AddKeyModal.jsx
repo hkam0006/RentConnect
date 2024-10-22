@@ -19,6 +19,7 @@ const AddKeyModal = ({ OnClose, properties, propManagers, keySetList }) => {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 500,
+    maxWidth: "95%",
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,

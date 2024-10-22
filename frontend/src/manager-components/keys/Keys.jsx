@@ -225,7 +225,7 @@ const Keys = () => {
           keyObject={openCheckout}
         />
       )}
-      <Container sx={{ mt: "70px", padding: "10px" }}>
+      <Box sx={{ mt: "70px", padding: "20px" }}>
         <Stack
           direction="row"
           sx={{
@@ -398,7 +398,7 @@ const Keys = () => {
             </TableContainer>
           </Grid>
         </Grid>
-      </Container>
+      </Box>
     </NavigationMenu>
   );
 };
