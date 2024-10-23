@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, Container, Stack,TextField,Typography,Paper,IconButton, Grid, AppBar, Toolbar } from '@mui/material'
 import { styled } from '@mui/system';
 import SearchIcon from '@mui/icons-material/Search';
@@ -6,7 +6,8 @@ import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import HouseIcon from '@mui/icons-material/House';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const SearchPropertyBar = ({onSearch, value, onChange}) => {
   return(
@@ -42,6 +43,7 @@ const SearchPropertyBar = ({onSearch, value, onChange}) => {
 
 const LandingPage = () => {
   const [search, setSearch] = useState("")
+  const isAuth = Boolean(useSelector(state => state.user.currentUser))
   const navigate = useNavigate()
   const HeroSection = styled(Box)({
     display: 'flex',
@@ -53,6 +55,13 @@ const LandingPage = () => {
     color: '#fff',
     textAlign: 'center',
   });
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/dashboard")
+    }
+  }, [isAuth])
+
   return (
       <div>
         <Box sx={{position: "fixed", width: "100%", py: 2}}>

@@ -20,6 +20,7 @@ const UserSlice = createSlice({
       state.isAdmin = false;
       state.isRenter = false;
       state.isManager = false;
+      state.isLoading = false;
     },
     setRenter: (state) => {
       state.isRenter = true;

@@ -43,8 +43,13 @@ const useAuthListener = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const storedUser = useSelector(state => state.user.currentUser)
+
   useEffect(() => {
     const {data} = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (Boolean(storedUser) && event !== "SIGNED_OUT") {
+        return
+      }
       await dispatch(setLoading(true))
       if ((event === 'SIGNED_IN' ) && session) {
         const user = session.user;
@@ -73,7 +78,9 @@ const useAuthListener = () => {
         })
       } else if (event === 'SIGNED_OUT'){
         await dispatch(logout())
-        await navigate("/Landing")
+        navigate("/Landing")
+      }
+      else {
         await dispatch(setLoading(false))
       }
     });
@@ -81,7 +88,7 @@ const useAuthListener = () => {
     return () => {
       data.subscription.unsubscribe();
     };
-  }, []);
+  }, [storedUser]);
 };
 
 export default useAuthListener;
