@@ -2,7 +2,7 @@ import { supabase } from "../../supabase"
 import { useState, useEffect } from 'react'
 
 
-const useGetPropetyManagersByCompanyID = (company_id) =>{
+const useGetPropertyManagersByCompanyID = (company_id) =>{
     const [property_managers, setPropertyManagers] = useState([])
   
     useEffect(() => {
@@ -39,4 +39,4 @@ const useGetPropetyManagersByCompanyID = (company_id) =>{
       return property_managers
     }
 
-export default useGetPropetyManagersByCompanyID
+export default useGetPropertyManagersByCompanyID

@@ -4,7 +4,7 @@ import { PropertyStatCards } from './PropertyStatCards';
 import { PropertiesTable } from './PropertiesTable';
 import { PropertySearch } from './PropertySearch';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
-import useGetPropetyManagersByCompanyID from '../../queries/Property Manager/useGetPropetyManagersByCompanyID';
+import useGetPropertyManagersByCompanyID from '../../queries/Property Manager/useGetPropertyManagersByCompanyID';
 
 import AppLoader from './AppLoader';
 import { useSelector } from 'react-redux';
@@ -17,7 +17,7 @@ const getDOM = (listing_date) => {
 export default function Properties() {
   const company_id = useSelector((state) => state.user.currentUser.company_id)
   const { fetchProperties } = uesGetPropertiesWithApplicationByCompanyId(company_id);
-  const propManagers = useGetPropetyManagersByCompanyID(company_id);
+  const propManagers = useGetPropertyManagersByCompanyID(company_id);
   const [properties, setProperties] = useState([]);
   const [unfiltered, setUnfiltered] = useState([]);
   const [loading, setLoading] = useState(true);

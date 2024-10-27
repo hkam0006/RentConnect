@@ -16,7 +16,7 @@ import {
   Stack,
 } 
 from '@mui/material';
-import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
+import useGetPropertyManagersByCompanyID from "../../queries/Property Manager/useGetPropertyManagersByCompanyID";
 import useAddProperty from "../../mutators/Property/useAddProperty";
 import useEditProperty from '../../mutators/Property/useEditProperty';
 import { useSelector } from 'react-redux';
@@ -24,7 +24,7 @@ import { useSelector } from 'react-redux';
 function EditPropertyModal({ property_id, open, handleClose, data, setData, handleSubmit }) {
   const company_id = useSelector(state => state.user.currentUser.company_id);        
 
-  const propManagers = useGetPropetyManagersByCompanyID(company_id);
+  const propManagers = useGetPropertyManagersByCompanyID(company_id);
   const [errors, setErrors] = useState({});
   const [photos, setPhotos] = useState([]);
   const { addProperty } = useAddProperty();

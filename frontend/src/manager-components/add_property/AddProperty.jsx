@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import AppLoader from "../property_page/AppLoader";
-import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
+import useGetPropertyManagersByCompanyID from "../../queries/Property Manager/useGetPropertyManagersByCompanyID";
 import ListingImage from '../property_page/listing.jpg'
 import useAddProperty from "../../mutators/Property/useAddProperty";
 import { v4 as uuidv4 } from 'uuid';
@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
 const AddProp = () => {
   const company_id = useSelector(state => state.user.currentUser.company_id)
   const property_manager_id = useSelector(state => state.user.currentUser.property_manager_id)
-  const propManagers = useGetPropetyManagersByCompanyID(company_id);
+  const propManagers = useGetPropertyManagersByCompanyID(company_id);
   const [loading, setLoading] = useState(true);
   const [photos, setPhotos] = useState([]);
   const [errors, setErrors] = useState({});

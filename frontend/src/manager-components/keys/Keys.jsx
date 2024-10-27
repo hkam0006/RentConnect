@@ -30,7 +30,7 @@ import useSubscribeKeysByCompanyID from "../../subscribers/Keys/useSubscribeKeys
 import useDeleteMultipleKeys from "../../mutators/Keys/useDeleteMultipleKeys";
 import useUpdateKeyStatus from "../../mutators/Keys/useUpdateKeyStatus";
 import AppLoader from "../property_page/AppLoader";
-import useGetPropetyManagersByCompanyID from "../../queries/Property Manager/useGetPropetyManagersByCompanyID";
+import useGetPropertyManagersByCompanyID from "../../queries/Property Manager/useGetPropertyManagersByCompanyID";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -58,7 +58,7 @@ const Keys = () => {
   const company_id = useSelector((state) => state.user.currentUser.company_id)
   const { fetchKeys } = useGetKeyByCompanyID(company_id);
   const { fetchProperties } = useGetPropertiesByCompanyID();
-  const propManagers = useGetPropetyManagersByCompanyID(company_id);
+  const propManagers = useGetPropertyManagersByCompanyID(company_id);
   const deleteKeys = useDeleteMultipleKeys();
   const { checkInKey } = useUpdateKeyStatus();
   const [keys, setKeys] = useState([]);
