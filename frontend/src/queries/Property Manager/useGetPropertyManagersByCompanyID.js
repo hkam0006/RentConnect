@@ -23,7 +23,7 @@ const useGetPropertyManagersByCompanyID = (company_id) =>{
           .select("*")
           .eq("property_manager_id", pmIDs[i].property_manager_id)
           if (propertyManagerError) {
-            console.error("Error fetching property manager ids:", propertyManagerError.message)
+            console.error("Error fetching property managers:", propertyManagerError.message)
             return;
           }
           else{

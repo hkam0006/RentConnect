@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
-import {Grid, Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography, Avatar } from '@mui/material';
+import {Grid, Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import ImageCarousel from '../property_page/ImageCarousel';
 import { useSelector } from 'react-redux';
@@ -10,6 +10,9 @@ import useGetPropertiesByCompanyID from '../../queries/Property/useGetProperties
 import useUpdateCompanyJoinRequest from '../../mutators/Company Join Request/useUpdateCompanyJoinRequest';
 import useAddPropertyManagerCompany from '../../mutators/Property Manager Company/useAddPropertyManagerCompany';
 import useGetPendingCompanyJoinRequestByCompanyID from '../../queries/Company Join Request/useGetPendingCompanyJoinRequestByCompanyID';
+import useGetPropertyManagersWithPendingRequestForCompany from '../../queries/Company Join Request/useGetPropertyManagersWithPendingRequestForCompany';
+import useDeletePropertyManagerCompany from '../../mutators/Property Manager Company/useDeletePropertyManagerCompany';
+import useDeleteCompanyJoinRequest from '../../mutators/Company Join Request/useDeleteCompanyJoinRequest';
 
 export default function CompanyPage() {
     const navigate = useNavigate();
@@ -18,14 +21,22 @@ export default function CompanyPage() {
     const { companyId } = useParams()
     const fetchCompany = useGetCompanyByCompanyID();
     const [company, setCompany] = useState({});
-    const propertyManagers = useGetPropertyManagersByCompanyID(companyId);
+    const propertyManagersData = useGetPropertyManagersByCompanyID(companyId);
+    const [propertyManagers, setPropertyManagers] = useState([]);
     const {fetchProperties} = useGetPropertiesByCompanyID();
     const [properties, setProperties] = useState([]);
-    const [editing, setEditing] = useState(false);
+    const [editingCompanyStaff, setEditingCompanyStaff] = useState(false);
     const updateJoinRequest = useUpdateCompanyJoinRequest();
     const {addPropertyManagerCompany} = useAddPropertyManagerCompany();
-    const {joinRequests, loading:joinRequestsLoading} = useGetPendingCompanyJoinRequestByCompanyID();
+    const {joinRequests, loading:joinRequestsLoading} = useGetPropertyManagersWithPendingRequestForCompany(companyId);
     const [requests, setRequests] = useState([]);
+    const [requestDialogueOpen, setRequestDialogueOpen] = useState(false);
+    const [dialogueType, setRequestDialogueType] = useState("");
+    const [requestDialoguePM, setRequestDialoguePM] = useState({});
+    const [removePmDialogueOpen, setRemovePmDialogueOpen] = useState(false);
+    const [dialoguePmToRemove, setDialoguePmToRemove] = useState({});
+    const {deletePropertyManagerCompany} = useDeletePropertyManagerCompany();
+    const {deleteCompanyJoinRequest} = useDeleteCompanyJoinRequest();
 
     useEffect(() => {
       async function getCompanyData() {
@@ -40,28 +51,86 @@ export default function CompanyPage() {
         setRequests(joinRequests);
       }
 
+      setPropertyManagers(propertyManagersData);
       getCompanyData();
       getProperties();
-    }, [joinRequestsLoading]);
+    }, [joinRequestsLoading, propertyManagersData]);
 
-    const handleEditCompany = f => {
-      setEditing(true);
+    const handleEditCompanyStaff = f => {
+      setEditingCompanyStaff(true);
     };
 
-    const handleSave = f => {
+    const handleSaveCompanyStaff = f => {
 
-      setEditing(false);
+      setEditingCompanyStaff(false);
     };
 
-    function handleAcceptRequest(propertyManagerId) {
-      updateJoinRequest(propertyManagerId, companyId, 'accepted');
-      addPropertyManagerCompany(propertyManagerId, companyId);
-
+    const handleRequestDialogueClose = () => {
+      setRequestDialogueOpen(false);
     };
 
-    function handleDeleteRequest(propertyManagerId) {
-      updateJoinRequest(propertyManagerId, companyId, 'rejected');
+    const handleRemovePmDialogueClose = () => {
+      setRemovePmDialogueOpen(false);
     };
+
+    const handleConfirmRequestDialogue = () => {
+      switch(dialogueType){
+        case 'accept':
+          updateJoinRequest(requestDialoguePM.property_manager_id, companyId, 'accepted');
+          addPropertyManagerCompany(requestDialoguePM.property_manager_id, companyId);
+          removeRequest(requestDialoguePM.property_manager_id);
+          break;
+        case 'delete':
+          updateJoinRequest(requestDialoguePM.property_manager_id, companyId, 'rejected');
+          removeRequest(requestDialoguePM.property_manager_id);
+          break;
+      }
+      setRequestDialogueOpen(false);
+    };
+
+    function removeRequest(pmIdToRemove){
+      var newPmRequestList = [];
+      requests.forEach(request => {
+        if (request.property_manager_id !== pmIdToRemove){
+          newPmRequestList.push(request);
+        }
+      });
+      setRequests(newPmRequestList);
+    }
+
+    function handleOpenAcceptRequest(requestingPropertyManager) {
+      setRequestDialogueType('accept');
+      setRequestDialoguePM(requestingPropertyManager);
+      setRequestDialogueOpen(true);
+    };
+
+    function handleOpenDeleteRequest(requestingPropertyManager) {
+      setRequestDialogueType('delete');
+      setRequestDialoguePM(requestingPropertyManager);
+      setRequestDialogueOpen(true);
+    };
+
+    function handleOpenRemovePropertyManagerDialogue(propertyManagerToRemove){
+      setDialoguePmToRemove(propertyManagerToRemove)
+      setRemovePmDialogueOpen(true);
+    };
+
+    const handleConfirmRemovePmDialogue = () => {
+      deletePropertyManagerCompany(dialoguePmToRemove.property_manager_id, companyId);
+      deleteCompanyJoinRequest(dialoguePmToRemove.property_manager_id, companyId);
+      removePm(dialoguePmToRemove.property_manager_id)
+      setRemovePmDialogueOpen(false);
+    };
+
+    function removePm(pmIdToRemove){
+      var newPmList = [];
+      propertyManagers.forEach(request => {
+        if (request.property_manager_id !== pmIdToRemove){
+          newPmList.push(request);
+        }
+      });
+      setPropertyManagers(newPmList);
+    }
 
     const gridContainerStyle = {
       display: "grid",
@@ -83,25 +152,26 @@ export default function CompanyPage() {
                 </Grid>
                 {/* Right Side */}
                 <Grid item xs={12} md={6}>
-                  {editing?
-                  <Button variant="contained" disableElevation onClick={handleSave}>
-                    Save
-                  </Button>
-                  :
+                  {editingCompanyStaff?
                   <Fragment>
-                    {company.super_admin_id == pmId? 
-                    <Button variant="contained" disableElevation onClick={handleEditCompany}>
-                      Edit Company
+                    {company.super_admin_id === pmId? 
+                    <Button variant="contained" disableElevation onClick={handleEditCompanyStaff}>
+                      Manage Staff
                     </Button>
                     : ''}
-                  </Fragment>}
+                  </Fragment>
+                  :
+                  <Button variant="contained" disableElevation onClick={handleSaveCompanyStaff}>
+                    Back
+                  </Button>
+                  }
                 </Grid>
               </Grid>
             </CardContent>
           </Card>
         </Container>
-        {editing?
-        <Container sx={{ mt: '1%', ml: '1%',  }} >
+        {!editingCompanyStaff?
+        <Container sx={{ mt: '1%', ml: '1%'  }} >
           <Grid container spacing={2} sx={{alignItems: "stretch"}}>
             {/* Properties */}
             <Grid item xs={12} md={6}>
@@ -187,23 +257,15 @@ export default function CompanyPage() {
           </Grid>
         </Container>
         :
-        <Container>
-          <Container sx={{ mt: '1%', ml: '1%',  }} >
-            <Grid container spacing={2} sx={{alignItems: "stretch"}}>
-              <CardContent>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center'}}>
-                    Properties
-                  </Typography>
-                  <Paper sx={{ overflow: 'hidden', boxShadow: 0 }}>
-
-                  </Paper>
-                </CardContent>
-              {/* Property Managers Editing */}
+        <React.Fragment>
+          <Container sx={{ mt: '1%', ml: '1%' }} >
+            <Grid container spacing={2} sx={{alignItems: "stretch", display: 'flex', flexDirection:'row'}}>
+              {/* Property Managers Edit*/}
               <Grid item xs={12} md={6}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center'}}>
-                      Property Managers 
+                    Property Managers
                     </Typography>
                     <Paper sx={{ overflow: 'hidden', boxShadow: 0 }}>
                       <TableContainer sx={{ height: '55vh', borderTop: 1, borderColor: 'grey.300'}}>
@@ -212,15 +274,55 @@ export default function CompanyPage() {
                             {propertyManagers.map((propertyManager) => (
                               <TableRow key={propertyManager.property_manager_id}>
                                 <TableCell>
+                                  <Avatar
+                                    src={propertyManager.property_manager_dp || "https://bpnlxdcsmicxotakbydb.supabase.co/storage/v1/object/public/PMDP/default.jpg"}
+                                    alt="Property Manager"
+                                    sx={{ width: 32, height: 32, marginRight: 1 }}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  {propertyManager.property_manager_first_name + ' ' + propertyManager.property_manager_last_name}
+                                </TableCell>
+                                <TableCell>
                                   {propertyManager.property_manager_email}
                                 </TableCell>
                                 <TableCell>
-                                  <Button variant='contained' color='primary' style={{ backgroundColor: 'green', color: 'white'}} onClick={() => handleAcceptRequest(propertyManager.property_manager_id)}>
+                                  <Button variant='contained' color='primary' style={{ backgroundColor: 'red', color: 'white'}} onClick={() => handleOpenRemovePropertyManagerDialogue(propertyManager)}>
+                                    Remove
+                                  </Button>                              
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </Paper>
+                  </CardContent>
+                </Card>
+              </Grid>
+              {/* Property Managers Requests */}
+              <Grid item xs={12} md={6}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', textAlign: 'center'}}>
+                      Property Manager Requests
+                    </Typography>
+                    <Paper sx={{ overflow: 'hidden', boxShadow: 0 }}>
+                      <TableContainer sx={{ height: '55vh', borderTop: 1, borderColor: 'grey.300'}}>
+                        <Table>
+                          <TableBody>
+                            {requests.map((propertyManager) => (
+                              <TableRow key={propertyManager.property_manager_id}>
+                                <TableCell>
+                                  {propertyManager.property_manager_email}
+                                </TableCell>
+                                <TableCell>
+                                  <Button variant='contained' color='primary' style={{ backgroundColor: 'green', color: 'white'}} onClick={() => handleOpenAcceptRequest(propertyManager)}>
                                     Accept
                                   </Button>
                                 </TableCell>
                                 <TableCell>
-                                  <Button variant='contained' color='primary' style={{ backgroundColor: 'red', color: 'white'}} onClick={() => handleDeleteRequest(propertyManager.property_manager_id)}>
+                                  <Button variant='contained' color='primary' style={{ backgroundColor: 'red', color: 'white'}} onClick={() => handleOpenDeleteRequest(propertyManager)}>
                                     Delete
                                   </Button>
                                 </TableCell>
@@ -235,7 +337,49 @@ export default function CompanyPage() {
               </Grid>
             </Grid>
           </Container>
-        </Container>
+          <Dialog
+          open={requestDialogueOpen}
+          onClose={handleRequestDialogueClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {dialogueType === 'accept'? 'Accpet':'Delete'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {dialogueType === 'accept'? 'Are you sure you want to add ' + requestDialoguePM.property_manager_email + ' to your company?':'Are you sure you want to delete ' + requestDialoguePM.property_manager_email + "'s request?"}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRequestDialogueClose}>Cancel</Button>
+            <Button onClick={handleConfirmRequestDialogue} autoFocus>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={removePmDialogueOpen}
+          onClose={handleRemovePmDialogueClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Remove Property Manager"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              {"Are you sure you want to remove " + dialoguePmToRemove.property_manager_email + " from " + company.company_name + "?"}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemovePmDialogueClose}>Cancel</Button>
+            <Button onClick={handleConfirmRemovePmDialogue} autoFocus>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </React.Fragment>
         }
       </NavigationMenu>
     );
