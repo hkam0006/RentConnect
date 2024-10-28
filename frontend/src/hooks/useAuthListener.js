@@ -29,17 +29,6 @@ const isRenter =  async (userId) => {
 }
 
 const useAuthListener = () => {
-  // Example currentUser object
-  // 
-  // propertyManager: {
-  //    property_manager_id: string,
-  //    company_id: string
-  // } 
-  //
-  // tenant: {
-  //    renter_id: string,
-  // }
-  //
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -62,10 +51,10 @@ const useAuthListener = () => {
                   ...item,
                   company_id: companyIDData[0].company_id       
                 }));
-                await dispatch(setManager())
-                await dispatch(setUser(data[0]))
-                await dispatch(setLoading(false))
               }
+              await dispatch(setManager())
+              await dispatch(setUser(data[0]))
+              await dispatch(setLoading(false))
             });
           }
         })
