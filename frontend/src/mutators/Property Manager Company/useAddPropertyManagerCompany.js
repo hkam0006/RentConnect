@@ -3,7 +3,7 @@ import { supabase } from "../../supabase";
 const useAddPropertyManagerCompany = () => {
   const addPropertyManagerCompany = async (property_manager_id, company_id) => {
     const {data ,error} = await supabase
-      .from('PROPERTY MANAGER')
+      .from('PROPERTY MANAGER COMPANY')
       .insert([
         {
             property_manager_id:property_manager_id,
