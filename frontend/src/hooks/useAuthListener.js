@@ -12,6 +12,14 @@ const isPropertyManager = async (userId) => {
   return data
 }
 
+const isAccountSetup = async (userId) => {
+  const {data, error} = await supabase
+    .from("ACCOUNT SETUP")
+    .select("*")
+    .eq('account_id', userId)
+    return data
+}
+
 const getCompanyID = async (userId) => {
   const {data: companyIDData, error} = await supabase
     .from("PROPERTY MANAGER COMPANY")
@@ -42,7 +50,24 @@ const useAuthListener = () => {
       await dispatch(setLoading(true))
       if ((event === 'SIGNED_IN' ) && session) {
         const user = session.user;
-        // Example role-checking logic
+        isAccountSetup(user.id).then(async (data) => {
+          if (data.length > 0){
+            switch (data[0].account_type){
+              case "Property Manager":
+                navigate("/AccountSetUpPM");
+                break;
+              case "Renter":
+                navigate("/AccountSetUpR");
+                break;
+              default:
+                console.log("Invalid account type found")
+                return;
+            }
+            await dispatch(setLoading(false))
+            return
+          } 
+        })
+
         isPropertyManager(user.id).then(async (data) => {
           if (data.length > 0) {
             getCompanyID(user.id).then(async (companyIDData) => {
@@ -56,7 +81,7 @@ const useAuthListener = () => {
               await dispatch(setUser(data[0]))
               await dispatch(setLoading(false))
             });
-          }
+          } 
         })
         isRenter(user.id).then(async (data) => {
           if (data.length > 0) {
