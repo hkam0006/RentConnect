@@ -1,6 +1,6 @@
 import { supabase } from "../../supabase";
 
-const useGetKeyByCompanyNames = () =>{
+const useGetCompanyNames = () =>{
   const fetchCompanies = async () => {
     const { data, error } = await supabase
       .from("COMPANY")
@@ -11,4 +11,4 @@ const useGetKeyByCompanyNames = () =>{
   return {fetchCompanies}
 };
 
-export default useGetKeyByCompanyNames;
+export default useGetCompanyNames;

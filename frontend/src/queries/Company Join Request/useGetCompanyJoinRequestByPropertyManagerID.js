@@ -2,7 +2,7 @@ import { supabase } from "../../supabase";
 import {useEffect, useState} from "react";
 
 const useGetCompanyJoinRequestByPropertyManagerID = (pm_id) =>{
-    const [joinRequest, setJoinRequest] = useState({});
+    const [joinRequests, setJoinRequests] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -16,19 +16,19 @@ const useGetCompanyJoinRequestByPropertyManagerID = (pm_id) =>{
 
                 if (error) {
                     setLoading(false);
-                    setJoinRequest({});
+                    setJoinRequests([]);
                 } else {
                     setLoading(false);
-                    setJoinRequest(data[0] || {});
+                    setJoinRequests(data || []);
                 }
             } else {
                 setLoading(false);
-                setJoinRequest({});
+                setJoinRequests([]);
             }
         }
         fetchJoinRequest();
     }, [pm_id]);
-    return {joinRequest, loading};
+    return {joinRequests, loading};
 };
 
 export default useGetCompanyJoinRequestByPropertyManagerID;

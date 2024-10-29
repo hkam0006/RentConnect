@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
-import {Grid, Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import {Grid, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import ImageCarousel from '../property_page/ImageCarousel';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,6 @@ import useGetPropertyManagersByCompanyID from '../../queries/Property Manager/us
 import useGetPropertiesByCompanyID from '../../queries/Property/useGetPropertiesByCompanyID';
 import useUpdateCompanyJoinRequest from '../../mutators/Company Join Request/useUpdateCompanyJoinRequest';
 import useAddPropertyManagerCompany from '../../mutators/Property Manager Company/useAddPropertyManagerCompany';
-import useGetPendingCompanyJoinRequestByCompanyID from '../../queries/Company Join Request/useGetPendingCompanyJoinRequestByCompanyID';
 import useGetPropertyManagersWithPendingRequestForCompany from '../../queries/Company Join Request/useGetPropertyManagersWithPendingRequestForCompany';
 import useDeletePropertyManagerCompany from '../../mutators/Property Manager Company/useDeletePropertyManagerCompany';
 import useDeleteCompanyJoinRequest from '../../mutators/Company Join Request/useDeleteCompanyJoinRequest';
@@ -152,7 +151,7 @@ export default function CompanyPage() {
                 </Grid>
                 {/* Right Side */}
                 <Grid item xs={12} md={6}>
-                  {editingCompanyStaff?
+                  {!editingCompanyStaff?
                   <Fragment>
                     {company.super_admin_id === pmId? 
                     <Button variant="contained" disableElevation onClick={handleEditCompanyStaff}>

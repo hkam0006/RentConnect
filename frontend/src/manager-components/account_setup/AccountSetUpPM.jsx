@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import { Autocomplete, Button, FormControlLabel, Switch, Typography} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState} from 'react';
-import useGetKeyByCompanyNames from '../../queries/Company/useGetCompanyNames';
+import useGetCompanyNames from '../../queries/Company/useGetCompanyNames';
 import useDeleteAccountSetUp from '../../mutators/Account SetUp/useDeleteAccountSetUp';
 import useAddCompany from '../../mutators/Company/useAddCompany';
 import useGetCompanyByName from '../../queries/Company/useGetCompanyByName';
@@ -60,7 +60,7 @@ function AccountSetUpPM(){
         setCompanyIndexErrorFlag(false);
     }
 
-    const { fetchCompanies } = useGetKeyByCompanyNames();
+    const { fetchCompanies } = useGetCompanyNames();
     const [companies, setCompanies] = useState([]);
     React.useEffect(() => {
         (async () => {

@@ -39,7 +39,7 @@ import PMprofileForR from './renter-components/profile_page/PMprofile';
 import RenterMessages from './renter-components/renter_message/RenterMessages';
 import RenterContacts from './renter-components/renter_contacts/RenterContacts';
 import NotFoundPage from './public-components/NotFoundPage';
-import WaitingForCompany from './manager-components/waiting_for_company/Waiting';
+import WaitingForCompany from './manager-components/waiting_for_company/WaitingForCompany';
 import ManagerWithoutCompanyRoute from './utils/ManagerWithoutCompanyRoute';
 import AppLoader from './manager-components/property_page/AppLoader';
 import CompanyPage from './manager-components/company/CompanyPage';
