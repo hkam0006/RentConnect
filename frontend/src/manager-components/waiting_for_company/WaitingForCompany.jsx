@@ -1,5 +1,5 @@
 import { Autocomplete, Box, Button, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import useGetCompanyByCompanyID from "../../queries/Company/useGetCompanyByCompanyID";
 import useGetCompanyJoinRequestByPropertyManagerID from "../../queries/Company Join Request/useGetCompanyJoinRequestByPropertyManagerID";
@@ -25,7 +25,7 @@ export default function WaitingForCompany() {
         async function getRequestData() {
             var status = '';
             var companyId = '';
-            var companyName = '';
+            var requestedCompanyName = '';
             joinRequests.forEach(request => {
                 if (request.request_status === 'pending'){
                     companyId = request.company_id;
@@ -45,16 +45,16 @@ export default function WaitingForCompany() {
             else{
                 try{
                     const companyTemp = await fetchCompany(companyId);
-                    companyName = companyTemp.data[0].company_name;
+                    requestedCompanyName = companyTemp.data[0].company_name;
                 }
                 catch{}
             }
             switch(status){
                 case 'rejected':
-                    setWaitingText("Your request to join " + companyName + " was rejected.  You can request to join a different company.");
+                    setWaitingText("Your request to join " + requestedCompanyName + " was rejected.  You can request to join a different company.");
                     break;
                 case 'pending':
-                    setWaitingText("Waiting for " + companyName + " to accept your request.");
+                    setWaitingText("Waiting for " + requestedCompanyName + " to accept your request.");
                     break;
                 case 'removed':
                     setWaitingText("You have been removed from your company.  You can request to join a different company.");
@@ -94,29 +94,35 @@ export default function WaitingForCompany() {
         navigate('/dashboard');
     };
 
-    const [companyIndex, setCompanyIndex] = useState(-1);
+    const [companyName, setCompanyName] = useState("");
     const [companyNameErrorFlag, setCompanyNameErrorFlag] = useState(false);
     const [companyNameErrorText, setCompanyNameErrorText] = useState("");
-    const handleCompanyNameChange = f => {
-        setCompanyIndex(f.target.value);
+    const handleCompanyNameChange = (event, newValue) => {
+        setCompanyName(newValue);
         setCompanyNameErrorFlag(false);
         setCompanyNameErrorText("");
     };
 
     const handleSendRequest = async () => {
-        if (companyIndex > - 1){
+        if (companyName > - 1){
             setCompanyNameErrorFlag(true);
             setCompanyNameErrorText("You must select a company");
             return;
         }
-        const {error} = await addCompanyJoinRequest(pmId, companies[companyIndex].company_id);
+        var companyId = "";
+        companies.forEach(company => {
+            if (company.company_name == companyName){
+                companyId = company.company_id;
+            } 
+        });
+        const {error} = await addCompanyJoinRequest(pmId, companyId);
         if(error){
             setCompanyNameErrorFlag(true);
             setCompanyNameErrorText("You have been rejected by this company");
             return;
         }
         setNoRequest(false);
-        setWaitingText("Waiting for " + companies[companyIndex].company_name + " to accept your request.");
+        setWaitingText("Waiting for " + companyName + " to accept your request.");
     };
 
     return (
@@ -131,23 +137,25 @@ export default function WaitingForCompany() {
             }
             <br/>
             {noRequest?
-            <Autocomplete 
-            disablePortal 
-            id="company" 
-            onChange={handleCompanyNameChange}
-            options={companyNameList} 
-            sx={{width: '96%', ml: '2%', mt: '1%', mb: '3%'}} 
-            renderInput={(params) => 
-                <TextField 
-                    {...params} 
-                    label="Company Name" 
-                    variant='standard' 
-                    error={companyNameErrorFlag}
-                    helperText={companyNameErrorText}
-                    InputLabelProps={{sx: {fontSize: '130%'}}} 
-                    value={companyIndex} />}/>
+            <React.Fragment>
+                <Autocomplete 
+                disablePortal 
+                id="company" 
+                onChange={handleCompanyNameChange}
+                options={companyNameList} 
+                sx={{width: '96%', ml: '2%', mt: '1%', mb: '3%'}} 
+                renderInput={(params) => 
+                    <TextField 
+                        {...params} 
+                        label="Company Name" 
+                        variant='standard' 
+                        error={companyNameErrorFlag}
+                        helperText={companyNameErrorText}
+                        InputLabelProps={{sx: {fontSize: '130%'}}} 
+                        value={companyName} />}/>
+                <br/>
+            </React.Fragment>
             :''}
-            <br/>
             <Box sx={{display:'inline-flex', justifyContent: 'center'}}>
                 <Button variant="contained" onClick={handleLogOut} sx={{mr:'3%'}}>Log Out</Button>
                 {noRequest?
