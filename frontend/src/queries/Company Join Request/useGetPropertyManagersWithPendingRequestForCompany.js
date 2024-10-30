@@ -10,7 +10,7 @@ const useGetPropertyManagersWithPendingRequestForCompany = (companyId) =>{
             if (companyId) {
                 setLoading(true);
                 const { data: pmIDs, error: pmIDsError } = await supabase
-                    .from("COMPANY JOIN REQUEST")
+                    .from("COMPANY-JOIN-REQUEST")
                     .select("*")
                     .eq("company_id", companyId)
                     .eq("request_status", "pending");

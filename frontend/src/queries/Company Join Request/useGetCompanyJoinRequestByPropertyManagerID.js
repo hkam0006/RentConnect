@@ -10,7 +10,7 @@ const useGetCompanyJoinRequestByPropertyManagerID = (pm_id) =>{
             if (pm_id) {
                 setLoading(true);
                 const { data, error } = await supabase
-                    .from("COMPANY JOIN REQUEST")
+                    .from("COMPANY-JOIN-REQUEST")
                     .select("*")
                     .eq("property_manager_id", pm_id);
 
