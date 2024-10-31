@@ -181,15 +181,17 @@ function AccountSetUpPM(){
                 company_id = company_id.data[0].company_id
                 await addPropertyManager(user.id, fname, lname, phoneNum, user.email);
                 await addPropertyManagerCompany(user.id, company_id);
+                navigate('/dashboard');
             }
             else{
                 company_id = await fetchCompany(companies[companyIndex]);
                 company_id = company_id.data[0].company_id
                 await addPropertyManager(user.id, fname, lname, phoneNum, user.email);
                 await addCompanyJoinRequest(user.id, company_id);
+                navigate('/waiting_for_company');
             }
             
-            navigate('/waiting_for_company');
+            
         }
     }
 

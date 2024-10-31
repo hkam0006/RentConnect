@@ -9,6 +9,8 @@ import { useState} from 'react';
 import useAddAccountSetUp from '../mutators/Account SetUp/useAddAccountSetUp';
 
 function SignUp(){
+    const DOMAIN = 'http://localhost:3000'; // Change in production
+
     const [email, setEmail] = useState('');
     const handleEmailChange = f => {
         setEmail(f.target.value);
@@ -83,9 +85,20 @@ function SignUp(){
             return;
         }
         else{
+            if (accountType === 'Property Manager'){
+              var redirect = {
+                emailRedirectTo: DOMAIN + '/AccountSetUpPM',
+              };
+            }
+            else{
+              var redirect = {
+                emailRedirectTo: DOMAIN + '/AccountSetUpR',
+              };
+            }
             const {data,error} =  await supabase.auth.signUp({
                 email: email,
-                password: password
+                password: password,
+                options: redirect
             });
             if (error){
                 setErrorText('Account already exists')
