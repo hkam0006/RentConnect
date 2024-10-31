@@ -7,16 +7,19 @@ import { useState} from 'react';
 import useDeleteAccountSetUp from '../../mutators/Account SetUp/useDeleteAccountSetUp';
 import { supabase } from '../../supabase';
 import useAddRenter from '../../mutators/Renter/useAddRenter';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../utils/UserSlice';
 
 function AccountSetUpR(){
     const navigate = useNavigate();
+    const dispatch = useDispatch()
 
-    const [user, setUser] = useState({});
+    const [currentUser, setCurrentUser] = useState({});
     React.useEffect(() => {
         async function getUserData() {
             await supabase.auth.getUser().then((value) =>{
                 if (value.data?.user) {
-                    setUser(value.data.user);
+                    setCurrentUser(value.data.user);
                 }
             })
         }
@@ -64,8 +67,15 @@ function AccountSetUpR(){
             anyError = true;
         }
         if (!anyError){
-            await deleteAccountSetUp(user.id);
-            await addRenter(user.id, user.email, fname, lname, phoneNum);
+            await deleteAccountSetUp(currentUser.id);
+            await addRenter(currentUser.id, currentUser.email, fname, lname, phoneNum);
+            dispatch(setUser({
+              renter_id: currentUser.id,
+              renter_first_name: fname,
+              renter_last_name: lname,
+              renter_phone_number: phoneNum,
+              renter_email: currentUser.email
+            }))
             navigate('/RenterHome');
         }
     }

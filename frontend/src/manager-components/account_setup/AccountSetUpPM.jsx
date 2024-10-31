@@ -12,18 +12,21 @@ import useAddPropertyManager from '../../mutators/Property Manager/useAddPropert
 import { supabase } from '../../supabase';
 import useAddPropertyManagerCompany from '../../mutators/Property Manager Company/useAddPropertyManagerCompany';
 import useAddCompanyJoinRequest from '../../mutators/Company Join Request/useAddCompanyJoinRequest';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../utils/UserSlice';
 
 
 
 function AccountSetUpPM(){
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const [user, setUser] = useState({});
+    const [currentUser, setCurrentUser] = useState({});
     React.useEffect(() => {
         async function getUserData() {
             await supabase.auth.getUser().then((value) =>{
                 if (value.data?.user) {
-                    setUser(value.data.user);
+                    setCurrentUser(value.data.user);
                 }
             })
         }
@@ -173,25 +176,30 @@ function AccountSetUpPM(){
             anyError = true;
         }
         if (!anyError){
-            await deleteAccountSetUp(user.id);
+            await deleteAccountSetUp(currentUser.id);
             var company_id = ''
             if (newCompanyFlag){
-                await addCompany(user.id, newCompanyName, abn, companyPhoneNum, companyStreetAddress, companySuburb, statesList[companyState]);
+                await addCompany(currentUser.id, newCompanyName, abn, companyPhoneNum, companyStreetAddress, companySuburb, statesList[companyState]);
                 company_id = await fetchCompany(newCompanyName);
                 company_id = company_id.data[0].company_id
-                await addPropertyManager(user.id, fname, lname, phoneNum, user.email);
-                await addPropertyManagerCompany(user.id, company_id);
+                await addPropertyManager(currentUser.id, fname, lname, phoneNum, currentUser.email);
+                await addPropertyManagerCompany(currentUser.id, company_id);
                 navigate('/dashboard');
             }
             else{
                 company_id = await fetchCompany(companies[companyIndex]);
                 company_id = company_id.data[0].company_id
-                await addPropertyManager(user.id, fname, lname, phoneNum, user.email);
-                await addCompanyJoinRequest(user.id, company_id);
+                await addPropertyManager(currentUser.id, fname, lname, phoneNum, currentUser.email);
+                await addCompanyJoinRequest(currentUser.id, company_id);
+                dispatch(setUser({
+                  property_manager_id: currentUser.id,
+                  property_manager_first_name: fname,
+                  property_manager_last_name: lname,
+                  property_manager_phone_number: phoneNum,
+                  property_manager_email: currentUser.email
+                }))
                 navigate('/waiting_for_company');
             }
-            
-            
         }
     }
 
