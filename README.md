@@ -98,7 +98,7 @@ The components in this sections contains elements of the application that is int
  
 ## Supabase
 
-The structure of the database can be seen on [this UML diagram](https://drive.google.com/file/d/1xH0zvbj_lshFGGj8PkJURQXjnCDbmDXG/view?usp=sharing).
+The structure of the database can be seen on [this UML diagram](https://drive.google.com/file/d/1RXk9hz7qA9hsrDIE-4_X1O2dOBQmo_hP/view?usp=sharing).
 
 The database utilises *row-level security* (RLS) to ensure that data is not incorrectly accessed by unauthorised users. It also provided our methods of authenticating the user via a log-in, sign-in and a 2FA.
 
