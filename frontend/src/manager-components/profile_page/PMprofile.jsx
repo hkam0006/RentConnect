@@ -4,7 +4,7 @@ import { supabase } from '../../supabase';
 import {Grid, Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
 import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPropertiesByPropertyManagerID';
 import ImageCarousel from '../property_page/ImageCarousel';
 import useUpdatePropertyManager from '../../mutators/Property Manager/useUpdatePropertyManager';
@@ -176,7 +176,11 @@ export default function PMprofileForPM() {
               </Grid>
               <Grid container spacing={2} alignItems="center" sx={{ mt: 2 }}>
                 <Grid item xs={12} sm={6}>
-                  <Typography variant="h5">{pmCompany.company_name}</Typography>
+                  <Typography variant="h5">
+                    <Link href="#" to={`/companyDetails/${pmCompany.company_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                      {pmCompany.company_name}
+                    </Link>
+                  </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6} sx={{ textAlign: { xs: 'left', sm: 'right' } }}>
                   {userID === pmID ? (

@@ -42,7 +42,8 @@ import NotFoundPage from './public-components/NotFoundPage';
 import WaitingForCompany from './manager-components/waiting_for_company/WaitingForCompany';
 import ManagerWithoutCompanyRoute from './utils/ManagerWithoutCompanyRoute';
 import AppLoader from './manager-components/property_page/AppLoader';
-import CompanyPage from './manager-components/company/CompanyPage';
+import CompanyPagePM from './manager-components/company/CompanyPage';
+import CompanyPageR from './renter-components/company/CompanyPage';
 
 function App() {
     useAuthListener()
@@ -94,7 +95,8 @@ function App() {
             <Route path='/renter_messages/:directMessageUserID' element={<RenterRoute Component={RenterMessages}/>}/>
             <Route path='/renter_contacts' element={<RenterRoute Component={RenterContacts}/>} />
             <Route path='/waiting_for_company' element={<ManagerWithoutCompanyRoute Component={WaitingForCompany}/>} />
-            <Route path='/company/:companyId' element={<ManagerRoute Component={CompanyPage}/>} />
+            <Route path='/companyDetails/:companyId' element={<ManagerRoute Component={CompanyPagePM}/>} />
+            <Route path='/company/:companyId' element={<RenterRoute Component={CompanyPageR}/>} />
             <Route path='*' element={<NotFoundPage />}/>
           </Routes>
     </ThemeProvider>

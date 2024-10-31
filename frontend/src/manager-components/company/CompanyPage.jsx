@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import {Grid, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography, Avatar, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import ImageCarousel from '../property_page/ImageCarousel';
 import { useSelector } from 'react-redux';
 import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
@@ -236,7 +236,9 @@ export default function CompanyPage() {
                                 />
                               </TableCell>
                               <TableCell>
-                                {propertyManager.property_manager_first_name + ' ' + propertyManager.property_manager_last_name}
+                                <Link href="#" to={`/PMprofile/${propertyManager.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                                  {propertyManager?.property_manager_first_name} {propertyManager?.property_manager_last_name}
+                                </Link>
                               </TableCell>
                               <TableCell>
                                 {propertyManager.property_manager_email}
@@ -280,7 +282,9 @@ export default function CompanyPage() {
                                   />
                                 </TableCell>
                                 <TableCell>
-                                  {propertyManager.property_manager_first_name + ' ' + propertyManager.property_manager_last_name}
+                                  <Link href="#" to={`/PMprofile/${propertyManager.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                                    {propertyManager?.property_manager_first_name} {propertyManager?.property_manager_last_name}
+                                  </Link>                                
                                 </TableCell>
                                 <TableCell>
                                   {propertyManager.property_manager_email}

@@ -32,7 +32,7 @@ export default function SideDrawer() {
   // Define the menu items in an array for easier maintenance
   const menuItems = [
     { text: "Dashboard", icon: <HomeIcon />, link: "/dashboard" },
-    { text: "Company", icon: <BusinessIcon />, link: `/company/${companyId}` }, // Use dynamic companyId
+    { text: "Company", icon: <BusinessIcon />, link: `/companyDetails/${companyId}` }, // Use dynamic companyId
     { text: "Messages", icon: <ChatIcon />, link: "/messages" },
     { text: "Inspection", icon: <InspectionIcon />, link: "/inspection" },
     { text: "Inspection Runs", icon: <InspectionRunsIcon />, link: "/InspectionRun" },

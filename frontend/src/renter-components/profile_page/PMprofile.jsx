@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Button, Card, CardContent, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
 import useGetPropertyManagerByPropertyManagerID from '../../queries/Property Manager/useGetPropertyManagerByPropertyManagerID';
 import useGetCompanyByCompanyID from '../../queries/Company/useGetCompanyByCompanyID';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPropertiesByPropertyManagerID';
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
@@ -56,7 +56,9 @@ export default function PMprofileForR() {
                         </Box>
                         <Box sx={{display:'flex', justifyContent: 'space-between'}}>
                             <Typography variant='h5'>
-                                {pmCompany.company_name}
+                                <Link href="#" to={`/company/${pmCompany.company_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                                    {pmCompany.company_name}
+                                </Link>
                             </Typography>
                             <Button variant="contained" disableElevation onClick={() => navigate(`/messages/${propertyManager.property_manager_id}`)}>Message</Button>
                         </Box>

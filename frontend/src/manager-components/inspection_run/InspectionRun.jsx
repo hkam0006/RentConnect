@@ -14,6 +14,7 @@ import { supabase } from "../../supabase";
 import { styled } from "@mui/material/styles";
 import NavigationMenu from "../navigation_menu/NavigationMenus";
 import MapComponent from "./MapNav";
+import { Link } from "react-router-dom";
 
 /* Shows the inspection runs that a property manager might have. 
 
@@ -246,8 +247,9 @@ const InspectionRun = () => {
                         {!inspection.propertyManagerData.property_manager_dp && <PersonIcon />}
                       </Avatar>
                       <Typography variant="body" fontWeight={700}>
-                        {inspection.propertyManagerData.property_manager_first_name}{" "}
-                        {inspection.propertyManagerData.property_manager_last_name}
+                        <Link href="#" to={`/PMprofile/${inspection.propertyManagerData.property_manager_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                          {inspection.propertyManagerData?.property_manager_first_name} {inspection.propertyManagerData?.property_manager_last_name}
+                        </Link>
                       </Typography>
                     </Box>
                   </TableCell>

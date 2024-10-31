@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { List, ListItem, Typography, Paper, Box, Alert } from '@mui/material'
 
 import useGetRenterByRenterID from '../../queries/Renter/useGetRenterByRenterID'
@@ -38,7 +38,11 @@ function Outline() {
             <Paper sx={{ padding: 2, margin: 2, position: 'fixed', width: '20%', height: '83%' }}>
                 {renter && (
                     <Box>
-                        <Typography variant='h6'>{renter.renter_first_name} {renter.renter_last_name}</Typography>
+                        <Typography variant='h6'>
+                            <Link href="#" to={`/Rprofile/${renter.renter_id}`} color="inherit" underline="none" style={{ textDecoration: 'none' }}>
+                                {renter?.renter_first_name} {renter?.renter_last_name}
+                            </Link>
+                        </Typography>
                         <List>
                             <ListItem variant='h6'>Primary Applicant</ListItem>
                             <ListItem variant='h6'>Phone: {renter.renter_phone_number}</ListItem>
