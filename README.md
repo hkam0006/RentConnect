@@ -12,7 +12,7 @@ RentConnect is a rental web application designed to be used by property managers
 
 ### Deployment
 
-First, you must have a version of Node.JS (version 18 or higher) running on your machine.  
+First, you must have a version of [Node.js](https://nodejs.org/en/download/) (version 18 or higher) running on your machine.  
 You can then run two npm commands inside `/frontend/`:  
 > `npm install`  
 > `npm start`
@@ -95,6 +95,12 @@ The components in this sections contains elements of the application that is int
   - Allows users to view property listings without having to have signed up or logged in  
 - Property Map  
   - Displays a map on the properties part of the public properties
+ 
+## Supabase
+
+The structure of the database can be seen on [this UML diagram](https://drive.google.com/file/d/1xH0zvbj_lshFGGj8PkJURQXjnCDbmDXG/view?usp=sharing).
+
+The database utilises *row-level security* (RLS) to ensure that data is not incorrectly accessed by unauthorised users. It also provided our methods of authenticating the user via a log-in, sign-in and a 2FA.
 
 ## Supabase Components
 
@@ -107,14 +113,6 @@ The components in this sections contains elements of the application that is int
   - Other more specialised subscribers exist in their own directories.  
 - Hooks \- useAuthListener  
   - The useAuthListener hooks listens for authentication changes and manages user sessions. When a user signs in, it checks if their account setup is complete and determines their role (property manager or renter) using Supabase queries. Based on the role, it navigates users to appropriate setup pages (/AccountSetUpPM or /AccountSetUpR). The hook also updates Redux with user’s information and manages loading state. If a user signs out, it dispatches a logout action and redirects them to the landing page. This hook ensures role based navigation and session management.
-
-## Supabase
-
-- Database tables  
-- User sign up / property manager sign up  
-- RLS
-
-Database tables:
 
 ## CI/CD
 
