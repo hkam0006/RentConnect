@@ -22,7 +22,7 @@ const isAccountSetup = async (userId) => {
 
 const getCompanyID = async (userId) => {
   const {data: companyIDData, error} = await supabase
-    .from("PROPERTY MANAGER COMPANY")
+    .from("PROPERTY MANAGER COMPANY") 
     .select("*")
     .eq('property_manager_id', userId)
   return companyIDData
