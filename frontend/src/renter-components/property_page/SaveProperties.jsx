@@ -44,7 +44,7 @@ const SavedProperties = () => {
         if (savedPropertiesError) {
           throw savedPropertiesError;
         }
-
+        console.log(savedProperties)
         const mergedSavedProperty = savedProperties.map((savedProperty) => {
           const property = properties.find((property) => property.property_id === savedProperty.property_id);
           return {
@@ -145,14 +145,12 @@ const SavedProperties = () => {
                         <Typography>${savedProperty.propertyData.property_rent} {savedProperty.propertyData.property_rent_frequency}</Typography>
                         <Typography>Type: {savedProperty.propertyData.property_type}</Typography>
                         <Typography>Available: {savedProperty.propertyData.property_lease_start}</Typography>
-                        <Button variant='outlined' size='small' endIcon={<OpenInNewIcon />}>Apply Link</Button>
                       </Stack>
                     </Stack>
                   </TableCell>
                   <TableCell align="right">
                   <Stack spacing={1}>
-                  <Button variant='contained' onClick={() => navigate(`/property/${savedProperty.propertyData.property_id}`)}>View</Button>
-                  <Button variant='outlined'>More</Button>
+                  <Button variant='contained' onClick={() => navigate(`/application/${savedProperty.propertyData.property_id}`)}>View</Button>
                   <Button variant='outlined' onClick={() => handleUnsave(savedProperty.id)} >Unsave</Button>
                 </Stack>
                   </TableCell>

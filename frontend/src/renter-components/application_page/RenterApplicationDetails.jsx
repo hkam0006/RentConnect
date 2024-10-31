@@ -10,7 +10,8 @@ import {
     CardContent,
     Button,
     Table,
-    TableHead, TableRow, TableBody, TableCell, tableCellClasses, Chip
+    TableHead, TableRow, TableBody, TableCell, tableCellClasses, Chip,
+    Snackbar, Alert 
 } from '@mui/material';
 import BathtubIcon from '@mui/icons-material/Bathtub';
 import BedIcon from '@mui/icons-material/Bed';
@@ -33,6 +34,7 @@ import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import {styled} from "@mui/material/styles";
 import RenterApplication from "../renter_application/RenterApplication";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "../../supabase";
 
 /**
  * A page which shows a property and its information; and all applications made by the signed-in renter at this
@@ -40,6 +42,7 @@ import { useNavigate } from 'react-router-dom';
  * @author Luke Phillips
  */
 export default function RenterApplicationDetails() {
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const navigate = useNavigate();
     
     // Cuncomment below to view the table
@@ -84,6 +87,49 @@ export default function RenterApplicationDetails() {
         handleInspectionRequestOpen();
     };
 
+    const handleSave = async (property_id, company_id) => {
+        try {
+          // Check if the property is already saved
+          const { data: existingSavedProperties, error: checkError } = await supabase
+            .from('SAVED PROPERTIES')
+            .select('*')
+            .eq('property_id', prop.property_id);
+    
+          if (checkError) {
+            console.log()
+            console.log("Property ID:", prop.property_id);
+            console.log("Company ID:", prop.company_id);
+            console.error('Error checking saved properties:', checkError);
+            return;
+          }
+
+        // If the property is already saved, show the Snackbar and return
+      if (existingSavedProperties.length > 0) {
+        setSnackbarOpen(true);
+        return;
+      }
+          // If not saved, proceed to add the property
+          const { data, error } = await supabase
+            .from('SAVED PROPERTIES')
+            .insert([
+              {
+                property_id: property_id,
+                company_id: company_id,
+                renter_id: userID
+              }
+            ]);
+    
+          if (error) {
+            console.error('Error saving property:', error);
+          } else {
+            console.log('Property saved successfully:', data);
+            navigate('/savedproperties');
+          }
+        } catch (err) {
+          console.error('Unexpected error:', err);
+        }
+      };
+      
     
 
     // For request inspection modal
@@ -106,7 +152,22 @@ export default function RenterApplicationDetails() {
     }
 
     let prop = property[0];
+
+      // Handle Snackbar close event
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
     return <>
+    <Snackbar
+      open={snackbarOpen}
+      autoHideDuration={3000}
+      onClose={handleSnackbarClose}
+      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+    >
+      <Alert onClose={handleSnackbarClose} severity="info" sx={{ width: '100%' }}>
+        Property already saved!
+      </Alert>
+    </Snackbar>
         {inspectionRequestOpen && (
             <InspectionRequestModal
                 open={inspectionRequestOpen}
@@ -132,6 +193,14 @@ export default function RenterApplicationDetails() {
                                         onClick={() => navigate('/messages/' + prop.property_manager_id)}
                                     >
                                         Message the agent
+                                    </Button>
+                                    <Button
+                                        variant='contained'
+                                        size='medium'
+                                        style={{ backgroundColor: 'green', color: 'white' }}
+                                        onClick={() =>handleSave(prop.property_id,prop.company_id)}
+                                    >
+                                        Save
                                     </Button>
                                     {hasActiveApplication ? null : (
                                         <Button
