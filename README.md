@@ -88,7 +88,8 @@ The components in this sections contains elements of the application that is int
 - Landing page  
   - Page that users are on when they first visit the app. Users can search for properties, or sign up or login to the app  
 - Sign up  
-  - Allows users to sign up either as a property manager or as a tenant.  
+  - Allows users to sign up either as a property manager or as a tenant.
+  - **IMPORTANT** the domain name for the site is a constant in this file and should be changed as needed.
 - Login   
   - Allows users to login if they have previously signed up  
 - Public property  
