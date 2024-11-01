@@ -76,8 +76,8 @@ function App() {
             <Route path='/LogIn' element={<LogIn/>} />
             <Route path='/Inspection' element={<ManagerRoute Component={Inspection} />} />
             <Route path='/InspectionRenter' element={<RenterRoute Component={InspectionRenter} />} />
-            <Route path='/messages' element={<Messaging/>} />
-            <Route path='/messages/:directMessageUserID' element={<Messaging/>} />
+            <Route path='/messages' element={<ManagerRoute Component={Messaging}/>} />
+            <Route path='/messages/:directMessageUserID' element={<ManagerRoute Component={Messaging}/>} />
             <Route path='/keys' element={<ManagerRoute Component={Keys}/>} />
             <Route path='/InspectionRun' element={<ManagerRoute Component={InspectionRun}/>} />
             <Route path='/SignUp' element={<SignUp/>} />

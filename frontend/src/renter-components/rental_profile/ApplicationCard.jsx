@@ -63,7 +63,7 @@ function ApplicationCard({ application }) {
                         <Box sx={{width: 100, height: 40, borderRadius: 2, color: 'white', backgroundColor: applicationStatusColour(application.application_status), display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                             {applicationStatusText(application.application_status)}
                         </Box>
-                        <Button variant='contained' sx={{ marginTop: 2 }} onClick={() => navigate(`/messages/${property.property_manager_id}`)}>
+                        <Button variant='contained' sx={{ marginTop: 2 }} onClick={() => navigate(`/renter_messages/${property.property_manager_id}`)}>
                             <Typography>
                                 MESSAGE MANAGER
                             </Typography>

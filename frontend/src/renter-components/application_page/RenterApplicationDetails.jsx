@@ -190,7 +190,7 @@ export default function RenterApplicationDetails() {
                                         variant='contained'
                                         size='medium'
                                         style={{ color: 'white' }}
-                                        onClick={() => navigate('/messages/' + prop.property_manager_id)}
+                                        onClick={() => navigate('/renter_messages/' + prop.property_manager_id)}
                                     >
                                         Message the agent
                                     </Button>

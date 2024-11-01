@@ -12,12 +12,13 @@ import MapComponent from '../../manager-components/inspection_run/MapNav';
 
 // Demo Images
 import NavigationMenu from '../../manager-components/navigation_menu/NavigationMenus';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useGetPropertyByPropertyID from '../../queries/Property/useGetPropertyByPropertyID';
 import AppLoader from "../../manager-components/property_page/AppLoader";
 import Paper from "@mui/material/Paper";
 
 export default function PropertyDetailsTenant() {
+    const navigate = useNavigate();
 
     // Dummy viewings
     const viewing1 = {
@@ -82,6 +83,7 @@ export default function PropertyDetailsTenant() {
                                     variant='contained'
                                     size='medium'
                                     style={{ colour: 'white' }}
+                                    onClick={() => navigate('/renter_messages/' + prop.property_manager_id)}
                                 >
                                     Message the agent
                                 </Button>

@@ -7,32 +7,37 @@ import useGetPropertiesByPropertyManagerID from '../../queries/Property/useGetPr
 import NavigationMenu from '../navigation_menu/NavigationMenus';
 import ImageCarousel from '../../manager-components/property_page/ImageCarousel';
 import { useSelector } from 'react-redux';
+import useGetCompanyIDByPropertyManagerID from '../../queries/Property Manager Company/useGetCompanyIDByPropertyManagerID';
 
 export default function PMprofileForR() {
     const navigate = useNavigate();
+    const { pmID } = useParams()
     const companyId = useSelector((state) => state.user.currentUser.company_id)
-    const fetchPropertyManager = useGetPropertyManagerByPropertyManagerID();
+    const {propertyManager: pmData, loading: pmLoading} = useGetPropertyManagerByPropertyManagerID(pmID);
     const [propertyManager, setPropertyManager] = useState({});
     const fetchCompany = useGetCompanyByCompanyID();
     const [pmCompany, setPMCompany] = useState({});
-    const { pmID } = useParams()
     const [properties, setProperties] = useState([{}])
     const fetchProperies = useGetPropertiesByPropertyManagerID();
+    const {companyID, loading: companyLoading} = useGetCompanyIDByPropertyManagerID(pmID);
     useEffect(() => {
-        async function getPMData() {
-            const pm = await fetchPropertyManager(pmID);
-            setPropertyManager(pm.data[0]);
-            const company = await fetchCompany(companyId);
+        async function getCompanyData() {
+            const company = await fetchCompany(companyID);
             setPMCompany(company.data[0]);
         }
         async function getPMProperties() {
             const data = await fetchProperies(pmID)
             setProperties(data.data)
         }
+        if (!pmLoading){
+            setPropertyManager(pmData[0]);
+        }
+        if (!companyLoading){
+            getCompanyData();
+        }
 
-        getPMData();
         getPMProperties();
-    }, []);
+    }, [pmLoading, companyLoading]);
 
    
 
@@ -60,7 +65,7 @@ export default function PMprofileForR() {
                                     {pmCompany.company_name}
                                 </Link>
                             </Typography>
-                            <Button variant="contained" disableElevation onClick={() => navigate(`/messages/${propertyManager.property_manager_id}`)}>Message</Button>
+                            <Button variant="contained" disableElevation onClick={() => navigate(`/renter_messages/${propertyManager.property_manager_id}`)}>Message</Button>
                         </Box>
                     </CardContent>
                 </Card>

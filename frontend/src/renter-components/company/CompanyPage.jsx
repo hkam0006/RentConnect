@@ -131,7 +131,7 @@ export default function CompanyPage() {
                                 {propertyManager.property_manager_email}
                               </TableCell>
                               <TableCell>
-                                <Button variant="contained" disableElevation onClick={() => navigate(`/messages/${propertyManager.property_manager_id}`)}>Message</Button>
+                                <Button variant="contained" disableElevation onClick={() => navigate(`/renter_messages/${propertyManager.property_manager_id}`)}>Message</Button>
                               </TableCell>
                             </TableRow>
                           ))}

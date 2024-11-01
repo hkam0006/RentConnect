@@ -245,7 +245,7 @@ function RenterContacts() {
                         day: 'numeric',
                       })}
                     </TableCell>
-                    <TableCell align="right"><Button variant="contained" disableElevation onClick={() => navigate(`/messages/${row.id}`)}>Message</Button></TableCell>
+                    <TableCell align="right"><Button variant="contained" disableElevation onClick={() => navigate(`/renter_messages/${row.id}`)}>Message</Button></TableCell>
                   </TableRow>
                 );
               })}
